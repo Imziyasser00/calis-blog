@@ -268,17 +268,25 @@ const components: PortableTextComponents = {
     },
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-    const data = await getData(params.slug)
+export default async function BlogPostPage({
+                                               params,
+                                           }: {
+    params: Promise<{ slug: string }>
+}) {
+    const { slug } = await params
+    const data = await getData(slug)
 
     if (!data) {
         return (
             <div className="max-w-4xl mx-auto px-6 py-24">
                 <h1 className="text-2xl font-semibold">Post not found</h1>
-                <p className="text-gray-500 mt-2">We couldn’t find a post with the slug “{params.slug}”.</p>
+                <p className="text-gray-500 mt-2">
+                    We couldn’t find a post with the slug “{slug}”.
+                </p>
             </div>
         )
     }
+
 
     const mainImageUrl = data.mainImage ? urlFor(data.mainImage as any).width(1600).url() : null
 
@@ -353,21 +361,29 @@ export async function generateStaticParams() {
 }
 
 // SEO metadata
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-    const data = await getData(params.slug)
+// SEO metadata
+export async function generateMetadata({
+                                           params,
+                                       }: {
+    params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+    const { slug } = await params
+    const data = await getData(slug)
     if (!data) return { title: "Post not found" }
 
     return {
         title: data.title,
-        description:
-            data.categories?.map((c) => c.title).join(", ") ||
-            "Read this article on Calisthenics Hub.",
+        description: data.categories?.map((c) => c.title).join(", "),
         openGraph: {
             title: data.title,
             images: data.mainImage
                 ? [
                     {
-                        url: urlFor(data.mainImage as any).width(1200).height(630).fit("crop").url(),
+                        url: urlFor(data.mainImage as any)
+                            .width(1200)
+                            .height(630)
+                            .fit("crop")
+                            .url(),
                         width: 1200,
                         height: 630,
                         alt: data.title,
