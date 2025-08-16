@@ -3,15 +3,32 @@ import { PortableText, PortableTextComponents } from "@portabletext/react"
 import type { Metadata } from "next"
 import { client } from "@calis/lib/sanity.client"
 import { urlFor } from "@calis/lib/sanity.image"
+import type { PortableTextBlock, Reference } from "sanity"
+
+// ---- Sanity types ----
+type SanityCategory = { _id: string; title: string }
+
+type SanityCrop = { top: number; bottom: number; left: number; right: number }
+type SanityHotspot = { x: number; y: number; height: number; width: number }
+
+// IMPORTANT: asset must be a Sanity reference for the image-url builder types
+type SanityImage = {
+    _type?: "image"
+    asset: Reference & { _ref: string } // ensures _type:"reference" | _ref present
+    crop?: SanityCrop
+    hotspot?: SanityHotspot
+    alt?: string
+    caption?: string
+}
 
 type Post = {
     title: string
     currentSlug: string
     publishedAt?: string
-    mainImage?: any
-    body: any
+    mainImage?: SanityImage
+    body: PortableTextBlock[]                 // never null for PortableText
     authorName?: string
-    categories?: { _id: string; title: string }[]
+    categories?: SanityCategory[]
 }
 
 async function getData(slug: string): Promise<Post | null> {
@@ -33,7 +50,7 @@ async function getData(slug: string): Promise<Post | null> {
         currentSlug: data.currentSlug,
         publishedAt: data.publishedAt,
         mainImage: data.mainImage,
-        body: data.body,
+        body: data.body ?? [],                        // ensure array, not null
         authorName: data?.author?.name,
         categories: data?.categories ?? [],
     }
@@ -52,10 +69,10 @@ function getYouTubeId(url?: string) {
 
 // --- PortableText components (rich rendering) ---
 const components: PortableTextComponents = {
-    // Custom object types (blocks)
     types: {
         image: ({ value }) => {
-            const src = value?.asset ? urlFor(value).width(1600).height(900).fit("max").url() : null
+            // cast to any so urlFor accepts our custom-typed image
+            const src = value?.asset ? urlFor(value as any).width(1600).height(900).fit("max").url() : null
             if (!src) return null
             const alt = value?.alt || "Post image"
             return (
@@ -75,7 +92,6 @@ const components: PortableTextComponents = {
             )
         },
 
-        // workoutTable is a single object, but we still normalize then render a table row
         workoutProgram: ({ value }) => {
             const rows = Array.isArray(value?.exercises) ? value.exercises : []
             if (!rows.length) return null
@@ -108,8 +124,8 @@ const components: PortableTextComponents = {
                                     <td className="font-medium">
                                         {r.superset ? (
                                             <span className="mr-2 inline-flex items-center rounded-md border border-blue-400/40 bg-blue-400/10 px-1.5 py-0.5 text-xs">
-                        SS {r.superset}
-                      </span>
+                          SS {r.superset}
+                        </span>
                                         ) : null}
                                         {r.exercise}
                                     </td>
@@ -127,6 +143,7 @@ const components: PortableTextComponents = {
                 </section>
             )
         },
+
         callout: ({ value }) => {
             const type = value?.type || "Note"
             const tone =
@@ -176,7 +193,6 @@ const components: PortableTextComponents = {
         ),
     },
 
-    // Inline marks (decorators & annotations)
     marks: {
         underline: ({ children }) => <span className="underline underline-offset-4">{children}</span>,
         highlight: ({ children }) => (
@@ -211,7 +227,6 @@ const components: PortableTextComponents = {
         },
     },
 
-    // Paragraphs & headings (block styles)
     block: {
         normal: ({ children }) => <p>{children}</p>,
         h1: ({ children }) => <h1 className="text-4xl md:text-5xl font-bold mt-10">{children}</h1>,
@@ -228,7 +243,6 @@ const components: PortableTextComponents = {
         ),
     },
 
-    // Lists
     list: {
         bullet: ({ children }) => <ul className="list-disc pl-6 space-y-2">{children}</ul>,
         number: ({ children }) => <ol className="list-decimal pl-6 space-y-2">{children}</ol>,
@@ -266,7 +280,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         )
     }
 
-    const mainImageUrl = data.mainImage ? urlFor(data.mainImage).width(1600).url() : null
+    const mainImageUrl = data.mainImage ? urlFor(data.mainImage as any).width(1600).url() : null
+
     const published = data.publishedAt
         ? new Date(data.publishedAt).toLocaleDateString(undefined, {
             year: "numeric",
@@ -322,6 +337,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 )}
 
                 <article className="mt-12 prose prose-xl prose-slate w-full mx-auto prose-li:marker:text-purple-500 prose-invert max-w-none">
+                    {/* body is always an array now */}
                     <PortableText value={data.body} components={components} />
                 </article>
             </div>
@@ -340,15 +356,18 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
     const data = await getData(params.slug)
     if (!data) return { title: "Post not found" }
+
     return {
         title: data.title,
-        description: data.categories?.map((c) => c.title).join(", "),
+        description:
+            data.categories?.map((c) => c.title).join(", ") ||
+            "Read this article on Calisthenics Hub.",
         openGraph: {
             title: data.title,
             images: data.mainImage
                 ? [
                     {
-                        url: urlFor(data.mainImage).width(1200).height(630).fit("crop").url(),
+                        url: urlFor(data.mainImage as any).width(1200).height(630).fit("crop").url(),
                         width: 1200,
                         height: 630,
                         alt: data.title,
