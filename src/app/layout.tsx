@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 const SITE_NAME = "Calisthenics Hub";
 const SITE_URL = process.env.SITE_URL || "http://localhost:3000";
 const DEFAULT_DESC =
-    "Learn calisthenics the smart way: step-by-step progressions, technique cues, workouts, and realistic programs—from absolute beginner to advanced. Tutorials, tips, and coaching notes.";
+    "Learn calisthenics the smart way: step-by-step progressions, technique cues, workouts, and realistic programs—from absolute beginner to advanced. Tutorials, tips.";
 
 // -- SEO: Viewport -------------------------------------------------------------
 export const viewport: Viewport = {
