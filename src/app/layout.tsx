@@ -24,34 +24,28 @@ export const viewport: Viewport = {
 // -- SEO: Metadata -------------------------------------------------------------
 export const metadata: Metadata = {
     metadataBase: new URL(SITE_URL),
-    applicationName: SITE_NAME,
-    generator: "Next.js",
-    referrer: "origin-when-cross-origin",
-    title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
+    title: {
+        default: "Calisthenics Hub — Tutorials, Progressions & Workouts",
+        template: "%s — Calisthenics Hub",
+    },
     description: DEFAULT_DESC,
-    keywords: [
-        "calisthenics", "bodyweight training", "progressions", "workouts",
-        "handstand", "muscle up", "front lever", "pull ups", "push ups",
-        "beginner calisthenics", "street workout"
-    ],
-    category: "Fitness",
-    formatDetection: { email: false, address: false, telephone: false },
     alternates: {
-        canonical: "/",
-        types: { "application/rss+xml": "/feed.xml" },
+        canonical: `${SITE_URL}/`,
+        types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
     },
     openGraph: {
         type: "website",
-        url: "/",
+        url: `${SITE_URL}/`,
         siteName: SITE_NAME,
         title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
         description: DEFAULT_DESC,
         images: [
             {
-                url: `https://calis-blog.vercel.app/og.jpg`,
+                url: `${SITE_URL}/og.jpg`,
                 width: 1200,
                 height: 630,
                 alt: SITE_NAME,
+                type: "image/jpeg",
             },
         ],
         locale: "en_US",
@@ -60,7 +54,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
         description: DEFAULT_DESC,
-        images: [`https://calis-blog.vercel.app/og.jpg`],
+        images: [`${SITE_URL}/og.jpg`],
     },
     robots: {
         index: true,
