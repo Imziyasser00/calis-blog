@@ -10,7 +10,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 
 // -- SITE CONSTANTS ------------------------------------------------------------
 const SITE_NAME = "Calisthenics Hub";
-const SITE_URL = process.env.SITE_URL || "http://localhost:3000";
+const SITE_URL = process.env.SITE_URL || "https://calis-blog.vercel.app";
 const DEFAULT_DESC =
     "Learn calisthenics the smart way: step-by-step progressions, workouts, and realistic programs—from absolute beginner to advanced.";
 
