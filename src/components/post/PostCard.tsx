@@ -30,8 +30,7 @@ export default function PostCard({ post }: { post: PostCardType }) {
             <CardContent>
                 {preview && (
                     <CardDescription className="text-gray-400 line-clamp-3">
-                        {preview}
-                        {needsEllipsis ? "…" : ""}
+                        {preview}{needsEllipsis ? "…" : ""}
                     </CardDescription>
                 )}
             </CardContent>
