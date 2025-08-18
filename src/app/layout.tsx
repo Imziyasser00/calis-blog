@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 const SITE_NAME = "Calisthenics Hub";
 const SITE_URL = process.env.SITE_URL || "http://localhost:3000";
 const DEFAULT_DESC =
-    "Learn calisthenics the smart way: step-by-step progressions, technique cues, workouts, and realistic programs—from absolute beginner to advanced. Tutorials, tips.";
+    "Learn calisthenics the smart way: step-by-step progressions, workouts, and realistic programs—from absolute beginner to advanced.";
 
 // -- SEO: Viewport -------------------------------------------------------------
 export const viewport: Viewport = {
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
         description: DEFAULT_DESC,
         images: [
             {
-                url: "/og.jpg", // ensure 1200x630 (<= 5MB)
+                url: "/og.png", // ensure 1200x630 (<= 5MB)
                 width: 1200,
                 height: 630,
                 alt: SITE_NAME,
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
         description: DEFAULT_DESC,
-        images: ["/og.jpg"],
+        images: ["/og.png"],
     },
     robots: {
         index: true,
