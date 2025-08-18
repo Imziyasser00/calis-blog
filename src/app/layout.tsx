@@ -11,7 +11,6 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 // -- SITE CONSTANTS ------------------------------------------------------------
 const SITE_NAME = "Calisthenics Hub";
 const SITE_URL = process.env.SITE_URL || "http://localhost:3000";
-const DEFAULT_TITLE = `${SITE_NAME} — Blog`;
 const DEFAULT_DESC =
     "Learn calisthenics the smart way: step-by-step progressions, technique cues, workouts, and realistic programs—from absolute beginner to advanced. Tutorials, tips, and coaching notes.";
 
@@ -28,7 +27,7 @@ export const metadata: Metadata = {
     applicationName: SITE_NAME,
     generator: "Next.js",
     referrer: "origin-when-cross-origin",
-    title: { default: DEFAULT_TITLE, template: `%s · ${SITE_NAME}` },
+    title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
     description: DEFAULT_DESC,
     keywords: [
         "calisthenics", "bodyweight training", "progressions", "workouts",
@@ -45,7 +44,7 @@ export const metadata: Metadata = {
         type: "website",
         url: "/",
         siteName: SITE_NAME,
-        title: DEFAULT_TITLE,
+        title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
         description: DEFAULT_DESC,
         images: [
             {
@@ -59,7 +58,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: DEFAULT_TITLE,
+        title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
         description: DEFAULT_DESC,
         images: ["/og.jpg"],
     },

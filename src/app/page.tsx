@@ -14,11 +14,6 @@ import { PostsGridSkeleton, HeroSkeleton } from "@calis/components/skeletons";
 
 export const revalidate = 60; // ISR
 
-export const metadata: Metadata = {
-    title: "Home",
-    description:
-        "Build strength with calisthenics. Actionable workouts, skill progressions, and gear advice.",
-};
 
 export default async function Home() {
     const data = await getHomepageData(client);
