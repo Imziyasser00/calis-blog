@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -12,7 +13,7 @@ const SITE_NAME = "Calisthenics Hub";
 const SITE_URL = process.env.SITE_URL || "http://localhost:3000";
 const DEFAULT_TITLE = `${SITE_NAME} — Blog`;
 const DEFAULT_DESC =
-    "Calisthenics tutorials, progressions, workouts, and coaching notes.";
+    "Learn calisthenics the smart way: step-by-step progressions, technique cues, workouts, and realistic programs—from absolute beginner to advanced. Tutorials, tips, and coaching notes.";
 
 // -- SEO: Viewport -------------------------------------------------------------
 export const viewport: Viewport = {
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
         description: DEFAULT_DESC,
         images: [
             {
-                url: "/og.jpg", // <-- add a 1200x630 image at public/og.jpg
+                url: "/og.jpg", // ensure 1200x630 (<= 5MB)
                 width: 1200,
                 height: 630,
                 alt: SITE_NAME,
@@ -82,37 +83,70 @@ export const metadata: Metadata = {
         apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
     },
     manifest: "/site.webmanifest",
-    themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#0b1220" }, { color: "#ffffff" }],
+    themeColor: [
+        { media: "(prefers-color-scheme: dark)", color: "#0b1220" },
+        { color: "#ffffff" }
+    ],
 };
 
-export default function RootLayout({
-                                       children,
-                                   }: Readonly<{ children: React.ReactNode }>) {
-    // JSON-LD (Organization + Website)
-    const jsonLd = {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+    // ---- JSON-LD: Organization + WebSite (+ optional SiteNavigation) -----------
+    const ldOrganization = {
         "@context": "https://schema.org",
         "@type": "Organization",
         name: SITE_NAME,
         url: SITE_URL,
-        logo: `${SITE_URL}/logo.png`, // optional: add public/logo.png
+        logo: `${SITE_URL}/logo.png`, // optional: add public/logo.png (512x512+)
+        sameAs: [
+            // add your real profiles to boost E-E-A-T
+            // "https://www.instagram.com/yourhandle",
+            // "https://www.youtube.com/@yourchannel",
+            // "https://twitter.com/yourhandle"
+        ],
     };
-    const websiteLd = {
+
+    const ldWebsite = {
         "@context": "https://schema.org",
         "@type": "WebSite",
         name: SITE_NAME,
         url: SITE_URL,
+        potentialAction: {
+            "@type": "SearchAction",
+            target: `${SITE_URL}/search?q={search_term_string}`,
+            "query-input": "required name=search_term_string",
+        },
     };
+
+    // (Optional) Site navigation markup – update the names/urls to your real top nav
+    const ldNav = {
+        "@context": "https://schema.org",
+        "@type": "SiteNavigationElement",
+        name: ["Beginner Guide", "Exercises", "Workouts", "Skills", "Blog"],
+        url: [
+            `${SITE_URL}/guides/beginner`,
+            `${SITE_URL}/exercises`,
+            `${SITE_URL}/workouts`,
+            `${SITE_URL}/skills`,
+            `${SITE_URL}/blog`,
+        ],
+    };
+
+    const jsonLdCombined = [ldOrganization, ldWebsite, ldNav];
 
     return (
         <html lang="en">
+        <head>
+            {/* Small perf wins: preconnects for common CDNs you actually use */}
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        </head>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-blue-950`}>
         {children}
         <Toaster />
-        <Script id="ld-org" type="application/ld+json" strategy="afterInteractive">
-            {JSON.stringify(jsonLd)}
-        </Script>
-        <Script id="ld-website" type="application/ld+json" strategy="afterInteractive">
-            {JSON.stringify(websiteLd)}
+
+        {/* Single inline script for all schema (reduces number of inline scripts) */}
+        <Script id="ld-all" type="application/ld+json" strategy="afterInteractive">
+            {JSON.stringify(jsonLdCombined)}
         </Script>
         </body>
         </html>
