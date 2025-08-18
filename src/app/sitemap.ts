@@ -1,9 +1,56 @@
-import type { MetadataRoute } from 'next'
-import { client } from '@calis/lib/sanity.client'
-import { allPostSlugsQuery } from '@calis/lib/sanity.queries'
+// app/sitemap.ts
+import { MetadataRoute } from "next";
+import { client } from "@calis/lib/sanity.client";
+
+const SITE_URL = (process.env.SITE_URL ?? "http://localhost:3000").replace(/\/+$/, "");
+
+// If you use a different field names, tweak GROQ accordingly
+const POSTS_GROQ = /* groq */ `
+*[_type == "post" && defined(slug.current) && !(_id in path("drafts.**"))]{
+  "slug": slug.current,
+  publishedAt,
+  _updatedAt
+}
+`;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const base = process.env.SITE_URL || 'http://localhost:3000'
-    const slugs: string[] = await client.fetch(allPostSlugsQuery)
-    const posts = slugs.map((slug) => ({ url: `${base}/blog/${slug}`, changeFrequency: 'daily' as const, priority: 0.8 }))
-    return [ { url: base, changeFrequency: 'daily', priority: 1 }, ...posts ]
+    // 1) Static routes you actually have
+    const staticRoutes: MetadataRoute.Sitemap = [
+        {
+            url: `${SITE_URL}/`,
+            lastModified: new Date(),
+            changeFrequency: "daily",
+            priority: 1,
+        },
+        {
+            url: `${SITE_URL}/blog`,
+            lastModified: new Date(),
+            changeFrequency: "daily",
+            priority: 0.9,
+        },
+        {
+            url: `${SITE_URL}/topics`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.6,
+        },
+        {
+            url: `${SITE_URL}/about`,
+            lastModified: new Date(),
+            changeFrequency: "yearly",
+            priority: 0.4,
+        },
+    ];
+
+    const posts: { slug: string; publishedAt?: string; _updatedAt?: string }[] =
+        await client.fetch(POSTS_GROQ);
+
+    const postRoutes: MetadataRoute.Sitemap = posts.map((p) => ({
+        url: `${SITE_URL}/blog/${p.slug}`,
+        lastModified: new Date(p._updatedAt ?? p.publishedAt ?? Date.now()),
+        changeFrequency: "daily",
+        priority: 0.8,
+    }));
+
+    return [...staticRoutes, ...postRoutes];
 }

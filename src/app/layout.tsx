@@ -48,7 +48,7 @@ export const metadata: Metadata = {
         description: DEFAULT_DESC,
         images: [
             {
-                url: "/og.png", // ensure 1200x630 (<= 5MB)
+                url: "/og.jpg", // ensure 1200x630 (<= 5MB)
                 width: 1200,
                 height: 630,
                 alt: SITE_NAME,
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
         description: DEFAULT_DESC,
-        images: ["/og.png"],
+        images: ["/og.jpg"],
     },
     robots: {
         index: true,
