@@ -7,10 +7,10 @@ export default function Footer() {
             <div className="container mx-auto px-4">
                 <div className="grid md:grid-cols-4 gap-8">
                     <div className="space-y-4">
-                        <Link href="/" className="text-xl font-bold tracking-tighter">
+                        <Link href="/" className="text-5xl font-bold tracking-tighter">
                             Cali<span className="text-purple-500">Hub</span>
                         </Link>
-                        <p className="text-gray-400 text-sm">
+                        <p className="text-gray-400 text-lg">
                             Calisthenics workouts, skills, and progress — clean content, no fluff.
                         </p>
                         <div className="flex space-x-4">
@@ -42,7 +42,7 @@ export default function Footer() {
                         <ul className="space-y-2 text-sm text-gray-400">
                             <li className="flex items-center gap-2">
                                 <Mail className="h-4 w-4" />
-                                <span>hello@calihub.dev</span>
+                                <span>hello@calihub.com</span>
                             </li>
                         </ul>
                     </div>
