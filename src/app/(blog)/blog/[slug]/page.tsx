@@ -92,8 +92,13 @@ async function getRelatedPosts(slug: string, firstCategoryId?: string): Promise<
 }
 
 // ---- Page component ----
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-    const data = await getData(params.slug)
+export default async function BlogPostPage({
+                                               params,
+                                           }: {
+    params: Promise<{ slug: string }>
+}) {
+    const { slug } = await params
+    const data = await getData(slug)
 
     if (!data) {
         return (
@@ -216,10 +221,14 @@ export async function generateStaticParams() {
 }
 
 // --- Metadata ---
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-    const data = await getData(params.slug)
+export async function generateMetadata({
+                                           params,
+                                       }: {
+    params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+    const { slug } = await params
+    const data = await getData(slug)
     if (!data) return { title: "Post not found" }
-
     return {
         title: data.title,
         description: data.categories?.map((c) => c.title).join(", "),
