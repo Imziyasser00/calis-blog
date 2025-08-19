@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@calis/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -144,10 +145,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <Toaster />
 
-        {/* Single inline script for all schema (reduces number of inline scripts) */}
         <Script id="ld-all" type="application/ld+json" strategy="afterInteractive">
             {JSON.stringify(jsonLdCombined)}
         </Script>
+        <Analytics />
         </body>
         </html>
     );
