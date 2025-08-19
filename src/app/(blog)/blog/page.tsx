@@ -1,3 +1,4 @@
+// src/app/(blog)/blog/page.tsx
 import "server-only"
 import Link from "next/link"
 import Image from "next/image"
@@ -61,18 +62,23 @@ async function getArticles(page: number): Promise<ArticleCardData[]> {
 export default async function BlogIndexPage({
                                                 searchParams,
                                             }: {
-    searchParams?: { [key: string]: string | string[] | undefined }
+    // Fix: In your project, PageProps defines searchParams as Promise
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-    const raw = Array.isArray(searchParams?.page) ? searchParams?.page[0] : searchParams?.page
+    const sp = await searchParams
+    const raw = Array.isArray(sp?.page) ? sp.page[0] : sp?.page
     const parsed = Number(raw)
     const currentPage = Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 1
 
-    const [totalCount, articles] = await Promise.all([getTotalCount(), getArticles(currentPage)])
+    const [totalCount, articles] = await Promise.all([
+        getTotalCount(),
+        getArticles(currentPage),
+    ])
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
     const safePage = Math.min(Math.max(1, currentPage), totalPages)
 
-    // If user passed a page beyond range and there are pages, refetch the last page
-    const pageArticles = safePage === currentPage ? articles : await getArticles(safePage)
+    const pageArticles =
+        safePage === currentPage ? articles : await getArticles(safePage)
 
     return (
         <div className="min-h-screen bg-black text-white">
@@ -80,7 +86,9 @@ export default async function BlogIndexPage({
 
             <main className="container mx-auto px-4 py-10 sm:py-12">
                 <section className="mb-10 sm:mb-12">
-                    <h1 className="text-3xl sm:text-4xl font-bold mb-6 sm:mb-8">All Articles</h1>
+                    <h1 className="text-3xl sm:text-4xl font-bold mb-6 sm:mb-8">
+                        All Articles
+                    </h1>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                         {pageArticles.map((a) => (
@@ -93,7 +101,11 @@ export default async function BlogIndexPage({
                                 slug={a.slug}
                                 imageUrl={
                                     a.mainImage
-                                        ? urlFor(a.mainImage as any).width(1200).height(800).fit("crop").url()
+                                        ? urlFor(a.mainImage as any)
+                                            .width(1200)
+                                            .height(800)
+                                            .fit("crop")
+                                            .url()
                                         : "/placeholder.svg"
                                 }
                             />
@@ -101,11 +113,17 @@ export default async function BlogIndexPage({
                     </div>
 
                     {pageArticles.length === 0 && (
-                        <p className="text-gray-400 mt-8">No articles yet. Check back soon.</p>
+                        <p className="text-gray-400 mt-8">
+                            No articles yet. Check back soon.
+                        </p>
                     )}
 
                     {totalPages > 1 && (
-                        <Pagination currentPage={safePage} totalPages={totalPages} basePath="/blog" />
+                        <Pagination
+                            currentPage={safePage}
+                            totalPages={totalPages}
+                            basePath="/blog"
+                        />
                     )}
                 </section>
             </main>
@@ -132,13 +150,20 @@ function ArticleCard({
     imageUrl: string
 }) {
     const shortDesc =
-        (description || "").trim().slice(0, 150) + ((description || "").length > 150 ? "…" : "")
+        (description || "").trim().slice(0, 150) +
+        ((description || "").length > 150 ? "…" : "")
 
     return (
         <Link href={`/blog/${slug}`} className="group block">
             <div className="space-y-3">
                 <div className="relative h-52 sm:h-56 md:h-64 xl:h-72 rounded-lg overflow-hidden border border-gray-800 group-hover:border-purple-500/50 transition-colors">
-                    <Image src={imageUrl} alt={`${title} thumbnail`} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw" />
+                    <Image
+                        src={imageUrl}
+                        alt={`${title} thumbnail`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    />
                 </div>
                 <div>
                     {category && (
@@ -147,8 +172,14 @@ function ArticleCard({
                             <span>{category}</span>
                         </div>
                     )}
-                    <h3 className="font-medium group-hover:text-purple-400 transition-colors leading-snug">{title}</h3>
-                    {shortDesc && <p className="text-gray-400 text-sm mt-2 line-clamp-2">{shortDesc}</p>}
+                    <h3 className="font-medium group-hover:text-purple-400 transition-colors leading-snug">
+                        {title}
+                    </h3>
+                    {shortDesc && (
+                        <p className="text-gray-400 text-sm mt-2 line-clamp-2">
+                            {shortDesc}
+                        </p>
+                    )}
                     {date && (
                         <div className="flex items-center gap-1 mt-3 text-[11px] sm:text-xs text-gray-500">
                             <Clock className="h-3 w-3" />
@@ -170,7 +201,6 @@ function Pagination({
     totalPages: number
     basePath?: string
 }) {
-    // Build a small window of pages around current
     const windowSize = 2
     const start = Math.max(1, currentPage - windowSize)
     const end = Math.min(totalPages, currentPage + windowSize)
@@ -179,13 +209,17 @@ function Pagination({
     const pageHref = (p: number) => (p === 1 ? `${basePath}` : `${basePath}?page=${p}`)
 
     return (
-        <nav className="mt-10 flex items-center justify-center gap-2 sm:gap-3" aria-label="Pagination">
-            {/* Prev */}
-            <PaginationLink href={pageHref(Math.max(1, currentPage - 1))} disabled={currentPage === 1}>
+        <nav
+            className="mt-10 flex items-center justify-center gap-2 sm:gap-3"
+            aria-label="Pagination"
+        >
+            <PaginationLink
+                href={pageHref(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+            >
                 Prev
             </PaginationLink>
 
-            {/* First page ellipsis */}
             {start > 1 && (
                 <>
                     <PaginationLink href={pageHref(1)}>1</PaginationLink>
@@ -193,14 +227,12 @@ function Pagination({
                 </>
             )}
 
-            {/* Page numbers */}
             {pages.map((p) => (
                 <PaginationLink key={p} href={pageHref(p)} active={p === currentPage}>
                     {p}
                 </PaginationLink>
             ))}
 
-            {/* Last page ellipsis */}
             {end < totalPages && (
                 <>
                     {end < totalPages - 1 && <span className="px-2 text-gray-500">…</span>}
@@ -208,8 +240,10 @@ function Pagination({
                 </>
             )}
 
-            {/* Next */}
-            <PaginationLink href={pageHref(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}>
+            <PaginationLink
+                href={pageHref(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+            >
                 Next
             </PaginationLink>
         </nav>
