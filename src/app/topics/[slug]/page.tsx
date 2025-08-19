@@ -1,3 +1,4 @@
+// app/topics/[slug]/page.tsx
 import "server-only"
 import Link from "next/link"
 import Image from "next/image"
@@ -87,23 +88,23 @@ export default async function CategoryPage({
                                                params,
                                                searchParams,
                                            }: {
-    params: { slug: string }
-    searchParams?: { [key: string]: string | string[] | undefined }
+    // NOTE: In your codebase PageProps makes these Promises
+    params: Promise<{ slug: string }>
+    searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-    const cat = await getCategory(params.slug)
-    if (!cat) {
-        notFound()
-    }
+    const { slug } = await params
+    const sp = (await searchParams) ?? {}
 
-    const raw = Array.isArray(searchParams?.page) ? searchParams?.page[0] : searchParams?.page
+    const cat = await getCategory(slug)
+    if (!cat) notFound()
+
+    const raw = Array.isArray(sp.page) ? sp.page[0] : sp.page
     const parsed = Number(raw)
     const currentPage = Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 1
 
     const totalCount = await getCounts(cat!._id)
     const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
     const safePage = Math.min(Math.max(1, currentPage), totalPages)
-
-    // fetch with safe page (handles out-of-range ?page)
     const posts = await getPosts(cat!._id, safePage)
 
     return (
@@ -153,11 +154,7 @@ export default async function CategoryPage({
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <Pagination
-                        currentPage={safePage}
-                        totalPages={totalPages}
-                        basePath={`/topics/${cat!.slug}`}
-                    />
+                    <Pagination currentPage={safePage} totalPages={totalPages} basePath={`/topics/${cat!.slug}`} />
                 )}
             </main>
 
@@ -260,10 +257,7 @@ function Pagination({
                 </>
             )}
 
-            <PaginationLink
-                href={pageHref(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-            >
+            <PaginationLink href={pageHref(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}>
                 Next
             </PaginationLink>
         </nav>
@@ -301,4 +295,27 @@ function PaginationLink({
             {children}
         </Link>
     )
+}
+
+// --- Optional: prebuild category pages ---
+export async function generateStaticParams() {
+    const rows: { slug: string }[] = await client.fetch(groq`
+    *[_type == "category" && defined(slug.current)]{ "slug": slug.current }
+  `)
+    return rows.map((r) => ({ slug: r.slug }))
+}
+
+// --- Optional: SEO ---
+export async function generateMetadata({
+                                           params,
+                                       }: {
+    params: Promise<{ slug: string }>
+}) {
+    const { slug } = await params
+    const cat: Category | null = await client.fetch(categoryBySlugQuery, { slug })
+    if (!cat) return { title: "Topic not found" }
+    return {
+        title: `${cat.title} — Topics`,
+        description: `Articles about ${cat.title}.`,
+    }
 }
