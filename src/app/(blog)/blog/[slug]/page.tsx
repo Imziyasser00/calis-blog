@@ -133,7 +133,7 @@ export default async function BlogPostPage({
 
             {/* --- Main --- */}
             <main className="container mx-auto px-4 py-12">
-                <div className="max-w-3xl mx-auto">
+                <div className="max-w-5xl mx-auto">
                     <Link href="/articles" className="inline-flex items-center text-gray-400 hover:text-white mb-8">
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Back to articles
@@ -160,14 +160,36 @@ export default async function BlogPostPage({
                     </div>
 
                     {mainImageUrl && (
-                        <div className="relative h-[400px] md:h-[500px] rounded-xl overflow-hidden border border-gray-800 mb-8">
-                            <Image src={mainImageUrl} alt="Article hero" fill className="object-cover" priority />
+                        <div className="relative aspect-video rounded-xl overflow-hidden border border-gray-800 mb-8 bg-black">
+                            <Image
+                                src={mainImageUrl}
+                                alt={data.title || "Article hero"}
+                                fill
+                                className="object-contain"
+                                sizes="(max-width: 1024px) 100vw, 960px"
+                                priority
+                            />
                         </div>
                     )}
 
-                    <article className="prose prose-invert prose-purple max-w-none">
+
+                    <article
+                        className="
+    prose prose-invert max-w-none
+    prose-h2:text-purple-400 prose-h2:font-semibold
+    prose-h3:text-purple-300
+    prose-a:text-purple-400 hover:prose-a:text-purple-300
+    prose-strong:text-white
+    prose-code:text-purple-300 prose-code:bg-white/5 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+    prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-white/10
+    prose-blockquote:border-l-purple-500 prose-blockquote:text-white/80
+    marker:text-purple-500
+    prose-img:rounded-xl
+  "
+                    >
                         <PortableText value={data.body} />
                     </article>
+
 
                     {/* --- Related Articles --- */}
                     {related.length > 0 && (
