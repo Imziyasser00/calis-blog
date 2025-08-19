@@ -29,6 +29,11 @@ export const metadata: Metadata = {
         template: "%s — Calisthenics Hub",
     },
     description: DEFAULT_DESC,
+    verification: {
+        google: "AGMdB0VDBN5JY8pqAeLWaBU_sB4thxrCbC4I10s1W2M",
+        yandex: "XXXX",
+        other: { "msvalidate.01": ["BING_CODE"] }
+    },
     alternates: {
         canonical: `${SITE_URL}/`,
         types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
@@ -69,9 +74,11 @@ export const metadata: Metadata = {
     },
     icons: {
         icon: [
-            { url: "/favicon.ico" },
-            { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-            { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+            { url: "/logo.png", sizes: "16x16", type: "image/png" },
+            { url: "/logo.png", sizes: "32x32", type: "image/png" },
+            { url: "/logo.png", sizes: "192x192", type: "image/png" },
+            { url: "/logo.png", sizes: "512x512", type: "image/png" },
+            { url: "/logo.png", sizes: "512x512", type: "image/png", rel: "maskable" },
         ],
         apple: [{ url: "/logo.png", sizes: "180x180" }],
     },
