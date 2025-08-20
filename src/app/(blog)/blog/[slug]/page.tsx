@@ -163,7 +163,8 @@ export default async function BlogPostPage({
                         <div className="relative aspect-video rounded-xl overflow-hidden border border-gray-800 mb-8 bg-black">
                             <Image
                                 src={mainImageUrl}
-                                alt={data.title || "Article hero"}
+                                alt={data.mainImage?.alt || data.title || ''}
+                                role={data.mainImage?.alt || data.title ? undefined : 'presentation'}
                                 fill
                                 className="object-contain"
                                 sizes="(max-width: 1024px) 100vw, 960px"
@@ -203,7 +204,7 @@ export default async function BlogPostPage({
                                         <Link href={`/blog/${rp.slug}`} className="group" key={rp.slug}>
                                             <div className="space-y-3">
                                                 <div className="relative h-48 rounded-lg overflow-hidden border border-gray-800 group-hover:border-purple-500/50 transition-colors">
-                                                    <Image src={img} alt={`${rp.title} thumbnail`} fill className="object-cover" />
+                                                    <Image src={img} alt={rp.mainImage?.alt || rp.title} fill className="object-cover" />
                                                 </div>
                                                 <div>
                                                     {rp.category?.title && (

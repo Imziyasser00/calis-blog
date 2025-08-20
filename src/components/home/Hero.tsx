@@ -93,7 +93,8 @@ export default function Hero({ post }: { post: HeroType | null }) {
                             <>
                                 <Image
                                     src={heroImg}
-                                    alt={post?.title || "Featured post"}
+                                    alt={post?.mainImage?.alt || post?.title || ''}
+                                    role={post?.mainImage?.alt || post?.title ? undefined : 'presentation'}
                                     fill
                                     priority
                                     sizes="(max-width: 1024px) 100vw, 50vw"

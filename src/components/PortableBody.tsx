@@ -11,7 +11,16 @@ const components: PortableTextComponents = {
             const blur = value?.asset?.metadata?.lqip
             return (
                 <figure className="my-6">
-                    <Image src={url} alt={value?.alt || ''} width={1200} height={675} className="rounded-xl" placeholder={blur ? 'blur' : 'empty'} blurDataURL={blur} />
+                    <Image
+                        src={url}
+                        alt={value?.alt || ''}
+                        role={value?.alt ? undefined : 'presentation'}
+                        width={1200}
+                        height={675}
+                        className="rounded-xl"
+                        placeholder={blur ? 'blur' : 'empty'}
+                        blurDataURL={blur}
+                    />
                     {value?.alt && <figcaption className="mt-2 text-sm text-gray-500">{value.alt}</figcaption>}
                 </figure>
             )

@@ -31,7 +31,7 @@ export function ArticleCard({
                 <div className="relative h-52 sm:h-56 md:h-64 xl:h-72 rounded-lg overflow-hidden border border-gray-800 group-hover:border-purple-500/50 transition-colors">
                     <Image
                         src={imageUrl}
-                        alt={`${title} thumbnail`}
+                        alt={title}
                         fill
                         className="object-cover"
                         sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
