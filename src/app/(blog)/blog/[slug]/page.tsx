@@ -4,12 +4,15 @@ import Image from "next/image"
 import { ArrowLeft, BrainCircuit, Clock } from "lucide-react"
 import { PortableText } from "@portabletext/react"
 import type { Metadata } from "next"
+import Script from "next/script"
 import { client } from "@calis/lib/sanity.client"
 import { urlFor } from "@calis/lib/sanity.image"
-import type { PortableTextBlock, Reference } from "sanity"
+import type { PortableTextBlock, Reference, Image as SanityImageType } from "sanity"
 import Header from "@calis/components/site/Header"
 import Footer from "@calis/components/site/Footer"
 import Newsletter from "@calis/components/Newsletter";
+
+const SITE_URL = (process.env.SITE_URL || "http://localhost:3000").replace(/\/+$/, "")
 
 // ---- Sanity types ----
 type SanityCategory = { _id: string; title: string }
@@ -82,8 +85,11 @@ async function getRelatedPosts(slug: string, firstCategoryId?: string): Promise<
       categories[]->{ _id, title }[0]
     }
   `
-    const rows = await client.fetch(query, { slug, catId: firstCategoryId })
-    return (rows || []).map((r: any) => ({
+    const rows: { title: string; slug: string; mainImage?: SanityImage; categories?: SanityCategory }[] = await client.fetch(
+        query,
+        { slug, catId: firstCategoryId }
+    )
+    return (rows || []).map((r) => ({
         title: r.title,
         slug: r.slug,
         mainImage: r.mainImage,
@@ -114,7 +120,8 @@ export default async function BlogPostPage({
         )
     }
 
-    const mainImageUrl = data.mainImage ? urlFor(data.mainImage as any).width(1600).height(900).fit("crop").url() : null
+    const canonicalUrl = `${SITE_URL}/blog/${data.currentSlug}`
+    const mainImageUrl = data.mainImage ? urlFor(data.mainImage as SanityImageType).width(1600).height(900).fit("crop").url() : null
     const published = data.publishedAt
         ? new Date(data.publishedAt).toLocaleDateString(undefined, {
             year: "numeric",
@@ -125,6 +132,18 @@ export default async function BlogPostPage({
 
     const firstCatId = data.categories?.[0]?._id
     const related = await getRelatedPosts(data.currentSlug, firstCatId)
+
+    const ldArticle = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: data.title,
+        image: mainImageUrl ? [mainImageUrl] : undefined,
+        datePublished: data.publishedAt ? new Date(data.publishedAt).toISOString() : undefined,
+        dateModified: data.publishedAt ? new Date(data.publishedAt).toISOString() : undefined,
+        author: data.authorName ? { "@type": "Person", name: data.authorName } : { "@type": "Person", name: "Calis Hub" },
+        url: canonicalUrl,
+        mainEntityOfPage: canonicalUrl,
+    }
 
     return (
         <div className="min-h-screen bg-black text-white">
@@ -198,8 +217,8 @@ export default async function BlogPostPage({
                             <h3 className="text-xl font-bold mb-6">Related Articles</h3>
                             <div className="grid md:grid-cols-2 gap-6">
                                 {related.map((rp) => {
-                                    const img =
-                                        rp.mainImage ? urlFor(rp.mainImage as any).width(1200).height(800).fit("crop").url() : "/placeholder.svg"
+                                      const img =
+                                        rp.mainImage ? urlFor(rp.mainImage as SanityImageType).width(1200).height(800).fit("crop").url() : "/placeholder.svg"
                                     return (
                                         <Link href={`/blog/${rp.slug}`} className="group" key={rp.slug}>
                                             <div className="space-y-3">
@@ -232,6 +251,9 @@ export default async function BlogPostPage({
             </main>
 
             <Footer />
+            <Script id="ld-article" type="application/ld+json" strategy="afterInteractive">
+                {JSON.stringify(ldArticle)}
+            </Script>
         </div>
     )
 }
@@ -252,15 +274,18 @@ export async function generateMetadata({
     const { slug } = await params
     const data = await getData(slug)
     if (!data) return { title: "Post not found" }
+    const canonicalUrl = `${SITE_URL}/blog/${data.currentSlug}`
     return {
         title: data.title,
         description: data.categories?.map((c) => c.title).join(", "),
+        alternates: { canonical: canonicalUrl },
         openGraph: {
             title: data.title,
+            url: canonicalUrl,
             images: data.mainImage
                 ? [
                     {
-                        url: urlFor(data.mainImage as any).width(1200).height(630).fit("crop").url(),
+                        url: urlFor(data.mainImage as SanityImageType).width(1200).height(630).fit("crop").url(),
                         width: 1200,
                         height: 630,
                         alt: data.title,

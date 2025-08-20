@@ -17,6 +17,9 @@ export const metadata: Metadata = {
         description:
             "CalisHub is your home for smart calisthenics: progressions, technique cues, workouts, mobility, and realistic programs—from absolute beginner to advanced.",
     },
+    alternates: {
+        canonical: "/about",
+    },
 }
 
 export default function AboutPage() {
