@@ -7,8 +7,20 @@
 
 /* your vars + theme are fine */
 
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 *{
   scroll-behavior: smooth;
+}
+
+html,body{
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 @theme inline {
