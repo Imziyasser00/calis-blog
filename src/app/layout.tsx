@@ -28,9 +28,6 @@ export const metadata: Metadata = {
         default: "Calisthenics Hub — Tutorials, Progressions & Workouts",
         template: "%s — Calisthenics Hub",
     },
-    alternates: {
-        canonical: "/about",
-    },
     description: DEFAULT_DESC,
     verification: {
         google: "AGMdB0VDBN5JY8pqAeLWaBU_sB4thxrCbC4I10s1W2M",
