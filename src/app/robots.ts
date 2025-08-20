@@ -1,7 +1,7 @@
 // app/robots.ts
 import { MetadataRoute } from "next";
 
-const SITE_URL = (process.env.SITE_URL ?? "http://localhost:3000").replace(/\/+$/, "");
+const SITE_URL = ("https://www.calishub.com/").replace(/\/+$/, "");
 
 export default function robots(): MetadataRoute.Robots {
     return {
