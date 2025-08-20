@@ -8,7 +8,7 @@ export default function Footer() {
                 <div className="grid md:grid-cols-4 gap-8">
                     <div className="space-y-4">
                         <Link href="/" className="text-5xl font-bold tracking-tighter">
-                            Cali<span className="text-purple-500">Hub</span>
+                            Calis<span className="text-purple-500">Hub</span>
                         </Link>
                         <p className="text-gray-400 text-lg">
                             Calisthenics workouts, skills, and progress — clean content, no fluff.

@@ -28,7 +28,7 @@ export default function Header() {
                     href="/"
                     className="text-3xl font-bold tracking-tighter px-3 py-2 border border-gray-800 rounded-lg hover:border-purple-500 transition-colors"
                 >
-                    Cali<span className="text-purple-500">Hub</span>
+                    Calis<span className="text-purple-500">Hub</span>
                 </Link>
 
                 {/* Desktop nav */}
