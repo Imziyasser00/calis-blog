@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     title: { default: 'Calisthenics Hub — Blog', template: '%s · Calisthenics Hub' },
     description: 'Calisthenics tutorials, progressions, workouts, and coaching notes.',
-    metadataBase: new URL(process.env.SITE_URL || 'http://localhost:3000'),
+    metadataBase: new URL("https://www.calishub.com"),
     alternates: { types: { 'application/rss+xml': '/feed.xml' } },
 }
 export default function RootLayout({

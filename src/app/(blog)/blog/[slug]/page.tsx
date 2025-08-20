@@ -140,7 +140,7 @@ export default async function BlogPostPage({
         image: mainImageUrl ? [mainImageUrl] : undefined,
         datePublished: data.publishedAt ? new Date(data.publishedAt).toISOString() : undefined,
         dateModified: data.publishedAt ? new Date(data.publishedAt).toISOString() : undefined,
-        author: data.authorName ? { "@type": "Person", name: data.authorName } : undefined,
+        author: data.authorName ? { "@type": "Person", name: data.authorName } : { "@type": "Person", name: "Calis Hub" },
         url: canonicalUrl,
         mainEntityOfPage: canonicalUrl,
     }
