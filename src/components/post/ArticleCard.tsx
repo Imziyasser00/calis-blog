@@ -17,7 +17,13 @@ export default function ArticleCard({ post }: { post: PostCardType }) {
         <Link href={`/blog/${post.slug}`} className="group">
             <div className="space-y-3">
                 <div className="relative h-72 rounded-lg overflow-hidden border border-gray-800 group-hover:border-purple-500/50 transition-colors">
-                    <Image src={image} alt={`${post.title} thumbnail`} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+                    <Image
+                        src={image}
+                        alt={post.mainImage?.alt || post.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                    />
                 </div>
                 <div>
                     <div className="flex items-center gap-2 text-xs text-purple-500 mb-2">
