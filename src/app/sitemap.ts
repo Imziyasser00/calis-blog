@@ -2,7 +2,7 @@
 import { MetadataRoute } from "next";
 import { client } from "@calis/lib/sanity.client";
 
-const SITE_URL = (process.env.SITE_URL ?? "http://localhost:3000").replace(/\/+$/, "");
+const SITE_URL = (process.env.SITE_URL ?? "https://www.calishub.com").replace(/\/+$/, "");
 
 // If you use a different field names, tweak GROQ accordingly
 const POSTS_GROQ = /* groq */ `
