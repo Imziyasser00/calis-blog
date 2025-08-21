@@ -6,6 +6,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { BrainCircuit } from "lucide-react"
 import { client } from "@calis/lib/sanity.client"
 import { groq } from "next-sanity"
+import type { Metadata } from "next"
+import Script from "next/script"
+
+const SITE_URL = (process.env.SITE_URL || "http://localhost:3000").replace(/\/+$/, "")
 
 type Topic = {
     _id: string
@@ -20,7 +24,6 @@ const topicsQuery = groq`
     _id,
     title,
     "slug": slug.current,
-    // number of posts referencing this category
     "count": count(*[_type == "post" && references(^._id)])
   }
 `
@@ -35,8 +38,94 @@ async function getTopics(): Promise<Topic[]> {
     }))
 }
 
+/* ------------------------- METADATA (dynamic) ------------------------- */
+function buildDescription(topics: Topic[]) {
+    const total = topics.reduce((acc, t) => acc + (t.count || 0), 0)
+    const topNames = topics
+        .slice() // copy
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 6)
+        .map((t) => t.title)
+    const list = topNames.join(", ")
+    const base = "Explore calisthenics topics: tutorials, progressions, skills, and programming."
+    if (!topics.length) return base
+    if (list) {
+        return `Browse ${topics.length} topics (${total} articles total). Popular: ${list}.`
+    }
+    return base
+}
+
+function buildKeywords(topics: Topic[]) {
+    const set = new Set<string>(["calisthenics", "bodyweight training", "workouts", "progressions", "skills"])
+    topics.forEach((t) => t.title && set.add(t.title.toLowerCase()))
+    return Array.from(set).slice(0, 25)
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+    const topics = await getTopics()
+    const canonical = `${SITE_URL}/topics`
+    const title = "Topics"
+    const description = buildDescription(topics)
+    const keywords = buildKeywords(topics)
+    const total = topics.reduce((acc, t) => acc + (t.count || 0), 0)
+
+    return {
+        title: { default: `${title} · Calisthenics Hub`, template: "%s · Calisthenics Hub" },
+        description,
+        keywords,
+        alternates: { canonical },
+        robots: {
+            index: true,
+            follow: true,
+            googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+        },
+        openGraph: {
+            type: "website",
+            url: canonical,
+            siteName: "Calisthenics Hub",
+            title: `${title} · Calisthenics Hub`,
+            description,
+        },
+        twitter: {
+            card: "summary",
+            title: `${title} · Calisthenics Hub`,
+            description,
+        },
+        // Optional: expose a category for analytics/UA hints
+        category: "Topics",
+        other: {
+            "x-items-count": String(topics.length),
+            "x-articles-count": String(total),
+        },
+    }
+}
+
+/* --------------------------- PAGE COMPONENT --------------------------- */
 export default async function TopicsPage() {
     const topics = await getTopics()
+
+    // JSON-LD: Breadcrumbs + ItemList of topics
+    const breadcrumbLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+            { "@type": "ListItem", position: 2, name: "Topics", item: `${SITE_URL}/topics` },
+        ],
+    }
+
+    const itemListLd = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        itemListOrder: "http://schema.org/ItemListOrderAscending",
+        numberOfItems: topics.length,
+        itemListElement: topics.map((t, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: t.title,
+            url: `${SITE_URL}/topics/${t.slug}`,
+        })),
+    }
 
     return (
         <div className="min-h-screen bg-black text-white">
@@ -54,7 +143,6 @@ export default async function TopicsPage() {
                                 title={topic.title}
                                 description={`Articles about ${topic.title}.`}
                                 count={topic.count}
-                                // Link to a category page like /topics/[slug]
                                 href={`/topics/${topic.slug}`}
                             />
                         ))}
@@ -67,6 +155,14 @@ export default async function TopicsPage() {
             </main>
 
             <Footer />
+
+            {/* JSON-LD */}
+            <Script id="ld-breadcrumbs" type="application/ld+json" strategy="afterInteractive">
+                {JSON.stringify(breadcrumbLd)}
+            </Script>
+            <Script id="ld-itemlist" type="application/ld+json" strategy="afterInteractive">
+                {JSON.stringify(itemListLd)}
+            </Script>
         </div>
     )
 }
@@ -100,9 +196,7 @@ function TopicCard({
                     <CardDescription className="text-gray-400">{description}</CardDescription>
                 </CardContent>
                 <CardFooter>
-          <span className="text-purple-500 text-sm group-hover:text-purple-400 transition-colors">
-            View articles →
-          </span>
+                    <span className="text-purple-500 text-sm group-hover:text-purple-400 transition-colors">View articles →</span>
                 </CardFooter>
             </Card>
         </Link>
