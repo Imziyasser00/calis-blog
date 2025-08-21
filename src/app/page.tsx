@@ -1,6 +1,4 @@
-// FILE: app/page.tsx
 import { Suspense } from "react";
-import type { Metadata } from "next";
 import Newsletter from "@calis/components/Newsletter";
 import { client } from "@calis/lib/sanity.client";
 import { getHomepageData } from "@calis/lib/sanity/queries";

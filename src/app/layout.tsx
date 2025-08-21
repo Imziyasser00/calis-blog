@@ -124,6 +124,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang="en">
         <head>
+            <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
             <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png" />
                 <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png" />
                     <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png" />

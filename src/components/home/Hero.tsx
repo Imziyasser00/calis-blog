@@ -6,7 +6,13 @@ import type { Hero as HeroType } from "@calis/types/content";
 
 export default function Hero({ post }: { post: HeroType | null }) {
     const heroImg = post?.mainImage
-        ? urlFor(post.mainImage).width(1600).height(900).fit("crop").url()
+        ? urlFor(post.mainImage)
+            .width(1600)       
+            .height(900)
+            .fit("crop")
+            .quality(70)
+            .auto("format")
+            .url()
         : undefined;
 
     const heroHref = post?.slug ? `/blog/${post.slug}` : "/blog";
@@ -93,13 +99,16 @@ export default function Hero({ post }: { post: HeroType | null }) {
                             <>
                                 <Image
                                     src={heroImg}
-                                    alt={post?.mainImage?.alt || post?.title || ''}
-                                    role={post?.mainImage?.alt || post?.title ? undefined : 'presentation'}
+                                    alt={post?.mainImage?.alt || post?.title || ""}
+                                    role={post?.mainImage?.alt || post?.title ? undefined : "presentation"}
                                     fill
                                     priority
+                                    fetchPriority="high"                      // 🔥 helps LCP request discovery
                                     sizes="(max-width: 1024px) 100vw, 50vw"
+                                    placeholder="empty"                       // no extra blur bytes; optional
                                     className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                                 />
+
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                                 <div className="absolute bottom-4 left-4 right-4">
                                     <div className="max-w-[90%]">
