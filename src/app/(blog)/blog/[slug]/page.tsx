@@ -10,7 +10,7 @@ import { urlFor } from "@calis/lib/sanity.image"
 import type { PortableTextBlock, Reference, Image as SanityImageType } from "sanity"
 import Header from "@calis/components/site/Header"
 import Footer from "@calis/components/site/Footer"
-import Newsletter from "@calis/components/Newsletter";
+import Newsletter from "@calis/components/Newsletter"
 
 const SITE_URL = (process.env.SITE_URL || "http://localhost:3000").replace(/\/+$/, "")
 
@@ -26,16 +26,20 @@ type SanityImage = {
     alt?: string
     caption?: string
 }
+type SanityTag = { title: string }
 
 type Post = {
     title: string
     currentSlug: string
     publishedAt?: string
+    updatedAt?: string
     mainImage?: SanityImage
     body: PortableTextBlock[]
     authorName?: string
     categories?: SanityCategory[]
     readTime?: string
+    seoDescription?: string
+    tags?: string[]
 }
 
 type RelatedPost = {
@@ -52,26 +56,35 @@ async function getData(slug: string): Promise<Post | null> {
       title,
       "currentSlug": slug.current,
       publishedAt,
+      _updatedAt,
       mainImage,
       body,
       author->{ name },
-      categories[]->{ _id, title }
+      categories[]->{ _id, title },
+      seo{ description, image },
+      tags[]->{ title }
     }
   `
-    const data = await client.fetch(query, { slug })
-    if (!data) return null
+    const raw = await client.fetch(query, { slug })
+    if (!raw) return null
+
     return {
-        title: data.title,
-        currentSlug: data.currentSlug,
-        publishedAt: data.publishedAt,
-        mainImage: data.mainImage,
-        body: data.body ?? [],
-        authorName: data?.author?.name,
-        categories: data?.categories ?? [],
+        title: raw.title,
+        currentSlug: raw.currentSlug,
+        publishedAt: raw.publishedAt,
+        updatedAt: raw._updatedAt,
+        mainImage: raw.seo?.image ?? raw.mainImage,
+        body: raw.body ?? [],
+        authorName: raw?.author?.name,
+        categories: raw?.categories ?? [],
+        seoDescription: raw?.seo?.description,
+        tags: (raw?.tags ?? []).map((t: SanityTag | string) =>
+            typeof t === "string" ? t : t?.title
+        ).filter(Boolean),
     }
 }
 
-// ---- Fetch related posts (same first category, exclude current) ----
+// ---- Fetch related posts ----
 async function getRelatedPosts(slug: string, firstCategoryId?: string): Promise<RelatedPost[]> {
     if (!firstCategoryId) return []
     const query = /* groq */ `
@@ -81,14 +94,12 @@ async function getRelatedPosts(slug: string, firstCategoryId?: string): Promise<
       title,
       "slug": slug.current,
       mainImage,
-      // pick the first resolved category just for display
       categories[]->{ _id, title }[0]
     }
   `
-    const rows: { title: string; slug: string; mainImage?: SanityImage; categories?: SanityCategory }[] = await client.fetch(
-        query,
-        { slug, catId: firstCategoryId }
-    )
+    const rows: { title: string; slug: string; mainImage?: SanityImage; categories?: SanityCategory }[] =
+        await client.fetch(query, { slug, catId: firstCategoryId })
+
     return (rows || []).map((r) => ({
         title: r.title,
         slug: r.slug,
@@ -97,12 +108,56 @@ async function getRelatedPosts(slug: string, firstCategoryId?: string): Promise<
     }))
 }
 
+// ---- Helpers for metadata ----
+function blocksToPlainText(blocks: PortableTextBlock[], maxLen = 300): string {
+    try {
+        const texts: string[] = []
+        for (const block of blocks || []) {
+            if (block?._type === "block" && Array.isArray(block.children)) {
+                const t = block.children.map((c: any) => c?.text || "").join("")
+                if (t.trim()) texts.push(t.trim())
+            }
+            if (texts.join(" ").length >= maxLen) break
+        }
+        const full = texts.join(" ").replace(/\s+/g, " ").trim()
+        return full.length > maxLen ? full.slice(0, maxLen - 1).trimEnd() + "…" : full
+    } catch {
+        return ""
+    }
+}
+
+function buildDescription(data: Post): string {
+    if (data.seoDescription && data.seoDescription.trim().length > 60) {
+        return data.seoDescription.trim()
+    }
+    const fallback = blocksToPlainText(data.body, 170)
+    if (fallback.length >= 60) return fallback
+    const cats = data.categories?.map((c) => c.title).filter(Boolean).join(", ")
+    return `${data.title}${cats ? ` — ${cats}` : ""}`
+}
+
+function buildKeywords(data: Post): string[] {
+    const set = new Set<string>()
+    ;(data.tags || []).forEach((t) => set.add(t.toLowerCase()))
+    ;(data.categories || []).forEach((c) => c?.title && set.add(c.title.toLowerCase()))
+    ;["calisthenics", "bodyweight training", "workout", "progressions"].forEach((s) => set.add(s))
+    return Array.from(set).slice(0, 20)
+}
+
+function isoOrUndefined(d?: string) {
+    if (!d) return undefined
+    const x = new Date(d)
+    return isNaN(+x) ? undefined : x.toISOString()
+}
+
+function mainImageForOg(img?: SanityImageType | undefined) {
+    if (!img) return undefined
+    const url = urlFor(img).width(1200).height(630).fit("crop").url()
+    return [{ url, width: 1200, height: 630, alt: "Open Graph image" }]
+}
+
 // ---- Page component ----
-export default async function BlogPostPage({
-                                               params,
-                                           }: {
-    params: Promise<{ slug: string }>
-}) {
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
     const data = await getData(slug)
 
@@ -121,7 +176,9 @@ export default async function BlogPostPage({
     }
 
     const canonicalUrl = `${SITE_URL}/blog/${data.currentSlug}`
-    const mainImageUrl = data.mainImage ? urlFor(data.mainImage as SanityImageType).width(1600).height(900).fit("crop").url() : null
+    const mainImageUrl = data.mainImage
+        ? urlFor(data.mainImage as SanityImageType).width(1600).height(900).fit("crop").url()
+        : null
     const published = data.publishedAt
         ? new Date(data.publishedAt).toLocaleDateString(undefined, {
             year: "numeric",
@@ -133,24 +190,29 @@ export default async function BlogPostPage({
     const firstCatId = data.categories?.[0]?._id
     const related = await getRelatedPosts(data.currentSlug, firstCatId)
 
+    const publishedISO = isoOrUndefined(data.publishedAt)
+    const modifiedISO = isoOrUndefined(data.updatedAt ?? data.publishedAt)
     const ldArticle = {
         "@context": "https://schema.org",
         "@type": "Article",
         headline: data.title,
         image: mainImageUrl ? [mainImageUrl] : undefined,
-        datePublished: data.publishedAt ? new Date(data.publishedAt).toISOString() : undefined,
-        dateModified: data.publishedAt ? new Date(data.publishedAt).toISOString() : undefined,
-        author: data.authorName ? { "@type": "Person", name: data.authorName } : { "@type": "Person", name: "Calis Hub" },
+        datePublished: publishedISO,
+        dateModified: modifiedISO,
+        author: { "@type": "Person", name: data.authorName || "Calisthenics Hub" },
         url: canonicalUrl,
         mainEntityOfPage: canonicalUrl,
+        keywords: (data.tags || []).join(", "),
+        articleSection: data.categories?.[0]?.title,
+        publisher: {
+            "@type": "Organization",
+            name: "Calisthenics Hub",
+        },
     }
 
     return (
         <div className="min-h-screen bg-black text-white">
-            {/* --- Header --- */}
             <Header />
-
-            {/* --- Main --- */}
             <main className="container mx-auto px-4 py-12">
                 <div className="max-w-5xl mx-auto">
                     <Link href="/articles" className="inline-flex items-center text-gray-400 hover:text-white mb-8">
@@ -182,8 +244,8 @@ export default async function BlogPostPage({
                         <div className="relative aspect-video rounded-xl overflow-hidden border border-gray-800 mb-8 bg-black">
                             <Image
                                 src={mainImageUrl}
-                                alt={data.mainImage?.alt || data.title || ''}
-                                role={data.mainImage?.alt || data.title ? undefined : 'presentation'}
+                                alt={data.mainImage?.alt || data.title || ""}
+                                role={data.mainImage?.alt || data.title ? undefined : "presentation"}
                                 fill
                                 className="object-contain"
                                 sizes="(max-width: 1024px) 100vw, 960px"
@@ -192,33 +254,31 @@ export default async function BlogPostPage({
                         </div>
                     )}
 
-
                     <article
                         className="
-    prose prose-invert max-w-none
-    prose-h2:text-purple-400 prose-h2:font-semibold
-    prose-h3:text-purple-300
-    prose-a:text-purple-400 hover:prose-a:text-purple-300
-    prose-strong:text-white
-    prose-code:text-purple-300 prose-code:bg-white/5 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
-    prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-white/10
-    prose-blockquote:border-l-purple-500 prose-blockquote:text-white/80
-    marker:text-purple-500
-    prose-img:rounded-xl
-  "
+              prose prose-invert max-w-none
+              prose-h2:text-purple-400 prose-h2:font-semibold
+              prose-h3:text-purple-300
+              prose-a:text-purple-400 hover:prose-a:text-purple-300
+              prose-strong:text-white
+              prose-code:text-purple-300 prose-code:bg-white/5 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+              prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-white/10
+              prose-blockquote:border-l-purple-500 prose-blockquote:text-white/80
+              marker:text-purple-500
+              prose-img:rounded-xl
+            "
                     >
                         <PortableText value={data.body} />
                     </article>
 
-
-                    {/* --- Related Articles --- */}
                     {related.length > 0 && (
                         <div className="border-t border-gray-800 mt-12 pt-8">
                             <h3 className="text-xl font-bold mb-6">Related Articles</h3>
                             <div className="grid md:grid-cols-2 gap-6">
                                 {related.map((rp) => {
-                                      const img =
-                                        rp.mainImage ? urlFor(rp.mainImage as SanityImageType).width(1200).height(800).fit("crop").url() : "/placeholder.svg"
+                                    const img = rp.mainImage
+                                        ? urlFor(rp.mainImage as SanityImageType).width(1200).height(800).fit("crop").url()
+                                        : "/placeholder.svg"
                                     return (
                                         <Link href={`/blog/${rp.slug}`} className="group" key={rp.slug}>
                                             <div className="space-y-3">
@@ -241,15 +301,12 @@ export default async function BlogPostPage({
                             </div>
                         </div>
                     )}
-                    <div className={"mt-24"}>
 
-                    <Newsletter />
+                    <div className="mt-24">
+                        <Newsletter />
                     </div>
-
                 </div>
-
             </main>
-
             <Footer />
             <Script id="ld-article" type="application/ld+json" strategy="afterInteractive">
                 {JSON.stringify(ldArticle)}
@@ -266,32 +323,66 @@ export async function generateStaticParams() {
 }
 
 // --- Metadata ---
-export async function generateMetadata({
-                                           params,
-                                       }: {
-    params: Promise<{ slug: string }>
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params
     const data = await getData(slug)
-    if (!data) return { title: "Post not found" }
+
+    if (!data) {
+        return {
+            title: "Post not found · Calisthenics Hub",
+            robots: { index: false, follow: false },
+        }
+    }
+
     const canonicalUrl = `${SITE_URL}/blog/${data.currentSlug}`
+    const description = buildDescription(data)
+    const keywords = buildKeywords(data)
+    const publishedISO = isoOrUndefined(data.publishedAt)
+    const modifiedISO = isoOrUndefined(data.updatedAt ?? data.publishedAt)
+    const authors = data.authorName ? [data.authorName] : ["Calisthenics Hub"]
+    const ogImages = mainImageForOg(data.mainImage as SanityImageType | undefined) ?? []
+    const shouldIndex = Boolean(data.publishedAt)
+
     return {
-        title: data.title,
-        description: data.categories?.map((c) => c.title).join(", "),
-        alternates: { canonical: canonicalUrl },
-        openGraph: {
-            title: data.title,
-            url: canonicalUrl,
-            images: data.mainImage
-                ? [
-                    {
-                        url: urlFor(data.mainImage as SanityImageType).width(1200).height(630).fit("crop").url(),
-                        width: 1200,
-                        height: 630,
-                        alt: data.title,
-                    },
-                ]
-                : [],
+        title: {
+            default: data.title,
+            template: "%s · Calisthenics Hub",
         },
+        description,
+        keywords,
+        alternates: { canonical: canonicalUrl },
+        robots: {
+            index: shouldIndex,
+            follow: true,
+            googleBot: {
+                index: shouldIndex,
+                follow: true,
+                "max-video-preview": -1,
+                "max-image-preview": "large",
+                "max-snippet": -1,
+            },
+        },
+        openGraph: {
+            type: "article",
+            siteName: "Calisthenics Hub",
+            title: data.title,
+            description,
+            url: canonicalUrl,
+            images: ogImages,
+            locale: "en_US",
+            publishedTime: publishedISO,
+            modifiedTime: modifiedISO,
+            authors,
+            tags: data.tags && data.tags.length ? data.tags : undefined,
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: data.title,
+            description,
+            images: ogImages?.[0]?.url ? [ogImages[0].url] : undefined,
+            creator: "@calishub",
+        },
+        category: data.categories?.[0]?.title,
+        formatDetection: { telephone: false, date: false, address: false, email: false, url: false },
     }
 }
