@@ -5,6 +5,7 @@ import Header from "@calis/components/site/Header"
 import Footer from "@calis/components/site/Footer"
 import type { Metadata } from "next"
 import { Activity, Timer, Shield, Apple, Award, Zap, Users, Rocket, PenTool } from "lucide-react"
+import Script from "next/script";
 
 export const revalidate = 60
 
