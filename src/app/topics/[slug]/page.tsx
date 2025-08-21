@@ -9,6 +9,8 @@ import { client } from "@calis/lib/sanity.client"
 import { urlFor } from "@calis/lib/sanity.image"
 import { groq } from "next-sanity"
 import { notFound } from "next/navigation"
+import { Metadata } from "next"
+import Script from "next/script";
 
 type SanityImage = any
 
@@ -159,6 +161,26 @@ export default async function CategoryPage({
             </main>
 
             <Footer />
+
+            <Script id="ld-topic" type="application/ld+json" strategy="afterInteractive">
+                {JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "CollectionPage",
+                    name: cat!.title,
+                    description: `${totalCount} article${totalCount === 1 ? "" : "s"} about ${cat!.title}`,
+                    url: `https://www.calishub.com/topics/${cat!.slug}`,
+                    mainEntity: {
+                        "@type": "ItemList",
+                        numberOfItems: posts.length,
+                        itemListElement: posts.map((p, i) => ({
+                            "@type": "ListItem",
+                            position: i + 1,
+                            name: p.title,
+                            url: `https://www.calishub.com/blog/${p.slug}`,
+                        })),
+                    },
+                })}
+            </Script>
         </div>
     )
 }
@@ -304,18 +326,64 @@ export async function generateStaticParams() {
   `)
     return rows.map((r) => ({ slug: r.slug }))
 }
-
-// --- Optional: SEO ---
-export async function generateMetadata({
-                                           params,
-                                       }: {
-    params: Promise<{ slug: string }>
-}) {
+// --- SEO Metadata ---
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params
     const cat: Category | null = await client.fetch(categoryBySlugQuery, { slug })
-    if (!cat) return { title: "Topic not found" }
+    if (!cat) {
+        return {
+            title: "Topic not found · Calisthenics Hub",
+            robots: { index: false, follow: false },
+        }
+    }
+
+    const count: number = await client.fetch(countPostsInCategoryQuery, { catId: cat._id })
+    const canonicalUrl = `https://www.calishub.com/topics/${cat.slug}`
+    const description =
+        count > 0
+            ? `Explore ${count} ${count === 1 ? "article" : "articles"} about ${cat.title}: tutorials, guides, and progressions.`
+            : `Articles about ${cat.title}.`
+
     return {
-        title: `${cat.title} — Topics`,
-        description: `Articles about ${cat.title}.`,
+        title: {
+            default: `${cat.title} · Calisthenics Hub`,
+            template: "%s · Calisthenics Hub",
+        },
+        description,
+        keywords: [cat.title, "calisthenics", "bodyweight training", "workouts", "progressions"],
+        alternates: { canonical: canonicalUrl },
+        robots: {
+            index: true,
+            follow: true,
+            googleBot: {
+                index: true,
+                follow: true,
+                "max-snippet": -1,
+                "max-image-preview": "large",
+                "max-video-preview": -1,
+            },
+        },
+        openGraph: {
+            type: "website",
+            url: canonicalUrl,
+            siteName: "Calisthenics Hub",
+            title: `${cat.title} · Calisthenics Hub`,
+            description,
+            images: [
+                {
+                    url: `https://www.calishub.com/og/topics.png`, // 👉 replace with your own OG fallback image
+                    width: 1200,
+                    height: 630,
+                    alt: `${cat.title} · Calisthenics Hub`,
+                },
+            ],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: `${cat.title} · Calisthenics Hub`,
+            description,
+            images: [`https://www.calishub.com/og/topics.png`], // same fallback
+        },
+        category: "Topics",
     }
 }

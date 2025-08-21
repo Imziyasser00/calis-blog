@@ -8,18 +8,64 @@ import { Activity, Timer, Shield, Apple, Award, Zap, Users, Rocket, PenTool } fr
 
 export const revalidate = 60
 
+
+const SITE_URL = ("https://www.calishub.com").replace(/\/+$/, "")
+
 export const metadata: Metadata = {
-    title: "About — CalisHub",
+    title: {
+        default: "About · CalisHub",
+        template: "%s · CalisHub",
+    },
     description:
         "CalisHub is your home for smart calisthenics: progressions, technique cues, workouts, mobility, and realistic programs—from absolute beginner to advanced.",
+    alternates: {
+        canonical: `${SITE_URL}/about`,
+    },
     openGraph: {
-        title: "About — CalisHub",
+        type: "website",
+        url: `${SITE_URL}/about`,
+        siteName: "CalisHub",
+        title: "About · CalisHub",
         description:
             "CalisHub is your home for smart calisthenics: progressions, technique cues, workouts, mobility, and realistic programs—from absolute beginner to advanced.",
+        images: [
+            {
+                url: `${SITE_URL}/og/about.png`, // 👉 replace with your OG image path
+                width: 1200,
+                height: 630,
+                alt: "About CalisHub",
+            },
+        ],
     },
-    alternates: {
-        canonical: "/about",
+    twitter: {
+        card: "summary_large_image",
+        title: "About · CalisHub",
+        description:
+            "Learn what CalisHub is all about: making calisthenics accessible, realistic, and sustainable for all levels.",
+        images: [`${SITE_URL}/og/about.png`], // same fallback
+        creator: "@calishub", // set your handle if you have one
     },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            "max-snippet": -1,
+            "max-image-preview": "large",
+            "max-video-preview": -1,
+        },
+    },
+    category: "About",
+    keywords: [
+        "calisthenics",
+        "about CalisHub",
+        "bodyweight training",
+        "progressions",
+        "workouts",
+        "fitness",
+        "strength training",
+    ],
 }
 
 export default function AboutPage() {
@@ -143,6 +189,25 @@ export default function AboutPage() {
             </main>
 
             <Footer />
+            <Script id="ld-about" type="application/ld+json" strategy="afterInteractive">
+                {JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "AboutPage",
+                    name: "About CalisHub",
+                    url: `${SITE_URL}/about`,
+                    description:
+                        "CalisHub is your home for smart calisthenics: progressions, technique cues, workouts, mobility, and realistic programs—from absolute beginner to advanced.",
+                    publisher: {
+                        "@type": "Organization",
+                        name: "CalisHub",
+                        url: SITE_URL,
+                        logo: {
+                            "@type": "ImageObject",
+                            url: `${SITE_URL}/logo.png`,
+                        },
+                    },
+                })}
+            </Script>
         </div>
     )
 }
