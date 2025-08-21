@@ -1,10 +1,8 @@
-// app/sitemap.ts
 import { MetadataRoute } from "next";
 import { client } from "@calis/lib/sanity.client";
 
 const SITE_URL = ("https://www.calishub.com").replace(/\/+$/, "");
 
-// If you use a different field names, tweak GROQ accordingly
 const POSTS_GROQ = /* groq */ `
 *[_type == "post" && defined(slug.current) && !(_id in path("drafts.**"))]{
   "slug": slug.current,
@@ -14,7 +12,7 @@ const POSTS_GROQ = /* groq */ `
 `;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    // 1) Static routes you actually have
+    // 1) Static routes
     const staticRoutes: MetadataRoute.Sitemap = [
         {
             url: `${SITE_URL}/`,
@@ -35,6 +33,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.6,
         },
         {
+            url: `${SITE_URL}/tools`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.7,
+        },
+        {
+            url: `${SITE_URL}/tools/max-rep-calculator`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.6,
+        },
+        {
+            url: `${SITE_URL}/tools/workout-generator`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.6,
+        },
+        {
+            url: `${SITE_URL}/tools/bmi-calculator`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.6,
+        },
+        {
             url: `${SITE_URL}/about`,
             lastModified: new Date(),
             changeFrequency: "yearly",
@@ -42,6 +64,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
     ];
 
+    // 2) Blog posts
     const posts: { slug: string; publishedAt?: string; _updatedAt?: string }[] =
         await client.fetch(POSTS_GROQ);
 

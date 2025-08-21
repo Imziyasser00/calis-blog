@@ -13,6 +13,7 @@ export default function Header() {
         { href: "/", label: "Home" },
         { href: "/blog", label: "Blog" },
         { href: "/topics", label: "Topics" },
+        { href: "/tools", label: "Tools" },
         { href: "/about", label: "About" },
     ];
 
@@ -32,7 +33,7 @@ export default function Header() {
                 </Link>
 
                 {/* Desktop nav */}
-                <nav className="hidden md:flex items-center space-x-6 text-lg">
+                <nav className="hidden md:flex items-center space-x-6 text-sm">
                     {navItems.map((item) => (
                         <Link
                             key={item.href}
