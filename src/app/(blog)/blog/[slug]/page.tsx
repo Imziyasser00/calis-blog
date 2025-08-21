@@ -222,7 +222,7 @@ export default async function BlogPostPage({
                                     return (
                                         <Link href={`/blog/${rp.slug}`} className="group" key={rp.slug}>
                                             <div className="space-y-3">
-                                                <div className="relative h-48 rounded-lg overflow-hidden border border-gray-800 group-hover:border-purple-500/50 transition-colors">
+                                                <div className="relative h-72 rounded-lg overflow-hidden border border-gray-800 group-hover:border-purple-500/50 transition-colors">
                                                     <Image src={img} alt={rp.mainImage?.alt || rp.title} fill className="object-cover" />
                                                 </div>
                                                 <div>
