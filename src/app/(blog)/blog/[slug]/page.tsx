@@ -215,7 +215,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <Header />
             <main className="container mx-auto px-4 py-12">
                 <div className="max-w-5xl mx-auto">
-                    <Link href="/articles" className="inline-flex items-center text-gray-400 hover:text-white mb-8">
+                    <Link href="/blog" className="inline-flex items-center text-gray-400 hover:text-white mb-8">
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Back to articles
                     </Link>
