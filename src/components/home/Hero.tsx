@@ -91,9 +91,9 @@ export default function Hero({ post }: { post: HeroType | null }) {
                     className="group relative block"
                     aria-label={post?.title ? `Read: ${post.title}` : "Browse blog"}
                 >
-                    <div className="relative h-[420px] w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] shadow-2xl backdrop-blur">
+                    <div className="relative h-[320px] md:h-[420px] w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] shadow-2xl backdrop-blur">
                         {/* glow ring on hover */}
-                        <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-white/10 transition group-hover:ring-purple-400/40" />
+                        <div className="pointer-events-none  absolute inset-0 rounded-2xl ring-1 ring-white/10 transition group-hover:ring-purple-400/40" />
 
                         {heroImg ? (
                             <>
@@ -101,10 +101,10 @@ export default function Hero({ post }: { post: HeroType | null }) {
                                     src={heroImg}
                                     alt={post?.mainImage?.alt || post?.title || ""}
                                     role={post?.mainImage?.alt || post?.title ? undefined : "presentation"}
-                                    fill
                                     priority
-                                    fetchPriority="high"                      // 🔥 helps LCP request discovery
-                                    sizes="(max-width: 1024px) 100vw, 50vw"
+
+                                    fetchPriority="high"
+                                    fill// 🔥 helps LCP request discovery
                                     placeholder="empty"                       // no extra blur bytes; optional
                                     className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                                 />
@@ -112,9 +112,9 @@ export default function Hero({ post }: { post: HeroType | null }) {
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                                 <div className="absolute bottom-4 left-4 right-4">
                                     <div className="max-w-[90%]">
-                                        <h3 className="text-lg md:text-xl font-semibold leading-snug line-clamp-2">
+                                        <h2 className="text-lg md:text-xl font-semibold leading-snug line-clamp-2">
                                             {post?.title || "Featured: Start your calisthenics journey"}
-                                        </h3>
+                                        </h2>
                                         <p className="mt-1 text-sm text-white/70 line-clamp-1">
                                             { "Foundations, progressions, and cues that actually help you improve."}
                                         </p>
