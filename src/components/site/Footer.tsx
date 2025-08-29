@@ -27,7 +27,7 @@ export default function Footer() {
                             <p>See the Topics section above.</p>
                         </div>
                     </div>
-                    
+
                     <div>
                         <h3 className="font-medium mb-4">Contact</h3>
                         <ul className="space-y-2 text-sm text-gray-400">

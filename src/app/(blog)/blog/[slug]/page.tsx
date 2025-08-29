@@ -11,6 +11,7 @@ import Header from "@calis/components/site/Header"
 import Footer from "@calis/components/site/Footer"
 import Newsletter from "@calis/components/Newsletter"
 import type { TypedObject } from "sanity"
+import Toc from "@calis/components/post/Toc";
 
 type LinkMark = TypedObject & {
     _type: "link"
@@ -323,6 +324,10 @@ export default async function BlogPostPage(
                             />
                         </div>
                     )}
+
+
+                    {/* ---- Table of contents ---- */}
+                    <Toc />
 
                     <article
                         className="
