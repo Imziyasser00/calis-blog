@@ -4,7 +4,6 @@ import Image from "next/image"
 import { ArrowLeft, BrainCircuit, Clock } from "lucide-react"
 import { PortableText } from "@portabletext/react"
 import type { Metadata } from "next"
-import Script from "next/script"
 import { client } from "@calis/lib/sanity.client"
 import { urlFor } from "@calis/lib/sanity.image"
 import type { PortableTextBlock, Reference, Image as SanityImageType } from "sanity"
@@ -12,7 +11,7 @@ import Header from "@calis/components/site/Header"
 import Footer from "@calis/components/site/Footer"
 import Newsletter from "@calis/components/Newsletter"
 
-const SITE_URL = (process.env.SITE_URL || "http://localhost:3000").replace(/\/+$/, "")
+const SITE_URL = ("https://www.calishub.com").replace(/\/+$/, "")
 
 // ---- Sanity types ----
 type SanityCategory = { _id: string; title: string }
@@ -49,6 +48,60 @@ type RelatedPost = {
     category?: SanityCategory
 }
 
+// ---- PortableText components ----
+const portableComponents = {
+    types: {
+        image: ({ value }: { value: SanityImage }) => {
+            if (!value?.asset?._ref) return null
+            const src = urlFor(value).width(1600).fit("max").url()
+            const alt = value.alt || "Article image"
+            return (
+                <figure className="my-8">
+                    <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden border border-gray-800 bg-black">
+                        <Image
+                            src={src}
+                            alt={alt}
+                            fill
+                            className="object-contain"
+                            sizes="(max-width: 1024px) 100vw, 960px"
+                            loading="lazy"
+                        />
+                    </div>
+                    {value.caption && (
+                        <figcaption className="mt-2 text-sm text-gray-400">{value.caption}</figcaption>
+                    )}
+                </figure>
+            )
+        },
+    },
+    marks: {
+        link: ({ children, value }: { children: React.ReactNode; value: { href?: string } }) => {
+            const href = value?.href || "#"
+            const isInternal = href.startsWith("/") || href.startsWith(SITE_URL)
+            if (isInternal) {
+                return (
+                    <Link
+                        href={href}
+                        className="underline decoration-purple-500/60 hover:decoration-purple-400"
+                    >
+                        {children}
+                    </Link>
+                )
+            }
+            return (
+                <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline decoration-purple-500/60 hover:decoration-purple-400"
+                >
+                    {children}
+                </a>
+            )
+        },
+    },
+}
+
 // ---- Fetch data ----
 async function getData(slug: string): Promise<Post | null> {
     const query = /* groq */ `
@@ -78,9 +131,9 @@ async function getData(slug: string): Promise<Post | null> {
         authorName: raw?.author?.name,
         categories: raw?.categories ?? [],
         seoDescription: raw?.seo?.description,
-        tags: (raw?.tags ?? []).map((t: SanityTag | string) =>
-            typeof t === "string" ? t : t?.title
-        ).filter(Boolean),
+        tags: (raw?.tags ?? [])
+            .map((t: SanityTag | string) => (typeof t === "string" ? t : t?.title))
+            .filter(Boolean),
     }
 }
 
@@ -108,7 +161,7 @@ async function getRelatedPosts(slug: string, firstCategoryId?: string): Promise<
     }))
 }
 
-// ---- Helpers for metadata ----
+// ---- Helpers ----
 function blocksToPlainText(blocks: PortableTextBlock[], maxLen = 300): string {
     try {
         const texts: string[] = []
@@ -156,8 +209,9 @@ function mainImageForOg(img?: SanityImageType | undefined) {
     return [{ url, width: 1200, height: 630, alt: "Open Graph image" }]
 }
 
-// ---- Page component ----
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BlogPostPage(
+    { params }: { params: Promise<{ slug: string }> }
+) {
     const { slug } = await params
     const data = await getData(slug)
 
@@ -166,8 +220,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <div className="min-h-screen bg-black text-white flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold mb-4">Post Not Found</h1>
-                    <p className="mb-6">The blog post you&apos;re looking for doesn&apos;t exist or has been moved.</p>
-                    <Link href="/" className="px-4 py-2 border border-purple-500 text-purple-500 rounded-lg hover:bg-purple-950">
+                    <p className="mb-6">
+                        The blog post you&apos;re looking for doesn&apos;t exist or has been moved.
+                    </p>
+                    <Link
+                        href="/"
+                        className="px-4 py-2 border border-purple-500 text-purple-500 rounded-lg hover:bg-purple-950"
+                    >
                         Return Home
                     </Link>
                 </div>
@@ -215,7 +274,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <Header />
             <main className="container mx-auto px-4 py-12">
                 <div className="max-w-5xl mx-auto">
-                    <Link href="/blog" className="inline-flex items-center text-gray-400 hover:text-white mb-8">
+                    <Link
+                        href="/blog"
+                        className="inline-flex items-center text-gray-400 hover:text-white mb-8"
+                    >
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Back to articles
                     </Link>
@@ -227,7 +289,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                         </div>
                     )}
 
-                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6">{data.title}</h1>
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-6">
+                        {data.title}
+                    </h1>
 
                     <div className="flex items-center gap-4 text-sm text-gray-400 mb-8">
                         {data.readTime && (
@@ -268,7 +332,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               prose-img:rounded-xl
             "
                     >
-                        <PortableText value={data.body} />
+                        <PortableText value={data.body} components={portableComponents} />
                     </article>
 
                     {related.length > 0 && (
@@ -277,13 +341,22 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                             <div className="grid md:grid-cols-2 gap-6">
                                 {related.map((rp) => {
                                     const img = rp.mainImage
-                                        ? urlFor(rp.mainImage as SanityImageType).width(1200).height(800).fit("crop").url()
+                                        ? urlFor(rp.mainImage as SanityImageType)
+                                            .width(1200)
+                                            .height(800)
+                                            .fit("crop")
+                                            .url()
                                         : "/placeholder.svg"
                                     return (
                                         <Link href={`/blog/${rp.slug}`} className="group" key={rp.slug}>
                                             <div className="space-y-3">
                                                 <div className="relative h-72 rounded-lg overflow-hidden border border-gray-800 group-hover:border-purple-500/50 transition-colors">
-                                                    <Image src={img} alt={rp.mainImage?.alt || rp.title} fill className="object-cover" />
+                                                    <Image
+                                                        src={img}
+                                                        alt={rp.mainImage?.alt || rp.title}
+                                                        fill
+                                                        className="object-cover"
+                                                    />
                                                 </div>
                                                 <div>
                                                     {rp.category?.title && (
@@ -292,7 +365,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                                             <span>{rp.category.title}</span>
                                                         </div>
                                                     )}
-                                                    <h4 className="font-medium group-hover:text-purple-400 transition-colors">{rp.title}</h4>
+                                                    <h4 className="font-medium group-hover:text-purple-400 transition-colors">
+                                                        {rp.title}
+                                                    </h4>
                                                 </div>
                                             </div>
                                         </Link>
@@ -308,9 +383,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 </div>
             </main>
             <Footer />
-            <Script id="ld-article" type="application/ld+json" strategy="afterInteractive">
-                {JSON.stringify(ldArticle)}
-            </Script>
+            <script
+                id="ld-article"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(ldArticle) }}
+            />
         </div>
     )
 }
@@ -323,7 +400,9 @@ export async function generateStaticParams() {
 }
 
 // --- Metadata ---
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata(
+    { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
     const { slug } = await params
     const data = await getData(slug)
 
@@ -383,6 +462,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             creator: "@calishub",
         },
         category: data.categories?.[0]?.title,
-        formatDetection: { telephone: false, date: false, address: false, email: false, url: false },
+        formatDetection: {
+            telephone: false,
+            date: false,
+            address: false,
+            email: false,
+            url: false,
+        },
     }
 }

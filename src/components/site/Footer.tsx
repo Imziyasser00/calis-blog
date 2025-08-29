@@ -42,7 +42,7 @@ export default function Footer() {
                         <ul className="space-y-2 text-sm text-gray-400">
                             <li className="flex items-center gap-2">
                                 <Mail className="h-4 w-4" />
-                                <span>hello@calihub.com</span>
+                                <span>hello@calishub.com</span>
                             </li>
                         </ul>
                     </div>
