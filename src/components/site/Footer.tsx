@@ -27,16 +27,7 @@ export default function Footer() {
                             <p>See the Topics section above.</p>
                         </div>
                     </div>
-                    <div>
-                        <h3 className="font-medium mb-4">Resources</h3>
-                        <ul className="space-y-2 text-sm text-gray-400">
-                            <li><Link href="/blog" className="hover:text-white">Tutorials</Link></li>
-                            <li><Link href="/blog" className="hover:text-white">Programs</Link></li>
-                            <li><Link href="/blog" className="hover:text-white">Gear</Link></li>
-                            <li><Link href="/blog" className="hover:text-white">Nutrition</Link></li>
-                            <li><Link href="/blog" className="hover:text-white">Tools</Link></li>
-                        </ul>
-                    </div>
+                    
                     <div>
                         <h3 className="font-medium mb-4">Contact</h3>
                         <ul className="space-y-2 text-sm text-gray-400">
