@@ -2,7 +2,7 @@ import "server-only"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, BrainCircuit, Clock } from "lucide-react"
-import { PortableText } from "@portabletext/react"
+import { PortableText, type PortableTextComponents, type PortableTextMarkComponentProps, type PortableTextTypeComponentProps } from "@portabletext/react"
 import type { Metadata } from "next"
 import { client } from "@calis/lib/sanity.client"
 import { urlFor } from "@calis/lib/sanity.image"
@@ -10,6 +10,12 @@ import type { PortableTextBlock, Reference, Image as SanityImageType } from "san
 import Header from "@calis/components/site/Header"
 import Footer from "@calis/components/site/Footer"
 import Newsletter from "@calis/components/Newsletter"
+import type { TypedObject } from "sanity"
+
+type LinkMark = TypedObject & {
+    _type: "link"
+    href?: string
+}
 
 const SITE_URL = ("https://www.calishub.com").replace(/\/+$/, "")
 
@@ -48,10 +54,10 @@ type RelatedPost = {
     category?: SanityCategory
 }
 
-// ---- PortableText components ----
-const portableComponents = {
+// ---- PortableText components (type-safe) ----
+const portableComponents: PortableTextComponents = {
     types: {
-        image: ({ value }: { value: SanityImage }) => {
+        image: ({ value }: PortableTextTypeComponentProps<SanityImage>) => {
             if (!value?.asset?._ref) return null
             const src = urlFor(value).width(1600).fit("max").url()
             const alt = value.alt || "Article image"
@@ -75,7 +81,7 @@ const portableComponents = {
         },
     },
     marks: {
-        link: ({ children, value }: { children: React.ReactNode; value: { href?: string } }) => {
+        link: ({ children, value }: PortableTextMarkComponentProps<LinkMark>) => {
             const href = value?.href || "#"
             const isInternal = href.startsWith("/") || href.startsWith(SITE_URL)
             if (isInternal) {
