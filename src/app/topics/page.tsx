@@ -35,7 +35,7 @@ async function getTopics(): Promise<Topic[]> {
         title: t.title,
         slug: t.slug,
         count: t.count ?? 0,
-    }))
+    })).filter((t: { count: number }) => t.count > 0)
 }
 
 /* ------------------------- METADATA (dynamic) ------------------------- */
