@@ -12,7 +12,6 @@ const POSTS_GROQ = /* groq */ `
 `;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    // 1) Static routes
     const staticRoutes: MetadataRoute.Sitemap = [
         {
             url: `${SITE_URL}/`,
@@ -30,30 +29,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             url: `${SITE_URL}/topics`,
             lastModified: new Date(),
             changeFrequency: "weekly",
-            priority: 0.6,
-        },
-        {
-            url: `${SITE_URL}/tools`,
-            lastModified: new Date(),
-            changeFrequency: "weekly",
-            priority: 0.7,
-        },
-        {
-            url: `${SITE_URL}/tools/max-rep-calculator`,
-            lastModified: new Date(),
-            changeFrequency: "monthly",
-            priority: 0.6,
-        },
-        {
-            url: `${SITE_URL}/tools/workout-generator`,
-            lastModified: new Date(),
-            changeFrequency: "monthly",
-            priority: 0.6,
-        },
-        {
-            url: `${SITE_URL}/tools/bmi-calculator`,
-            lastModified: new Date(),
-            changeFrequency: "monthly",
             priority: 0.6,
         },
         {
