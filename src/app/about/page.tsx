@@ -10,7 +10,7 @@ import Script from "next/script";
 export const revalidate = 60
 
 
-const SITE_URL = ("https://www.calishub.com").replace(/\/+$/, "")
+const SITE_URL = ("https://www.calishub.com")
 
 export const metadata: Metadata = {
     title: {

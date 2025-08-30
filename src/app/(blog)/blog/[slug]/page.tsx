@@ -18,7 +18,7 @@ type LinkMark = TypedObject & {
     href?: string
 }
 
-const SITE_URL = ("https://www.calishub.com").replace(/\/+$/, "")
+const SITE_URL = ("https://www.calishub.com")
 
 // ---- Sanity types ----
 type SanityCategory = { _id: string; title: string }

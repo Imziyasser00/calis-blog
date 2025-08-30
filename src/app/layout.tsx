@@ -11,7 +11,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 
 // -- SITE CONSTANTS ------------------------------------------------------------
 const SITE_NAME = "Calisthenics Hub";
-const SITE_URL = "https://www.calishub.com".replace(/\/+$/, ""); // remove trailing slashes
+const SITE_URL = "https://www.calishub.com";
 const DEFAULT_DESC =
     "Learn calisthenics the smart way: step-by-step progressions, workouts, and realistic programs—from absolute beginner to advanced.";
 

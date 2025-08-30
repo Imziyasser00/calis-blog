@@ -9,7 +9,7 @@ import { groq } from "next-sanity"
 import type { Metadata } from "next"
 import Script from "next/script"
 
-const SITE_URL = ("https://www.calishub.com").replace(/\/+$/, "")
+const SITE_URL = ("https://www.calishub.com")
 
 type Topic = {
     _id: string

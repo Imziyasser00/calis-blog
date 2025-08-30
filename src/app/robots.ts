@@ -1,7 +1,7 @@
 // app/robots.ts
 import { MetadataRoute } from "next";
 
-const SITE_URL = ("https://www.calishub.com/").replace(/\/+$/, "");
+const SITE_URL = ("https://www.calishub.com")
 
 export default function robots(): MetadataRoute.Robots {
     return {

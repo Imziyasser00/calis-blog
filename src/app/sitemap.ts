@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { client } from "@calis/lib/sanity.client";
 
-const SITE_URL = ("https://www.calishub.com").replace(/\/+$/, "");
+const SITE_URL = ("https://www.calishub.com");
 
 const POSTS_GROQ = /* groq */ `
 *[_type == "post" && defined(slug.current) && !(_id in path("drafts.**"))]{
