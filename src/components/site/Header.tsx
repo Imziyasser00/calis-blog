@@ -13,6 +13,7 @@ export default function Header() {
         { href: "/", label: "Home" },
         { href: "/blog", label: "Blog" },
         { href: "/topics", label: "Topics" },
+        { href: "/tools", label: "Tools" },
         { href: "/about", label: "About" },
     ];
 
@@ -51,7 +52,7 @@ export default function Header() {
 
                 {/* Subscribe (always visible on desktop) */}
                 <div className="hidden md:block">
-                    <Link href="#newsletter">
+                    <Link href="http://localhost:3000/#newsletter">
                         <Button
                             variant="outline"
                             className="text-lg border-purple-500 cursor-pointer text-purple-500 hover:bg-purple-950 bg-black hover:text-white"
