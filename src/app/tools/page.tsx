@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@calis/components/ui/card'
-import { Dumbbell } from "lucide-react"
+import { Dumbbell, Route } from "lucide-react"
 import Header from "@calis/components/site/Header";
 import Footer from "@calis/components/site/Footer";
 

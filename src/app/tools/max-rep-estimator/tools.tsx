@@ -11,9 +11,7 @@ import { ArrowLeft, Award, Target, TrendingUp, Zap, Star, Trophy, Info, Calculat
 import { toast } from "sonner"
 import * as RSlider from "@radix-ui/react-slider"
 import { motion } from "framer-motion"
-import Header from "@calis/components/site/Header";
-
-
+import Header from "@calis/components/site/Header"
 
 // ---------- UI: Purple slider ----------
 function PurpleSlider({
@@ -211,16 +209,52 @@ function formatNumber(n: number, unit: "kg" | "lbs") {
     return `${val.toFixed(1)} ${unit}`
 }
 
+// ---------- Parsing & validation helpers ----------
+function toNumber(raw: string): number | undefined {
+    const trimmed = raw.trim()
+    if (trimmed === "") return undefined
+    const num = Number(trimmed.replace(",", "."))
+    return Number.isFinite(num) ? num : undefined
+}
+function isValidPositive(raw: string): boolean {
+    const n = toNumber(raw)
+    return n !== undefined && n > 0
+}
+function isValidNonNegative(raw: string): boolean {
+    const n = toNumber(raw)
+    return n !== undefined && n >= 0
+}
+function parsePositiveOrUndefined(raw: string): number | undefined {
+    const n = toNumber(raw)
+    if (n === undefined) return undefined
+    return n > 0 ? n : undefined
+}
+function parseNonNegativeOrUndefined(raw: string): number | undefined {
+    const n = toNumber(raw)
+    if (n === undefined) return undefined
+    return n >= 0 ? n : undefined
+}
+
 // ---------- Main Tool ----------
 function CalisthenicsStrengthTool() {
     const [selectedExercise, setSelectedExercise] = useState<ExerciseKey>("pull-ups")
-    const [bodyweight, setBodyweight] = useState<number>(70)
+
+    // keep as strings so user can clear inputs (especially on mobile)
+    const [bodyweightStr, setBodyweightStr] = useState<string>("70")
+    const [extraWeightStr, setExtraWeightStr] = useState<string>("0")
+
     const [reps, setReps] = useState<number>(10)
-    const [extraWeight, setExtraWeight] = useState<number>(0)
     const [unit, setUnit] = useState<"kg" | "lbs">("kg")
     const [result, setResult] = useState<Result | null>(null)
 
     const repMaxForExercise = useMemo(() => exercises[selectedExercise].repsMax ?? 50, [selectedExercise])
+
+    // derived validation flags
+    const bwEmpty = bodyweightStr.trim() === ""
+    const bwError = !bwEmpty && !isValidPositive(bodyweightStr)
+
+    const extraEmpty = extraWeightStr.trim() === ""
+    const extraError = !extraEmpty && !isValidNonNegative(extraWeightStr)
 
     useEffect(() => {
         setReps((r) => Math.min(r, repMaxForExercise))
@@ -228,10 +262,20 @@ function CalisthenicsStrengthTool() {
 
     const calculateStrength = () => {
         const exercise = exercises[selectedExercise]
-
         const toKg = unit === "kg" ? 1 : 0.45359237
-        const bwKg = Math.max(1, bodyweight) * toKg
-        const extraKg = Math.max(0, extraWeight) * toKg
+
+        // If any validation error or BW empty, stop and hide results
+        if (bwEmpty || bwError || extraError) {
+            setResult(null)
+            return
+        }
+
+        const bodyweight = parsePositiveOrUndefined(bodyweightStr)! // safe (we checked valid)
+        const extraParsed = parseNonNegativeOrUndefined(extraWeightStr)
+        const extraWeight = extraParsed ?? 0
+
+        const bwKg = bodyweight * toKg
+        const extraKg = extraWeight * toKg
 
         const effectiveWeight = bwKg * exercise.bodyweightPercent + extraKg
         const oneRM = calculateOneRM(effectiveWeight, Math.max(1, reps))
@@ -241,11 +285,7 @@ function CalisthenicsStrengthTool() {
         const lastIndex = exercise.progressions.length - 1
         const currentProgressionIndex = Math.min(Math.floor(strengthRatio * 2), lastIndex)
 
-        const nextProgression =
-            currentProgressionIndex < lastIndex
-                ? exercise.progressions[currentProgressionIndex + 1]
-                : undefined
-
+        const nextProgression = currentProgressionIndex < lastIndex ? exercise.progressions[currentProgressionIndex + 1] : undefined
 
         const unlockedSkills = Object.entries(skillUnlocks)
             .filter(([threshold]) => strengthRatio >= Number.parseFloat(threshold))
@@ -255,7 +295,7 @@ function CalisthenicsStrengthTool() {
             .map(Number)
             .find((threshold) => strengthRatio < threshold)
 
-        const r: Result = {
+        setResult({
             strengthRatio: strengthRatio.toFixed(2),
             level,
             currentProgression: exercise.progressions[currentProgressionIndex],
@@ -265,9 +305,7 @@ function CalisthenicsStrengthTool() {
             progressionTree: exercise.progressions,
             currentIndex: currentProgressionIndex,
             oneRMkg: oneRM,
-        }
-
-        setResult(r)
+        })
 
         if (level.name === "Elite" || level.name === "Legendary") {
             toast(`${level.badge} ${level.name} Calisthenics Athlete!`, {
@@ -277,8 +315,9 @@ function CalisthenicsStrengthTool() {
     }
 
     useEffect(() => {
-        if (reps > 0 && bodyweight > 0) calculateStrength()
-    }, [selectedExercise, bodyweight, reps, extraWeight, unit])
+        if (reps > 0) calculateStrength()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedExercise, bodyweightStr, extraWeightStr, reps, unit, bwError, extraError])
 
     return (
         <div className="space-y-8">
@@ -309,7 +348,7 @@ function CalisthenicsStrengthTool() {
                         <CardContent className="space-y-5">
                             <div className="space-y-2">
                                 <Label>Exercise</Label>
-                                <Select value={selectedExercise} onValueChange={(v: ExerciseKey) => setSelectedExercise(v)}>
+                                <Select value={selectedExercise} onValueChange={(v) => setSelectedExercise(v as ExerciseKey)}>
                                     <SelectTrigger className="bg-black border-gray-700">
                                         <SelectValue placeholder="Choose exercise" />
                                     </SelectTrigger>
@@ -327,15 +366,22 @@ function CalisthenicsStrengthTool() {
                                 <div className="col-span-2 space-y-2">
                                     <Label>Bodyweight ({unit})</Label>
                                     <Input
-                                        type="number"
-                                        value={bodyweight}
-                                        onChange={(e) => setBodyweight(Math.max(1, Number(e.target.value)))}
-                                        className="bg-black border-gray-700"
+                                        type="text"
+                                        inputMode="decimal"
+                                        pattern="[0-9]*[.,]?[0-9]*"
+                                        value={bodyweightStr}
+                                        onChange={(e) => setBodyweightStr(e.target.value)}
+                                        placeholder="e.g. 70"
+                                        aria-invalid={bwError}
+                                        className={`bg-black ${bwError ? "border-red-500 focus-visible:ring-red-500" : "border-gray-700"}`}
                                     />
+                                    {bwError && (
+                                        <p className="text-xs text-red-400">Type a valid number please (must be &gt; 0).</p>
+                                    )}
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Unit</Label>
-                                    <Select value={unit} onValueChange={(v: "kg" | "lbs") => setUnit(v)}>
+                                    <Select value={unit} onValueChange={(v) => setUnit(v as "kg" | "lbs")}>
                                         <SelectTrigger className="bg-black border-gray-700">
                                             <SelectValue placeholder="Unit" />
                                         </SelectTrigger>
@@ -356,7 +402,11 @@ function CalisthenicsStrengthTool() {
                                         <Input
                                             type="number"
                                             value={reps}
-                                            onChange={(e) => setReps(Math.max(1, Math.min(Number(e.target.value), repMaxForExercise)))}
+                                            onChange={(e) => {
+                                                const n = Number(e.target.value)
+                                                if (!Number.isFinite(n)) return
+                                                setReps(Math.max(1, Math.min(n, repMaxForExercise)))
+                                            }}
                                             className="h-8 w-20 bg-black border-gray-700"
                                         />
                                     </div>
@@ -369,12 +419,19 @@ function CalisthenicsStrengthTool() {
                             <div className="space-y-2">
                                 <Label>Extra Weight ({unit})</Label>
                                 <Input
-                                    type="number"
-                                    value={extraWeight}
-                                    onChange={(e) => setExtraWeight(Number(e.target.value))}
-                                    className="bg-black border-gray-700"
+                                    type="text"
+                                    inputMode="decimal"
+                                    pattern="[0-9]*[.,]?[0-9]*"
+                                    value={extraWeightStr}
+                                    onChange={(e) => setExtraWeightStr(e.target.value)}
                                     placeholder="0"
+                                    aria-invalid={extraError}
+                                    className={`bg-black ${extraError ? "border-red-500 focus-visible:ring-red-500" : "border-gray-700"}`}
                                 />
+                                {extraError && (
+                                    <p className="text-xs text-red-400">Type a valid number please (must be ≥ 0).</p>
+                                )}
+                                {!extraError && <p className="text-xs text-gray-500">Leave empty for none.</p>}
                             </div>
                         </CardContent>
                     </Card>
@@ -383,7 +440,7 @@ function CalisthenicsStrengthTool() {
                 {/* Results */}
                 {result && (
                     <motion.div
-                        key={`${selectedExercise}-${reps}-${extraWeight}-${unit}`}
+                        key={`${selectedExercise}-${reps}-${unit}-${bodyweightStr}-${extraWeightStr}`}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.25 }}
@@ -435,7 +492,6 @@ function CalisthenicsStrengthTool() {
                                         <strong>Current Level:</strong> {result.currentProgression}
                                     </p>
                                 </div>
-
 
                                 {result.nextProgression ? (
                                     <div className="p-4 bg-lime-500/10 rounded-lg border border-lime-500/20">
@@ -524,8 +580,6 @@ function CalisthenicsStrengthTool() {
                                         </p>
                                     </div>
                                 )}
-
-
                             </CardContent>
                         </Card>
                     </motion.div>
@@ -540,7 +594,6 @@ export default function ToolPage() {
     return (
         <div className="min-h-screen bg-black text-white">
             <Header />
-
             <main className="container mx-auto px-4 py-12">
                 <div className="mb-8">
                     <Link href="/tools" className="inline-flex items-center gap-2 text-purple-500 hover:text-purple-400 transition-colors">
