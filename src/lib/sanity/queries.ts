@@ -12,7 +12,7 @@ const postCardFields = `
 `;
 
 export const heroQuery = groq`
-  *[_type=="post" && defined(slug.current)]|order(publishedAt desc)[0]{
+  *[_type=="post" && defined(slug.current)]|order(publishedAt desc)[2]{
     title, "slug": slug.current, mainImage
   }
 `;
@@ -36,7 +36,7 @@ export async function getHomepageData(client: any): Promise<HomeData> {
         client.fetch(topicsQuery),
     ]);
 
-    const featured = combined.slice(0, 3);
+    const featured = combined.slice(2, 5);
     const recent = combined.slice(0, 6);
 
     return {

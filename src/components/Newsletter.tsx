@@ -134,7 +134,7 @@ export default function Newsletter() {
                                     <Button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="h-11 w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-80"
+                                        className="h-11 w-full cursor-pointer bg-purple-600 hover:bg-purple-700 disabled:opacity-80"
                                     >
                                         {isSubmitting ? "Subscribing…" : "Subscribe"}
                                     </Button>

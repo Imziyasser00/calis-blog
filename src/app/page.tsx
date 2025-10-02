@@ -9,6 +9,7 @@ import FeaturedGrid from "@calis/components/home/FeaturedGrid";
 import RecentGrid from "@calis/components/home/RecentGrid";
 import TopicChips from "@calis/components/home/TopicChips";
 import { PostsGridSkeleton, HeroSkeleton } from "@calis/components/skeletons";
+import Link from "next/link";
 
 export const revalidate = 60; // ISR
 
@@ -27,21 +28,57 @@ export default async function Home() {
                         <Hero post={data.hero ?? null} />
                     </Suspense>
                 </section>
+                {/* Interactive Tools section (high on page) */}
+                <section className="mb-20" aria-labelledby="interactive-tools">
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 id="interactive-tools" className="text-2xl font-bold">
+                            Interactive Tools
+                        </h2>
+                        <Link href="/tools" className="text-purple-500 hover:text-purple-400 text-sm">
+                            Browse all tools
+                        </Link>
+                    </div>
 
-                {/* Featured (latest 3) */}
-                <section className="mb-20">
-                    <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-2xl font-bold">Featured Articles</h2>
-                        <a href="/blog" className="text-purple-500 hover:text-purple-400 text-sm flex items-center gap-2">
-                            View all
-                            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    <div className="grid sm:grid-cols-2 gap-6">
+                        {/* Max Rep Estimator */}
+                        <Link
+                            href="/tools/max-rep-estimator"
+                            className="group rounded-2xl border border-gray-800 hover:border-purple-500/50 transition-all bg-gray-950 p-6"
+                        >
+                            <div className="mb-3 inline-flex items-center gap-2 text-xs tracking-wider text-purple-400">
+                                <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                                Live
+                            </div>
+                            <h3 className="text-xl font-semibold mb-2 group-hover:text-purple-400 transition-colors">
+                                Max Rep Estimator
+                            </h3>
+                            <p className="text-gray-300">
+                                Find your true strength level and progression path with science-based estimates.
+                            </p>
+                        </Link>
+
+                        {/* Workout Generator (coming soon) */}
+                        <a
+                            href="#newsletter"
+                            className="group rounded-2xl border border-gray-800 hover:border-gray-700 transition-all bg-gray-950 p-6"
+                            id="workout-generator"
+                        >
+                            <div className="mb-3 inline-flex items-center gap-2 text-xs tracking-wider text-gray-400">
+                                <span className="h-1.5 w-1.5 rounded-full bg-gray-500" />
+                                Coming Soon
+                            </div>
+                            <h3 className="text-xl font-semibold mb-2 group-hover:text-white transition-colors">
+                                Workout Generator
+                            </h3>
+                            <p className="text-gray-300 mb-3">
+                                Auto-create sessions tailored to your goals (strength, skills, fat loss).
+                            </p>
+                            <span className="inline-flex rounded-lg px-3 py-1 border border-purple-500/40 text-sm text-purple-300 group-hover:border-purple-500/70">
+                Get notified at launch
+              </span>
                         </a>
                     </div>
-                    <Suspense fallback={<PostsGridSkeleton count={3} />}>
-                        <FeaturedGrid posts={data.featured} />
-                    </Suspense>
                 </section>
-
                 {/* Recent (next 6) */}
                 <section className="mb-20">
                     <h2 className="text-2xl font-bold mb-8">Recent Articles</h2>
