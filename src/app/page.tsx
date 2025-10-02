@@ -79,14 +79,6 @@ export default async function Home() {
                         </a>
                     </div>
                 </section>
-                {/* Recent (next 6) */}
-                <section className="mb-20">
-                    <h2 className="text-2xl font-bold mb-8">Recent Articles</h2>
-                    <Suspense fallback={<PostsGridSkeleton count={6} />}>
-                        <RecentGrid posts={data.recent} />
-                    </Suspense>
-                </section>
-
                 {/* Topics */}
                 <section className="mb-20">
                     <div className="flex items-center justify-between mb-6">
@@ -95,6 +87,15 @@ export default async function Home() {
                     </div>
                     <TopicChips topics={data.topics} />
                 </section>
+                {/* Recent (next 6) */}
+                <section className="mb-20">
+                    <h2 className="text-2xl font-bold mb-8">Recent Articles</h2>
+                    <Suspense fallback={<PostsGridSkeleton count={6} />}>
+                        <RecentGrid posts={data.recent} />
+                    </Suspense>
+                </section>
+
+
 
                 {/* Newsletter */}
                 <Newsletter />
