@@ -20,15 +20,7 @@ export default function Footer() {
                             </Link>
                                                     </div>
                     </div>
-                    <div>
-                        <h3 className="font-medium mb-4">Topics</h3>
-                        <div className="space-y-2 text-sm text-gray-400">
-                            {/* Keep links dynamic on the page itself */}
-                            <p>See the Topics section above.</p>
-                        </div>
-                    </div>
 
-                    
                 </div>
                 <div className="border-t border-gray-800 mt-12 pt-6 text-sm text-gray-400">
                     <p>© {new Date().getFullYear()} Calisthenics Hub. All rights reserved.</p>
