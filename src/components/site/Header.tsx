@@ -15,6 +15,7 @@ export default function Header() {
         { href: "/topics", label: "Topics" },
         { href: "/tools", label: "Tools" },
         { href: "/about", label: "About" },
+        { href: "/exercises", label: "Exercises" },
     ];
 
     const isActive = (href: string) =>
@@ -51,8 +52,8 @@ export default function Header() {
                 </nav>
 
                 {/* Subscribe (always visible on desktop) */}
-                <div className="hidden md:block">
-                    <Link href="http://localhost:3000/#newsletter">
+                <div className="hidden sm:block">
+                    <Link href="https://www.calishub.com/#newsletter">
                         <Button
                             variant="outline"
                             className="text-lg border-purple-500 cursor-pointer text-purple-500 hover:bg-purple-950 bg-black hover:text-white"

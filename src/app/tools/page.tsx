@@ -50,12 +50,7 @@ export default function ToolsPage() {
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {tools.map((tool) => {
-                        const isComingSoon = tool.status === "coming-soon"
-
-                        // Live tools → clickable Link
-                        if (!isComingSoon) {
-                            return (
+                    {tools.map((tool) =>  (
                                 <Link
                                     key={tool.slug}
                                     href={`/tools/${tool.slug}`}
@@ -82,43 +77,8 @@ export default function ToolsPage() {
                                         </CardContent>
                                     </Card>
                                 </Link>
-                            )
+                            ))
                         }
-
-                        // Coming soon tools → not a link
-                        return (
-                            <Card
-                                key={tool.slug}
-                                className="relative opacity-75 bg-gray-900 border-gray-800 hover:border-gray-700 transition-all h-full"
-                            >
-                                <CardHeader>
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <div className="text-purple-500">{tool.icon}</div>
-                                        <span className="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded-full">
-                      {tool.category}
-                    </span>
-                                        <span className="ml-auto text-[10px] uppercase tracking-wider text-gray-500">
-                      Coming Soon
-                    </span>
-                                    </div>
-                                    <CardTitle className="text-xl text-white">
-                                        {tool.title}
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <CardDescription className="text-gray-400 mb-4">
-                                        {tool.description}
-                                    </CardDescription>
-                                    <a
-                                        href="#newsletter"
-                                        className="inline-block rounded-lg px-3 py-1 border border-purple-500/40 text-sm text-purple-300 hover:border-purple-500/70 transition"
-                                    >
-                                        Get Notified
-                                    </a>
-                                </CardContent>
-                            </Card>
-                        )
-                    })}
                 </div>
                 <div className={"mt-24"}>
 
