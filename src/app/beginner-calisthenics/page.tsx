@@ -449,7 +449,7 @@ export default async function BeginnerCalisthenicsHubPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                         {beginnerPicks.map((p: {
-                            _id: Key | null | undefined;
+                            _id: string;
                             title: any;
                             slug: any;
                             excerpt: any;
@@ -481,7 +481,7 @@ export default async function BeginnerCalisthenicsHubPage() {
                     </div>
 
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {latest.map((p) => (
+                        {latest.map((p: { _id: any; title: any; slug: any; excerpt: any; categoryTitles: any; publishedAt: any; mainImage: any; }) => (
                             <ArticleCard
                                 key={`latest-${p._id}`}
                                 post={{
