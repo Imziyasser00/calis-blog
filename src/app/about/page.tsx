@@ -1,24 +1,34 @@
-import "server-only"
-import Link from "next/link"
-import Image from "next/image"
-import Header from "@calis/components/site/Header"
-import Footer from "@calis/components/site/Footer"
-import type { Metadata } from "next"
-import { Activity, Timer, Shield, Apple, Award, Zap, Users, Rocket, PenTool } from "lucide-react"
+import "server-only";
+import Link from "next/link";
+import Image from "next/image";
+import Header from "@calis/components/site/Header";
+import Footer from "@calis/components/site/Footer";
+import type { Metadata } from "next";
+import {
+    Activity,
+    Timer,
+    Shield,
+    Apple,
+    Award,
+    Zap,
+    Users,
+    Rocket,
+    PenTool,
+} from "lucide-react";
 import Script from "next/script";
 
-export const revalidate = 60
+export const revalidate = 60;
 
+const SITE_URL = "https://www.calishub.com";
 
-const SITE_URL = ("https://www.calishub.com")
-
+/* ------------------------- METADATA ------------------------- */
 export const metadata: Metadata = {
     title: {
         default: "About · CalisHub",
         template: "%s · CalisHub",
     },
     description:
-        "CalisHub is your home for smart calisthenics: progressions, technique cues, workouts, mobility, and realistic programs—from absolute beginner to advanced.",
+        "CalisHub helps you learn calisthenics the smart way with clear progressions, workouts, mobility, and realistic programs from beginner to advanced.",
     alternates: {
         canonical: `${SITE_URL}/about`,
     },
@@ -28,10 +38,10 @@ export const metadata: Metadata = {
         siteName: "CalisHub",
         title: "About · CalisHub",
         description:
-            "CalisHub is your home for smart calisthenics: progressions, technique cues, workouts, mobility, and realistic programs—from absolute beginner to advanced.",
+            "CalisHub is your home for smart calisthenics: progressions, technique cues, workouts, mobility, and sustainable programs.",
         images: [
             {
-                url: `${SITE_URL}/og/about.png`, // 👉 replace with your OG image path
+                url: `${SITE_URL}/og/about.png`,
                 width: 1200,
                 height: 630,
                 alt: "About CalisHub",
@@ -42,33 +52,24 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "About · CalisHub",
         description:
-            "Learn what CalisHub is all about: making calisthenics accessible, realistic, and sustainable for all levels.",
-        images: [`${SITE_URL}/og/about.png`], // same fallback
-        creator: "@calishub", // set your handle if you have one
+            "Learn what CalisHub is about: realistic calisthenics training, from beginner to advanced.",
+        images: [`${SITE_URL}/og/about.png`],
     },
     robots: {
         index: true,
         follow: true,
-        googleBot: {
-            index: true,
-            follow: true,
-            "max-snippet": -1,
-            "max-image-preview": "large",
-            "max-video-preview": -1,
-        },
     },
     category: "About",
     keywords: [
         "calisthenics",
-        "about CalisHub",
         "bodyweight training",
-        "progressions",
-        "workouts",
-        "fitness",
+        "calisthenics progressions",
+        "home workouts",
         "strength training",
     ],
-}
+};
 
+/* --------------------------- PAGE --------------------------- */
 export default function AboutPage() {
     return (
         <div className="min-h-screen bg-black text-white">
@@ -81,65 +82,108 @@ export default function AboutPage() {
             <Rocket className="h-4 w-4" />
             About
           </span>
+
                     <h1 className="mt-3 text-4xl md:text-5xl font-bold tracking-tight">
                         CalisHub: learn calisthenics the smart way.
                     </h1>
-                    <p className="mt-4 text-gray-400">
-                        We publish practical guides, progressions, and honest workout advice so you can build real strength,
-                        mobility, and skills—without fancy equipment. Clear steps, clean form, realistic programs.
+
+                    <p className="mt-4 text-white/60">
+                        We publish practical guides, progressions, and honest workout advice
+                        so you can build real strength, mobility, and skills without fancy
+                        equipment.
                     </p>
                 </section>
 
                 {/* Mission / Style / Audience */}
                 <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
                     <InfoCard title="Our Mission" icon={<Rocket className="h-5 w-5" />}>
-                        Make calisthenics accessible and sustainable—from your first push-up to your first muscle-up.
+                        Make calisthenics accessible and sustainable, from your first push-up
+                        to advanced skills.
                     </InfoCard>
+
                     <InfoCard title="How We Teach" icon={<PenTool className="h-5 w-5" />}>
-                        Short, clear explanations, visual cues, and step-by-step progressions backed by experience.
+                        Clear explanations, visual cues, and step-by-step progressions backed
+                        by real training experience.
                     </InfoCard>
+
                     <InfoCard title="Who It’s For" icon={<Users className="h-5 w-5" />}>
-                        Absolute beginners, returning athletes, and intermediates chasing skills like L-sit, HS, and front lever.
+                        Beginners, returning athletes, and intermediates chasing skills like
+                        L-sit, handstand, and front lever.
                     </InfoCard>
                 </section>
 
                 {/* What we cover */}
                 <section className="mb-16">
                     <h2 className="text-2xl font-bold mb-6">What we cover</h2>
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                        <TopicPill icon={<Activity className="h-5 w-5" />} title="Progressions & Skills" desc="Push-ups to planche: structured steps with standards and common fixes." />
-                        <TopicPill icon={<Timer className="h-5 w-5" />} title="Programs & Workouts" desc="Evidence-based templates, deloads, and weekly splits for real life." />
-                        <TopicPill icon={<Shield className="h-5 w-5" />} title="Technique & Injury-proofing" desc="Form cues, mobility flows, and prehab for shoulders, wrists, elbows." />
-                        <TopicPill icon={<Apple className="h-5 w-5" />} title="Nutrition & Recovery" desc="Protein basics, creatine, sleep, and fueling for bodyweight strength." />
-                        <TopicPill icon={<Award className="h-5 w-5" />} title="Beginner to Advanced" desc="From your first pull-up to solid handstands and beyond." />
-                        <TopicPill icon={<Zap className="h-5 w-5" />} title="Gear & Minimal Setup" desc="Bars, rings, and budget picks you actually need (and what you don’t)." />
+                        <TopicPill
+                            icon={<Activity className="h-5 w-5" />}
+                            title="Progressions & Skills"
+                            desc="Structured steps from basics to advanced movements."
+                        />
+                        <TopicPill
+                            icon={<Timer className="h-5 w-5" />}
+                            title="Programs & Workouts"
+                            desc="Weekly splits, deloads, and routines that fit real life."
+                        />
+                        <TopicPill
+                            icon={<Shield className="h-5 w-5" />}
+                            title="Technique & Injury Prevention"
+                            desc="Form cues, mobility, and prehab for joints and tendons."
+                        />
+                        <TopicPill
+                            icon={<Apple className="h-5 w-5" />}
+                            title="Nutrition & Recovery"
+                            desc="Protein basics, supplements, sleep, and recovery habits."
+                        />
+                        <TopicPill
+                            icon={<Award className="h-5 w-5" />}
+                            title="Beginner to Advanced"
+                            desc="Start simple and progress safely toward harder skills."
+                        />
+                        <TopicPill
+                            icon={<Zap className="h-5 w-5" />}
+                            title="Minimal Gear"
+                            desc="Bars, rings, and equipment you actually need."
+                        />
                     </div>
                 </section>
 
-                {/* Author / team */}
+                {/* Team */}
                 <section className="mb-16">
                     <h2 className="text-2xl font-bold mb-6">Who’s behind CalisHub?</h2>
-                    <div className="rounded-2xl border border-gray-800 p-6 md:p-8 bg-gradient-to-b from-gray-900/40 to-transparent">
+
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
                         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                             <div className="relative w-20 h-20 rounded-full overflow-hidden ring-1 ring-purple-500/40 shrink-0">
                                 <Image
-                                    src="/logo.png" // replace with your image or remove block
+                                    src="/logo.png"
                                     alt="CalisHub"
                                     fill
-                                    className="object-cover"
                                     sizes="80px"
+                                    className="object-cover"
                                 />
                             </div>
+
                             <div className="flex-1">
                                 <h3 className="text-xl font-semibold">The CalisHub Team</h3>
-                                <p className="text-gray-400 mt-1">
-                                    calisthenics nerds, and everyday athletes. We test what we write and keep it realistic.
+                                <p className="text-white/60 mt-1">
+                                    Calisthenics nerds and everyday athletes. We test what we write
+                                    and keep everything realistic.
                                 </p>
+
                                 <div className="flex flex-wrap gap-3 mt-4 text-sm">
-                                    <Link href="/blog" className="rounded-lg border border-purple-500 px-3 py-1.5 text-purple-400 hover:bg-purple-950/50">
+                                    <Link
+                                        href="/blog"
+                                        className="rounded-lg border border-purple-500 px-3 py-1.5 text-purple-400 hover:bg-purple-500/10"
+                                    >
                                         Read the blog →
                                     </Link>
-                                    <Link href="/topics" className="rounded-lg border border-gray-800 px-3 py-1.5 text-gray-300 hover:border-purple-500/60 hover:text-white">
+                                    <Link
+                                        href="/topics"
+                                        className="rounded-lg border border-white/10 px-3 py-1.5 text-white/70 hover:border-purple-500/50 hover:text-white"
+                                    >
                                         Browse topics
                                     </Link>
                                 </div>
@@ -148,39 +192,26 @@ export default function AboutPage() {
                     </div>
                 </section>
 
-                {/* Timeline */}
-                <section className="mb-16">
-                    <h2 className="text-2xl font-bold mb-6">Milestones</h2>
-                    <div className="space-y-5">
-                        <Milestone date="2024" title="The idea">
-                            We started drafting simple, no-BS guides for friends who wanted to get stronger at home.
-                        </Milestone>
-                        <Milestone date="2025" title="CalisHub v1">
-                            Launched the blog with beginner progressions, weekly plans, and mobility routines.
-                        </Milestone>
-                        <Milestone date="Soon" title="Skills library & tools">
-                            A searchable exercise library, printable plans, and ring/bar skills roadmaps.
-                        </Milestone>
-                    </div>
-                </section>
-
                 {/* CTA */}
-                <section className="mb-4">
-                    <div className="rounded-2xl border border-purple-500/40 p-6 md:p-8 text-center bg-purple-500/5">
-                        <h3 className="text-xl md:text-2xl font-semibold">Get new workouts & guides</h3>
-                        <p className="text-gray-400 mt-2">
-                            No spam—just actionable progressions and realistic programs.
+                <section>
+                    <div className="rounded-2xl border border-purple-500/40 bg-purple-500/5 p-6 md:p-8 text-center">
+                        <h3 className="text-xl md:text-2xl font-semibold">
+                            Get new workouts & guides
+                        </h3>
+                        <p className="text-white/60 mt-2">
+                            No spam. Just actionable calisthenics content.
                         </p>
+
                         <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
                             <Link
                                 href="/#newsletter"
-                                className="inline-flex items-center justify-center rounded-lg border border-purple-500 px-4 py-2 text-purple-400 hover:bg-purple-950/50"
+                                className="rounded-lg border border-purple-500 px-4 py-2 text-purple-400 hover:bg-purple-500/10"
                             >
                                 Subscribe
                             </Link>
                             <Link
                                 href="/blog"
-                                className="inline-flex items-center justify-center rounded-lg border border-gray-800 px-4 py-2 text-gray-300 hover:border-purple-500/60 hover:text-white"
+                                className="rounded-lg border border-white/10 px-4 py-2 text-white/70 hover:border-purple-500/50 hover:text-white"
                             >
                                 Read latest articles
                             </Link>
@@ -190,14 +221,16 @@ export default function AboutPage() {
             </main>
 
             <Footer />
-            <Script id="ld-about" type="application/ld+json" strategy="afterInteractive">
+
+            {/* JSON-LD */}
+            <Script id="ld-about" type="application/ld+json" strategy="beforeInteractive">
                 {JSON.stringify({
                     "@context": "https://schema.org",
                     "@type": "AboutPage",
                     name: "About CalisHub",
                     url: `${SITE_URL}/about`,
                     description:
-                        "CalisHub is your home for smart calisthenics: progressions, technique cues, workouts, mobility, and realistic programs—from absolute beginner to advanced.",
+                        "CalisHub helps people learn calisthenics with realistic progressions, workouts, and technique guidance.",
                     publisher: {
                         "@type": "Organization",
                         name: "CalisHub",
@@ -206,11 +239,12 @@ export default function AboutPage() {
                             "@type": "ImageObject",
                             url: `${SITE_URL}/logo.png`,
                         },
+                        sameAs: ["https://www.tiktok.com/@calishub.com"],
                     },
                 })}
             </Script>
         </div>
-    )
+    );
 }
 
 /* ----------------- small components ----------------- */
@@ -220,19 +254,21 @@ function InfoCard({
                       icon,
                       children,
                   }: {
-    title: string
-    icon: React.ReactNode
-    children: React.ReactNode
+    title: string;
+    icon: React.ReactNode;
+    children: React.ReactNode;
 }) {
     return (
-        <div className="rounded-2xl border border-gray-800 p-6 h-full bg-gray-900/40">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 h-full">
             <div className="flex items-center gap-3">
-                <div className="bg-purple-500/10 p-2 rounded-lg text-purple-500">{icon}</div>
+                <div className="rounded-lg bg-purple-500/10 p-2 text-purple-400">
+                    {icon}
+                </div>
                 <h3 className="font-semibold">{title}</h3>
             </div>
-            <p className="text-gray-400 mt-3">{children}</p>
+            <p className="text-white/60 mt-3">{children}</p>
         </div>
-    )
+    );
 }
 
 function TopicPill({
@@ -240,36 +276,17 @@ function TopicPill({
                        title,
                        desc,
                    }: {
-    icon: React.ReactNode
-    title: string
-    desc: string
+    icon: React.ReactNode;
+    title: string;
+    desc: string;
 }) {
     return (
-        <div className="rounded-2xl border border-gray-800 p-5 bg-gray-900/30 hover:border-purple-500/50 transition-colors">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 hover:border-purple-500/40 transition">
             <div className="flex items-center gap-2 text-purple-400">
                 {icon}
                 <h3 className="font-medium">{title}</h3>
             </div>
-            <p className="text-gray-400 mt-2 text-sm">{desc}</p>
+            <p className="text-white/60 mt-2 text-sm">{desc}</p>
         </div>
-    )
-}
-
-function Milestone({
-                       date,
-                       title,
-                       children,
-                   }: {
-    date: string
-    title: string
-    children: React.ReactNode
-}) {
-    return (
-        <div className="relative pl-6">
-            <div className="absolute left-0 top-2 h-2 w-2 rounded-full bg-purple-500" />
-            <div className="text-sm text-purple-400">{date}</div>
-            <div className="font-semibold mt-0.5">{title}</div>
-            <p className="text-gray-400 mt-1">{children}</p>
-        </div>
-    )
+    );
 }

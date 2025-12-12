@@ -1,200 +1,212 @@
-import "server-only"
-import Link from "next/link"
-import Header from "@calis/components/site/Header"
-import Footer from "@calis/components/site/Footer"
-import { client } from "@calis/lib/sanity.client"
-import { urlFor } from "@calis/lib/sanity.image"
-import {ArticleCard } from "@calis/components/post/ArticlelCard";
-// Make search param variations render on the server each time
-export const dynamic = "force-dynamic";
-// or: export const revalidate = 0
+import "server-only";
+import Link from "next/link";
+import Header from "@calis/components/site/Header";
+import Footer from "@calis/components/site/Footer";
+import { client } from "@calis/lib/sanity.client";
+import ArticleCard from "@calis/components/post/ArticleCard";
+import BlogControls from "@calis/components/blog/BlogControls";
 
-// --- Types ---
-type SanityImage = any
+export const revalidate = 60;
+
+// --------------------
+// Types
+// --------------------
+type SanityImage = any;
+
 type ArticleCardData = {
-    title: string
-    slug: string
-    description?: string
-    category?: { _id: string; title: string } | null
-    date?: string | null
-    mainImage?: SanityImage
+    _id: string;
+    title: string;
+    slug: string;
+    excerpt?: string;
+    category?: string | null;
+    publishedAt?: string | null;
+    mainImage?: SanityImage;
+};
+
+type CategoryData = {
+    _id: string;
+    title: string;
+    slug?: string;
+};
+
+const PAGE_SIZE = 6;
+
+// --------------------
+// Data helpers
+// --------------------
+async function getCategories(): Promise<CategoryData[]> {
+    const query = /* groq */ `
+    *[_type == "category"] | order(title asc){
+      _id,
+      title,
+      "slug": slug.current
+    }
+  `;
+    return client.fetch(query);
 }
 
-const PAGE_SIZE = 6
+async function getTotalCount(q?: string, cat?: string): Promise<number> {
+    const m = q ? `*${q}*` : "";
+    const c = cat?.trim() || "";
 
-// --- Data helpers (search-aware) ---
-async function getTotalCount(q?: string): Promise<number> {
-    const m = q ? `*${q}*` : ""
     const query = /* groq */ `
     count(*[_type == "post" && (
-      $m == "" ||
-      title match $m ||
-      pt::text(body) match $m ||
-      count(categories[]-> [title match $m]) > 0
+      ($m == "" || title match $m || pt::text(body) match $m || categories[]->title match $m)
+      &&
+      ($c == "" || $c in categories[]->slug.current || $c in categories[]->title)
     )])
-  `
-    return await client.fetch(query, { m })
+  `;
+    return client.fetch(query, { m, c });
 }
 
+async function getArticles(page: number, q?: string, cat?: string): Promise<ArticleCardData[]> {
+    const start = (page - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    const m = q ? `*${q}*` : "";
+    const c = cat?.trim() || "";
 
-async function getArticles(page: number, q?: string): Promise<ArticleCardData[]> {
-    const start = (page - 1) * PAGE_SIZE
-    const end = start + PAGE_SIZE
-    const m = q ? `*${q}*` : ""
     const query = /* groq */ `
     *[_type == "post" && (
-      $m == "" ||
-      title match $m ||
-      pt::text(body) match $m ||
-      count(categories[]-> [title match $m]) > 0
-    )] | order(publishedAt desc)[$start...$end]{
+      ($m == "" || title match $m || pt::text(body) match $m || categories[]->title match $m)
+      &&
+      ($c == "" || $c in categories[]->slug.current || $c in categories[]->title)
+    )]
+    | order(publishedAt desc)
+    [$start...$end]{
+      _id,
       title,
       "slug": slug.current,
-      "description": coalesce(excerpt, pt::text(body)),
-      "category": categories[0]->{ _id, title },
+      "excerpt": coalesce(excerpt, pt::text(body)),
+      "category": categories[0]->title,
       publishedAt,
       mainImage
     }
-  `
-    const rows = await client.fetch(query, { start, end, m })
-    return (rows || []).map((r: any) => ({
-        title: r.title,
-        slug: r.slug,
-        description: r.description,
-        category: r.category ?? null,
-        date: r.publishedAt
-            ? new Date(r.publishedAt).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-            })
-            : null,
-        mainImage: r.mainImage,
-    }))
+  `;
+    return client.fetch(query, { start, end, m, c });
 }
 
-// --- Page ---
+// --------------------
+// Page
+// --------------------
 export default async function BlogIndexPage({
                                                 searchParams,
                                             }: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+    searchParams: { page?: string; q?: string; cat?: string };
 }) {
-    const sp = await searchParams
-    const rawPage = Array.isArray(sp?.page) ? sp.page[0] : sp?.page
-    const q = (Array.isArray(sp?.q) ? sp.q[0] : sp?.q)?.trim() || ""
-    const parsed = Number(rawPage)
-    const currentPage = Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 1
+    const sp = await searchParams;
 
-    const [totalCount, articles] = await Promise.all([
-        getTotalCount(q),
-        getArticles(currentPage, q),
-    ])
-    const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
-    const safePage = Math.min(Math.max(1, currentPage), totalPages)
-    const pageArticles = safePage === currentPage ? articles : await getArticles(safePage, q)
+    const q = sp.q?.trim() || "";
+    const cat = sp.cat?.trim() || "";
+    const currentPage = Math.max(1, Number(sp.page) || 1);
+
+    const [categories, totalCount, articles] = await Promise.all([
+        getCategories(),
+        getTotalCount(q, cat),
+        getArticles(currentPage, q, cat),
+    ]);
+
+    const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+    const safePage = Math.min(currentPage, totalPages);
 
     return (
         <div className="min-h-screen bg-black text-white">
             <Header />
 
-            <main className="container mx-auto px-4 py-10 sm:py-12">
-                <section className="mb-10 sm:mb-12">
-                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 sm:mb-8">
-                        <h1 className="text-3xl sm:text-4xl font-bold">All Articles</h1>
-                    </div>
+            <main className="container mx-auto px-4 py-10 sm:py-14">
+                {/* Header */}
+                <section className="mb-6">
+                    <h1 className="text-3xl sm:text-4xl font-bold">Calisthenics Articles & Guides</h1>
+                    <p className="mt-2 max-w-2xl text-white/60">
+                        Training guides, progressions, workouts, and practical advice to help you build real calisthenics strength.
+                    </p>
+                </section>
 
+                {/* Search + Category pills */}
+                <BlogControls categories={categories} />
+
+                {/* Articles */}
+                <section>
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {pageArticles.map((a) => (
+                        {articles.map((a, idx) => (
                             <ArticleCard
-                                key={a.slug}
-                                title={a.title}
-                                description={a.description}
-                                category={a.category?.title}
-                                date={a.date ?? ""}
-                                slug={a.slug}
-                                imageUrl={
-                                    a.mainImage
-                                        ? urlFor(a.mainImage as any).width(1200).height(800).fit("crop").url()
-                                        : "/placeholder.svg"
-                                }
+                                key={a._id}
+                                post={{
+                                    _id: a._id,
+                                    title: a.title,
+                                    slug: a.slug,
+                                    excerpt: a.excerpt,
+                                    categoryTitles: a.category ? [a.category] : [],
+                                    publishedAt: a.publishedAt ?? undefined,
+                                    mainImage: a.mainImage,
+                                }}
+                                priority={idx === 0 && safePage === 1 && !q && !cat}
                             />
                         ))}
                     </div>
 
-                    {pageArticles.length === 0 && (
-                        <p className="text-gray-400 mt-8">No results{q ? ` for “${q}”` : ""}. Try a different search.</p>
-                    )}
-
-                    {totalPages > 1 && (
-                        <Pagination currentPage={safePage} totalPages={totalPages} basePath="/blog" q={q} />
+                    {articles.length === 0 && (
+                        <p className="mt-8 text-white/50">
+                            No results{q ? ` for “${q}”` : ""}{cat ? ` in “${cat}”` : ""}. Try a different search.
+                        </p>
                     )}
                 </section>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <Pagination currentPage={safePage} totalPages={totalPages} basePath="/blog" q={q} cat={cat} />
+                )}
             </main>
 
             <Footer />
         </div>
-    )
+    );
 }
 
-// --- needed client imports for SearchBar
-
-
-// --- Pagination (keeps ?q=...) ---
+// --------------------
+// Pagination
+// --------------------
 function Pagination({
                         currentPage,
                         totalPages,
-                        basePath = "/blog",
-                        q = "",
+                        basePath,
+                        q,
+                        cat,
                     }: {
-    currentPage: number
-    totalPages: number
-    basePath?: string
-    q?: string
+    currentPage: number;
+    totalPages: number;
+    basePath: string;
+    q?: string;
+    cat?: string;
 }) {
-    const windowSize = 2
-    const start = Math.max(1, currentPage - windowSize)
-    const end = Math.min(totalPages, currentPage + windowSize)
-    const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i)
+    const windowSize = 2;
+    const start = Math.max(1, currentPage - windowSize);
+    const end = Math.min(totalPages, currentPage + windowSize);
 
     const pageHref = (p: number) => {
-        const params = new URLSearchParams()
-        if (q) params.set("q", q)
-        if (p > 1) params.set("page", String(p))
-        const qs = params.toString()
-        return qs ? `${basePath}?${qs}` : `${basePath}`
-    }
+        const params = new URLSearchParams();
+        if (q) params.set("q", q);
+        if (cat) params.set("cat", cat);
+        if (p > 1) params.set("page", String(p));
+        return `${basePath}${params.toString() ? `?${params}` : ""}`;
+    };
 
     return (
-        <nav className="mt-10 flex items-center justify-center gap-2 sm:gap-3" aria-label="Pagination">
-            <PaginationLink href={pageHref(Math.max(1, currentPage - 1))} disabled={currentPage === 1}>
+        <nav className="mt-12 flex justify-center gap-2" aria-label="Pagination">
+            <PaginationLink href={pageHref(currentPage - 1)} disabled={currentPage === 1}>
                 Prev
             </PaginationLink>
 
-            {start > 1 && (
-                <>
-                    <PaginationLink href={pageHref(1)}>1</PaginationLink>
-                    {start > 2 && <span className="px-2 text-gray-500">…</span>}
-                </>
-            )}
-
-            {pages.map((p) => (
+            {Array.from({ length: end - start + 1 }, (_, i) => start + i).map((p) => (
                 <PaginationLink key={p} href={pageHref(p)} active={p === currentPage}>
                     {p}
                 </PaginationLink>
             ))}
 
-            {end < totalPages && (
-                <>
-                    {end < totalPages - 1 && <span className="px-2 text-gray-500">…</span>}
-                    <PaginationLink href={pageHref(totalPages)}>{totalPages}</PaginationLink>
-                </>
-            )}
-
-            <PaginationLink href={pageHref(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages}>
+            <PaginationLink href={pageHref(currentPage + 1)} disabled={currentPage === totalPages}>
                 Next
             </PaginationLink>
         </nav>
-    )
+    );
 }
 
 function PaginationLink({
@@ -203,29 +215,26 @@ function PaginationLink({
                             active,
                             disabled,
                         }: {
-    href: string
-    children: React.ReactNode
-    active?: boolean
-    disabled?: boolean
+    href: string;
+    children: React.ReactNode;
+    active?: boolean;
+    disabled?: boolean;
 }) {
     if (disabled) {
-        return (
-            <span className="px-3 py-1.5 rounded-lg border border-gray-800 text-gray-600 cursor-not-allowed select-none">
-        {children}
-      </span>
-        )
+        return <span className="px-3 py-1.5 rounded-lg border border-white/10 text-white/40">{children}</span>;
     }
+
     return (
         <Link
             href={href}
             className={[
-                "px-3 py-1.5 rounded-lg border transition-colors",
+                "px-3 py-1.5 rounded-lg border transition",
                 active
                     ? "border-purple-500/60 bg-purple-500/10 text-white"
-                    : "border-gray-800 text-gray-300 hover:border-purple-500/60 hover:text-white",
+                    : "border-white/10 text-white/70 hover:border-purple-500/50 hover:text-white",
             ].join(" ")}
         >
             {children}
         </Link>
-    )
+    );
 }
