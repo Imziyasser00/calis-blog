@@ -1,144 +1,103 @@
 import Link from "next/link";
-import { ArrowRight, Sparkles, ClipboardList, Dumbbell, GraduationCap } from "lucide-react";
+import { ArrowRight, Sparkles, Gauge, ClipboardCheck, ShieldCheck } from "lucide-react";
 
 export function StartHereSection() {
     return (
         <section className="mb-20" aria-labelledby="start-here">
-            <div className="flex items-end justify-between gap-4 mb-6">
-                <div>
-                    <h2 id="start-here" className="text-2xl font-bold">
-                        Start Here (Beginner-Friendly)
-                    </h2>
-                    <p className="mt-1 text-sm text-white/60 max-w-2xl">
-                        New to calisthenics? Follow a simple path: assess your level, pick a routine, learn the basics, then progress.
-                    </p>
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10]">
+                {/* background glow */}
+                <div aria-hidden className="pointer-events-none absolute inset-0">
+                    <div className="absolute -top-20 -left-24 h-72 w-72 rounded-full blur-3xl opacity-25 bg-purple-600/40" />
+                    <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full blur-3xl opacity-20 bg-fuchsia-500/30" />
+                    <div className="absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_0%,rgba(168,85,247,0.12),transparent_60%)]" />
                 </div>
 
-                <Link
-                    href="/blog/how-to-build-a-beginner-friendly-calisthenics-routine-step-by-step-guide"
-                    className="text-sm text-purple-400 hover:text-purple-300 transition rounded-md px-2 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
-                >
-                    Read the full Beginner Guide
-                </Link>
-            </div>
+                <div className="relative p-6 sm:p-8">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+                        {/* Left */}
+                        <div className="max-w-2xl">
+                            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70 backdrop-blur">
+                                <Sparkles className="h-3.5 w-3.5 text-purple-300" />
+                                Start Here
+                            </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-                {/* Step 1 */}
-                <Link
-                    href="/tools/max-rep-estimator"
-                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-purple-500/40"
-                >
-                    <div className="pointer-events-none absolute -inset-20 opacity-0 group-hover:opacity-100 transition duration-700">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(168,85,247,0.22),transparent_60%)]" />
-                    </div>
+                            <h2 id="start-here" className="mt-4 text-2xl sm:text-3xl font-bold tracking-tight">
+                                New to calisthenics? Follow a clear roadmap.
+                            </h2>
 
-                    <div className="relative flex items-start justify-between gap-4">
-                        <div className="inline-flex items-center gap-2 text-xs text-purple-300">
-                            <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
-                            Step 1
+                            <p className="mt-2 text-white/60">
+                                Stop guessing. Use a beginner-friendly path that tells you what to train, how often, and how to progress
+                                without wrecking your joints.
+                            </p>
+
+                            {/* mini trust points */}
+                            <div className="mt-5 flex flex-wrap gap-3 text-sm text-white/60">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                  <ShieldCheck className="h-4 w-4 text-purple-300" />
+                  joint-friendly progressions
+                </span>
+                                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                  <ClipboardCheck className="h-4 w-4 text-purple-300" />
+                  weekly plan included
+                </span>
+                                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                  <Gauge className="h-4 w-4 text-purple-300" />
+                  track your level
+                </span>
+                            </div>
+
+                            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                                <Link
+                                    href="/beginner-calisthenics"
+                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-purple-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
+                                >
+                                    Open Beginner Hub
+                                    <ArrowRight className="h-4 w-4" />
+                                </Link>
+
+                                <Link
+                                    href="/tools/max-rep-estimator"
+                                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/85 backdrop-blur transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
+                                >
+                                    Check your level
+                                    <ArrowRight className="h-4 w-4" />
+                                </Link>
+                            </div>
                         </div>
-                        <div className="rounded-xl bg-purple-500/10 p-2 ring-1 ring-purple-500/20">
-                            <Sparkles className="h-4 w-4 text-purple-300" />
+
+                        {/* Right: “3 steps” card */}
+                        <div className="w-full lg:max-w-sm">
+                            <div className="rounded-2xl border border-white/10 bg-black/40 p-5 backdrop-blur">
+                                <p className="text-xs uppercase tracking-wider text-white/50">How it works</p>
+
+                                <div className="mt-4 space-y-3 text-sm">
+                                    <Step n="1" title="Pick your level" desc="Use regressions you can do cleanly." />
+                                    <Step n="2" title="Train 3x/week" desc="Simple plan, repeat weekly, progress slowly." />
+                                    <Step n="3" title="Upgrade when ready" desc="More reps → harder variation → skill work." />
+                                </div>
+
+                                <div className="mt-5 text-xs text-white/45">
+                                    Tip: stop <span className="text-white/70">1–2 reps before failure</span> to keep form clean.
+                                </div>
+                            </div>
                         </div>
-                    </div>
-
-                    <h3 className="relative mt-4 text-lg font-semibold group-hover:text-purple-300 transition-colors">
-                        Test your level
-                    </h3>
-                    <p className="relative mt-2 text-sm text-white/65">
-                        Use your reps to estimate your current strength and get a progression direction.
-                    </p>
-
-                    <div className="relative mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
-                        Take the test <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                    </div>
-                </Link>
-
-                {/* Step 2 */}
-                <Link
-                    href="/tools/workout-generator"
-                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-fuchsia-500/40"
-                >
-                    <div className="pointer-events-none absolute -inset-20 opacity-0 group-hover:opacity-100 transition duration-700">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(236,72,153,0.20),transparent_60%)]" />
-                    </div>
-
-                    <div className="relative flex items-start justify-between gap-4">
-                        <div className="inline-flex items-center gap-2 text-xs text-fuchsia-300">
-                            <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-500" />
-                            Step 2
-                        </div>
-                        <div className="rounded-xl bg-fuchsia-500/10 p-2 ring-1 ring-fuchsia-500/20">
-                            <ClipboardList className="h-4 w-4 text-fuchsia-300" />
-                        </div>
-                    </div>
-
-                    <h3 className="relative mt-4 text-lg font-semibold group-hover:text-fuchsia-300 transition-colors">
-                        Get a routine
-                    </h3>
-                    <p className="relative mt-2 text-sm text-white/65">
-                        Generate a workout based on your goal, time, and level (strength, skills, fat loss).
-                    </p>
-
-                    <div className="relative mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
-                        Generate workout <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                    </div>
-                </Link>
-
-                {/* Step 3 */}
-                <Link
-                    href="/topics"
-                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-white/20"
-                >
-                    <div className="pointer-events-none absolute -inset-20 opacity-0 group-hover:opacity-100 transition duration-700">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.10),transparent_60%)]" />
-                    </div>
-
-                    <div className="relative flex items-start justify-between gap-4">
-                        <div className="inline-flex items-center gap-2 text-xs text-white/60">
-                            <span className="h-1.5 w-1.5 rounded-full bg-white/40" />
-                            Step 3
-                        </div>
-                        <div className="rounded-xl bg-white/5 p-2 ring-1 ring-white/10">
-                            <GraduationCap className="h-4 w-4 text-white/80" />
-                        </div>
-                    </div>
-
-                    <h3 className="relative mt-4 text-lg font-semibold group-hover:text-white transition-colors">
-                        Learn progressions
-                    </h3>
-                    <p className="relative mt-2 text-sm text-white/65">
-                        Explore skill progressions, exercise form cues, and training principles to improve safely.
-                    </p>
-
-                    <div className="relative mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
-                        Browse topics <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                    </div>
-                </Link>
-            </div>
-
-            {/* Bottom CTA */}
-            <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-                <div className="flex items-start gap-3">
-                    <div className="rounded-xl bg-purple-500/10 p-2 ring-1 ring-purple-500/20">
-                        <Dumbbell className="h-4 w-4 text-purple-300" />
-                    </div>
-                    <div>
-                        <p className="text-sm font-semibold">Not sure where to start?</p>
-                        <p className="text-sm text-white/60">
-                            Follow the beginner guide and get a simple routine you can repeat weekly.
-                        </p>
                     </div>
                 </div>
-
-                <Link
-                    href="/blog/how-to-build-a-beginner-friendly-calisthenics-routine-step-by-step-guide"
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-purple-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
-                >
-                    Start the Beginner Guide
-                    <ArrowRight className="h-4 w-4" />
-                </Link>
             </div>
         </section>
+    );
+}
+
+function Step({ n, title, desc }: { n: string; title: string; desc: string }) {
+    return (
+        <div className="flex gap-3">
+            <div className="h-6 w-6 shrink-0 rounded-full border border-purple-500/40 bg-purple-500/10 text-purple-200 flex items-center justify-center text-xs">
+                {n}
+            </div>
+            <div>
+                <div className="font-medium text-white/90">{title}</div>
+                <div className="text-white/60">{desc}</div>
+            </div>
+        </div>
     );
 }

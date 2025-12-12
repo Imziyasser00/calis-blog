@@ -5,9 +5,7 @@ import { getHomepageData } from "@calis/lib/sanity/queries";
 import Header from "@calis/components/site/Header";
 import Footer from "@calis/components/site/Footer";
 import Hero from "@calis/components/home/Hero";
-import FeaturedGrid from "@calis/components/home/FeaturedGrid";
 import RecentGrid from "@calis/components/home/RecentGrid";
-import TopicChips from "@calis/components/home/TopicChips";
 import { PostsGridSkeleton, HeroSkeleton } from "@calis/components/skeletons";
 import Link from "next/link";
 import {InteractiveToolsSection} from "@calis/components/home/InteractiveToolsSection";
@@ -66,9 +64,9 @@ export default async function Home() {
 
                 {/* Newsletter */}
                 <Newsletter />
-                <Footer />
 
             </main>
+            <Footer />
 
         </div>
     );

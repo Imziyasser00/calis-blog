@@ -48,7 +48,7 @@ export default function Newsletter() {
     };
 
     return (
-        <section id="newsletter" className="relative mb-20">
+        <section id="newsletter" className="relative">
             {/* Background glow */}
             <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
                 <div className="absolute -inset-16 rounded-3xl opacity-40 blur-3xl bg-gradient-to-tr from-purple-700/20 via-purple-500/10 to-fuchsia-500/10" />
