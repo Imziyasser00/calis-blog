@@ -90,58 +90,95 @@ export default function Hero() {
                 </div>
 
                 {/* Right: clean "Tool Preview" panel */}
+                {/* Right: colored "Tool Preview" panel */}
                 <div className="relative">
-                    <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6 shadow-2xl backdrop-blur">
-                        <div className="flex items-start justify-between gap-4">
-                            <div>
-                                <p className="text-xs uppercase tracking-wider text-white/50">Start in 60 seconds</p>
-                                <h2 className="mt-2 text-xl md:text-2xl font-semibold">
-                                    Pick a tool and get a plan
-                                </h2>
-                                <p className="mt-2 text-sm text-white/70">
-                                    Use your current reps to estimate your level, then choose a progression path.
-                                </p>
+                    <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 shadow-2xl backdrop-blur transition">
+                        {/* panel glow */}
+                        <div className="pointer-events-none absolute -inset-24 opacity-80">
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_10%,rgba(168,85,247,0.22),transparent_55%)]" />
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_70%,rgba(236,72,153,0.18),transparent_55%)]" />
+                        </div>
+
+                        {/* top gradient line */}
+                        <div className="pointer-events-none absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-purple-500/0 via-purple-500/70 to-fuchsia-500/0 opacity-70" />
+
+                        <div className="relative">
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <p className="text-xs uppercase tracking-wider text-white/50">
+                                        Start in 60 seconds
+                                    </p>
+                                    <h2 className="mt-2 text-xl md:text-2xl font-semibold">
+                                        Pick a tool and get a plan
+                                    </h2>
+                                    <p className="mt-2 text-sm text-white/70">
+                                        Use your current reps to estimate your level, then choose a progression path.
+                                    </p>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="mt-6 grid gap-3">
-                            <Link
-                                href="/tools/max-rep-estimator"
-                                className="group flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3 transition hover:bg-black/30"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <Gauge className="h-4 w-4 text-white/80" />
-                                    <div>
-                                        <p className="text-sm font-medium">Max Rep Estimator</p>
-                                        <p className="text-xs text-white/60">Know your level instantly</p>
+                            <div className="mt-6 grid gap-3">
+                                {/* Row 1 */}
+                                <Link
+                                    href="/tools/max-rep-estimator"
+                                    className="group/item relative overflow-hidden flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3 transition hover:border-purple-500/40 hover:bg-black/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
+                                >
+                                    {/* row glow */}
+                                    <div className="pointer-events-none absolute -inset-16 opacity-0 group-hover/item:opacity-100 transition duration-700">
+                                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(168,85,247,0.22),transparent_60%)]" />
                                     </div>
-                                </div>
-                                <ArrowRight className="h-4 w-4 text-white/60 transition group-hover:translate-x-0.5" />
-                            </Link>
 
-                            <Link
-                                href="/tools/workout-generator"
-                                className="group flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3 transition hover:bg-black/30"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <ClipboardList className="h-4 w-4 text-white/80" />
-                                    <div>
-                                        <p className="text-sm font-medium">Workout Generator</p>
-                                        <p className="text-xs text-white/60">Strength, skills, fat loss</p>
+                                    <div className="relative flex items-center gap-3">
+                                        <div className="rounded-xl bg-purple-500/10 p-2 ring-1 ring-purple-500/20">
+                                            <Gauge className="h-4 w-4 text-purple-300" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium">Max Rep Estimator</p>
+                                            <p className="text-xs text-white/60">Know your level instantly</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <ArrowRight className="h-4 w-4 text-white/60 transition group-hover:translate-x-0.5" />
-                            </Link>
-                        </div>
 
-                        <div className="mt-5 flex items-center justify-between text-xs text-white/50">
-                            <span>No signup required</span>
-                            <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1">Free</span>
+                                    <ArrowRight className="relative h-4 w-4 text-white/60 transition group-hover/item:translate-x-0.5 group-hover/item:text-white/80" />
+                                </Link>
+
+                                {/* Row 2 */}
+                                <Link
+                                    href="/tools/workout-generator"
+                                    className="group/item relative overflow-hidden flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3 transition hover:border-fuchsia-500/40 hover:bg-black/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-500"
+                                >
+                                    {/* row glow */}
+                                    <div className="pointer-events-none absolute -inset-16 opacity-0 group-hover/item:opacity-100 transition duration-700">
+                                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(236,72,153,0.20),transparent_60%)]" />
+                                    </div>
+
+                                    <div className="relative flex items-center gap-3">
+                                        <div className="rounded-xl bg-fuchsia-500/10 p-2 ring-1 ring-fuchsia-500/20">
+                                            <ClipboardList className="h-4 w-4 text-fuchsia-300" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium">Workout Generator</p>
+                                            <p className="text-xs text-white/60">Strength, skills, fat loss</p>
+                                        </div>
+                                    </div>
+
+                                    <ArrowRight className="relative h-4 w-4 text-white/60 transition group-hover/item:translate-x-0.5 group-hover/item:text-white/80" />
+                                </Link>
+                            </div>
+
+                            <div className="mt-5 flex items-center justify-between text-xs text-white/50">
+                                <span>No signup required</span>
+                                <span className="rounded-full text-green-500 font-bold border border-white/10 bg-white/5 px-2 py-1">
+          Free
+        </span>
+                            </div>
                         </div>
                     </div>
 
-                    {/* subtle glow */}
-                    <div aria-hidden="true" className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl bg-purple-600/10 blur-2xl" />
+                    {/* extra outer glow (subtle) */}
+                    <div
+                        aria-hidden="true"
+                        className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl bg-purple-600/10 blur-2xl"
+                    />
                 </div>
             </div>
         </section>
