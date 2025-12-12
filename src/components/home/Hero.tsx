@@ -1,138 +1,148 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Mail, BookOpen } from "lucide-react";
-import { urlFor } from "@calis/lib/sanity.image";
-import type { Hero as HeroType } from "@calis/types/content";
+import { ArrowRight, BicepsFlexed, Sparkles, Gauge, ClipboardList } from "lucide-react";
 
-export default function Hero({ post }: { post: HeroType | null }) {
-    const heroImg = post?.mainImage
-        ? urlFor(post.mainImage)
-            .width(1600)       
-            .height(900)
-            .fit("crop")
-            .quality(70)
-            .auto("format")
-            .url()
-        : undefined;
-
-    const heroHref = post?.slug ? `/blog/${post.slug}` : "/blog";
-
+export default function Hero() {
     return (
         <section className="relative overflow-hidden">
             {/* background aesthetics */}
-            <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 -z-10"
-            >
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
                 <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl opacity-30 bg-purple-600/40" />
                 <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full blur-3xl opacity-30 bg-fuchsia-500/30" />
-                <div className="absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_0%,rgba(168,85,247,0.10),transparent_60%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_0%,rgba(168,85,247,0.12),transparent_60%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.2),rgba(0,0,0,0.65))]" />
             </div>
 
             <div className="grid lg:grid-cols-2 gap-10 md:gap-12 items-center">
-                {/* Left column */}
+                {/* Left */}
                 <div className="space-y-7">
                     <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70 backdrop-blur">
                         <span className="h-2 w-2 rounded-full bg-purple-500" />
-                        New content weekly
+                        Tools + guides updated weekly
                     </div>
 
                     <h1 className="text-4xl md:text-6xl font-bold leading-tight tracking-tight">
-                        Build real strength with{" "}
-                        <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-purple-300 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-purple-300 bg-clip-text text-transparent">
               Calisthenics
-            </span>
+            </span>{" "}
+                        Workouts, Skill Progressions & Strength Tools
                     </h1>
 
                     <p className="text-base md:text-lg text-white/70 max-w-xl">
-                        Actionable workouts, skill progressions, and gear advice — powered
-                        by a clean Sanity + Next.js stack. Learn smarter, progress faster.
+                        Build real strength with clear workouts, step-by-step progressions, and interactive tools that
+                        help you train smarter and track progress.
                     </p>
 
+                    {/* Primary actions */}
                     <div className="flex flex-col sm:flex-row gap-3">
                         <Link
-                            href="/blog"
+                            href="/tools"
                             className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-purple-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
                         >
-                            <BookOpen className="h-4 w-4" />
-                            Latest Articles
+                            <BicepsFlexed className="h-4 w-4" />
+                            Explore Training Tools
                             <ArrowRight className="h-4 w-4" />
                         </Link>
 
-                        <a
-                            href="#newsletter"
+                        <Link
+                            href="http://localhost:3000/blog/how-to-build-a-beginner-friendly-calisthenics-routine-step-by-step-guide"
                             className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/90 backdrop-blur transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
                         >
-                            <Mail className="h-4 w-4" />
-                            Join Newsletter
-                        </a>
+                            <Sparkles className="h-4 w-4" />
+                            Start Here (Beginner Guide)
+                        </Link>
                     </div>
 
-                    {/* Quick stats / trust signals */}
+                    {/* Quick links (reduces bounce) */}
+                    <div className="flex flex-wrap items-center gap-2 pt-1 text-sm text-white/60">
+                        <span className="mr-1">Popular:</span>
+                        <Link
+                            href="/tools/max-rep-estimator"
+                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10 transition"
+                        >
+                            Max Rep Estimator
+                        </Link>
+                        <Link
+                            href="/tools/workout-generator"
+                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10 transition"
+                        >
+                            Workout Generator
+                        </Link>
+                        <Link
+                            href="/exercises"
+                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10 transition"
+                        >
+                            Exercise Library
+                        </Link>
+                    </div>
+
+                    {/* Trust signals */}
                     <div className="flex flex-wrap gap-6 pt-2 text-sm">
                         <div className="flex items-center gap-2 text-white/70">
-                            <span className="font-semibold text-white">100+</span>
-                            tutorials
+                            <span className="font-semibold text-white">100+</span> tutorials
                         </div>
                         <div className="flex items-center gap-2 text-white/70">
-                            <span className="font-semibold text-white">Beginner → Advanced</span>
-                            progressions
+                            <span className="font-semibold text-white">Beginner → Advanced</span> progressions
                         </div>
                         <div className="flex items-center gap-2 text-white/70">
-                            <span className="font-semibold text-white">No-equipment</span>
-                            options
+                            <span className="font-semibold text-white">No-equipment</span> options
                         </div>
                     </div>
                 </div>
 
-                {/* Right column: feature card */}
-                <Link
-                    href={heroHref}
-                    className="group relative block"
-                    aria-label={post?.title ? `Read: ${post.title}` : "Browse blog"}
-                >
-                    <div className="relative h-[320px] md:h-[420px] w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] shadow-2xl backdrop-blur">
-                        {/* glow ring on hover */}
-                        <div className="pointer-events-none  absolute inset-0 rounded-2xl ring-1 ring-white/10 transition group-hover:ring-purple-400/40" />
+                {/* Right: clean "Tool Preview" panel */}
+                <div className="relative">
+                    <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-6 shadow-2xl backdrop-blur">
+                        <div className="flex items-start justify-between gap-4">
+                            <div>
+                                <p className="text-xs uppercase tracking-wider text-white/50">Start in 60 seconds</p>
+                                <h2 className="mt-2 text-xl md:text-2xl font-semibold">
+                                    Pick a tool and get a plan
+                                </h2>
+                                <p className="mt-2 text-sm text-white/70">
+                                    Use your current reps to estimate your level, then choose a progression path.
+                                </p>
+                            </div>
+                        </div>
 
-                        {heroImg ? (
-                            <>
-                                <Image
-                                    src={heroImg}
-                                    alt={post?.mainImage?.alt || post?.title || ""}
-                                    role={post?.mainImage?.alt || post?.title ? undefined : "presentation"}
-                                    priority
-
-                                    fetchPriority="high"
-                                    fill// 🔥 helps LCP request discovery
-                                    placeholder="empty"                       // no extra blur bytes; optional
-                                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                                />
-
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                                <div className="absolute bottom-4 left-4 right-4">
-                                    <div className="max-w-[90%]">
-                                        <h2 className="text-lg md:text-xl font-semibold leading-snug line-clamp-2">
-                                            {post?.title || "Featured: Start your calisthenics journey"}
-                                        </h2>
-                                        <p className="mt-1 text-sm text-white/70 line-clamp-1">
-                                            { "Foundations, progressions, and cues that actually help you improve."}
-                                        </p>
-                                    </div>
-
-                                    <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs text-white/80 backdrop-blur transition group-hover:bg-black/40">
-                                        Read now
-                                        <ArrowRight className="h-3.5 w-3.5 transition -translate-x-0 group-hover:translate-x-0.5" />
+                        <div className="mt-6 grid gap-3">
+                            <Link
+                                href="/tools/max-rep-estimator"
+                                className="group flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3 transition hover:bg-black/30"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <Gauge className="h-4 w-4 text-white/80" />
+                                    <div>
+                                        <p className="text-sm font-medium">Max Rep Estimator</p>
+                                        <p className="text-xs text-white/60">Know your level instantly</p>
                                     </div>
                                 </div>
-                            </>
-                        ) : (
-                            <div className="flex h-full items-center justify-center text-white/60">
-                                No hero image yet
-                            </div>
-                        )}
+                                <ArrowRight className="h-4 w-4 text-white/60 transition group-hover:translate-x-0.5" />
+                            </Link>
+
+                            <Link
+                                href="/tools/workout-generator"
+                                className="group flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3 transition hover:bg-black/30"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <ClipboardList className="h-4 w-4 text-white/80" />
+                                    <div>
+                                        <p className="text-sm font-medium">Workout Generator</p>
+                                        <p className="text-xs text-white/60">Strength, skills, fat loss</p>
+                                    </div>
+                                </div>
+                                <ArrowRight className="h-4 w-4 text-white/60 transition group-hover:translate-x-0.5" />
+                            </Link>
+                        </div>
+
+                        <div className="mt-5 flex items-center justify-between text-xs text-white/50">
+                            <span>No signup required</span>
+                            <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1">Free</span>
+                        </div>
                     </div>
-                </Link>
+
+                    {/* subtle glow */}
+                    <div aria-hidden="true" className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl bg-purple-600/10 blur-2xl" />
+                </div>
             </div>
         </section>
     );

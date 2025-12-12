@@ -63,9 +63,9 @@ export default async function Home() {
                             className="group rounded-2xl border border-gray-800 hover:border-gray-700 transition-all bg-gray-950 p-6"
                             id="workout-generator"
                         >
-                            <div className="mb-3 inline-flex items-center gap-2 text-xs tracking-wider text-gray-400">
-                                <span className="h-1.5 w-1.5 rounded-full bg-gray-500" />
-                                Coming Soon
+                            <div className="mb-3 inline-flex items-center gap-2 text-xs tracking-wider text-purple-400">
+                                <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                                    New
                             </div>
                             <h3 className="text-xl font-semibold mb-2 group-hover:text-white transition-colors">
                                 Workout Generator
