@@ -146,7 +146,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>
             <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous"/>
         </head>
-        <body className={`${geistSans.variable} ${geistMono.variable} overflow-x-hidden antialiased min-h-screen`}>
+        <body className={`${geistSans.variable} ${geistMono.variable} bg-black overflow-x-hidden antialiased min-h-screen`}>
         {children}
         <Toaster />
 
