@@ -28,7 +28,12 @@ type LinkMark = TypedObject & {
     href?: string;
 };
 
-type SanityCategory = { _id: string; title: string };
+type SanityCategory = {
+    _id: string;
+    title: string;
+    slug?: string;
+};
+
 type SanityCrop = { top: number; bottom: number; left: number; right: number };
 type SanityHotspot = { x: number; y: number; height: number; width: number };
 
@@ -61,8 +66,51 @@ type RelatedPost = {
     title: string;
     slug: string;
     mainImage?: SanityImage;
-    category?: SanityCategory;
+    category?: { _id: string; title: string };
 };
+
+/* ------------------------- UI: Start Here Card ------------------------- */
+function StartHereCard({
+                           title,
+                           description,
+                           href,
+                           cta,
+                       }: {
+    title: string;
+    description: string;
+    href: string;
+    cta: string;
+}) {
+    return (
+        <div className="my-10 rounded-2xl border border-purple-500/30 bg-purple-500/5 p-6">
+            <h3 className="text-lg font-semibold text-purple-300 mb-2">{title}</h3>
+            <p className="text-white/70 mb-4">{description}</p>
+            <Link
+                href={href}
+                className="inline-flex items-center gap-2 rounded-lg border border-purple-500 px-4 py-2 text-purple-300 hover:bg-purple-500/10"
+            >
+                {cta} →
+            </Link>
+        </div>
+    );
+}
+
+/* ------------------------- Helpers: split intro ------------------------- */
+function splitPortableTextAfterIntro(blocks: PortableTextBlock[], paragraphs = 2) {
+    let count = 0;
+    const intro: PortableTextBlock[] = [];
+    const rest: PortableTextBlock[] = [];
+
+    for (const block of blocks || []) {
+        if (count < paragraphs && block?._type === "block") {
+            intro.push(block);
+            count++;
+        } else {
+            rest.push(block);
+        }
+    }
+    return { intro, rest };
+}
 
 /* ------------------------- PortableText components ------------------------- */
 const portableComponents: PortableTextComponents = {
@@ -121,19 +169,18 @@ const portableComponents: PortableTextComponents = {
 /* ------------------------- Data ------------------------- */
 async function getData(slug: string): Promise<Post | null> {
     const query = /* groq */ `
-    *[_type == "post" && slug.current == $slug][0]{
-      title,
-      "currentSlug": slug.current,
-      publishedAt,
-      _updatedAt,
-      mainImage,
-      body,
-      author->{ name },
-      categories[]->{ _id, title },
-      seo{ description, image },
-      tags[]->{ title }
-    }
-  `;
+  *[_type == "post" && slug.current == $slug][0]{
+    title,
+    "currentSlug": slug.current,
+    publishedAt,
+    _updatedAt,
+    mainImage,
+    body,
+    author->{ name },
+    categories[]->{ _id, title, "slug": slug.current },
+    seo{ description, image },
+    tags[]->{ title }
+  }`;
 
     const raw = await client.fetch(query, { slug });
     if (!raw) return null;
@@ -168,8 +215,7 @@ async function getRelatedPosts(slug: string, firstCategoryId?: string): Promise<
     }
   `;
 
-    const rows: { title: string; slug: string; mainImage?: SanityImage; categories?: SanityCategory }[] =
-        await client.fetch(query, { slug, catId: firstCategoryId });
+    const rows: any[] = await client.fetch(query, { slug, catId: firstCategoryId });
 
     return (rows || []).map((r) => ({
         title: r.title,
@@ -207,7 +253,7 @@ function buildDescription(data: Post): string {
 
 function buildKeywords(data: Post): string[] {
     const set = new Set<string>();
-    (data.tags || []).forEach((t) => set.add(t.toLowerCase()));
+    (data.tags || []).forEach((t) => set.add(String(t).toLowerCase()));
     (data.categories || []).forEach((c) => c?.title && set.add(c.title.toLowerCase()));
     ["calisthenics", "bodyweight training", "workouts", "progressions"].forEach((s) => set.add(s));
     return Array.from(set).slice(0, 20);
@@ -235,9 +281,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
                 <div className="text-center max-w-lg">
                     <h1 className="text-3xl font-bold mb-3">Post Not Found</h1>
-                    <p className="text-white/60 mb-6">
-                        The blog post you&apos;re looking for doesn&apos;t exist or has been moved.
-                    </p>
+                    <p className="text-white/60 mb-6">The blog post you&apos;re looking for doesn&apos;t exist or has been moved.</p>
                     <Link
                         href="/blog"
                         className="inline-flex items-center justify-center rounded-lg border border-purple-500 px-4 py-2 text-purple-300 hover:bg-purple-500/10"
@@ -249,8 +293,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         );
     }
 
-    const canonicalUrl = `${SITE_URL}/blog/${data.currentSlug}`;
+    const isBeginner = (data.categories || []).some(
+        (c) => c.slug === "beginner-s-guide" || c.slug === "beginners-guide"
+    );
 
+    const { intro, rest } = splitPortableTextAfterIntro(data.body, 2);
+
+    const canonicalUrl = `${SITE_URL}/blog/${data.currentSlug}`;
     const mainImageUrl = data.mainImage
         ? urlFor(data.mainImage as SanityImageType).width(1600).height(900).fit("crop").auto("format").quality(80).url()
         : null;
@@ -287,7 +336,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <main className="container mx-auto px-4 py-12">
                 <div className="mx-auto max-w-7xl">
                     <div className="grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-12">
-                        {/* LEFT: Article */}
+                        {/* LEFT */}
                         <div>
                             <Link href="/blog" className="inline-flex items-center text-white/55 hover:text-white mb-8">
                                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -319,7 +368,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                     <Image
                                         src={mainImageUrl}
                                         alt={data.mainImage?.alt || data.title || ""}
-                                        role={data.mainImage?.alt || data.title ? undefined : "presentation"}
                                         fill
                                         className="object-cover"
                                         sizes="(max-width: 1024px) 100vw, 960px"
@@ -343,7 +391,21 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   prose-img:rounded-xl
                 "
                             >
-                                <PortableText value={data.body} components={portableComponents} />
+                                {/* Intro */}
+                                <PortableText value={intro} components={portableComponents} />
+
+                                {/* Start Here injection */}
+                                {isBeginner && (
+                                    <StartHereCard
+                                        title="New to calisthenics?"
+                                        description="This article is part of the Beginner path. Start with the full beginner guide to understand what to train first, how often, and how to progress safely."
+                                        href="/beginner-calisthenics"
+                                        cta="Open the Beginner Guide"
+                                    />
+                                )}
+
+                                {/* Rest */}
+                                <PortableText value={rest} components={portableComponents} />
                             </article>
 
                             {/* Related */}
@@ -354,14 +416,20 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                     <div className="grid md:grid-cols-2 gap-6">
                                         {related.map((rp) => {
                                             const img = rp.mainImage
-                                                ? urlFor(rp.mainImage as SanityImageType).width(1200).height(800).fit("crop").auto("format").quality(80).url()
+                                                ? urlFor(rp.mainImage as SanityImageType)
+                                                    .width(1200)
+                                                    .height(800)
+                                                    .fit("crop")
+                                                    .auto("format")
+                                                    .quality(80)
+                                                    .url()
                                                 : "/placeholder.svg";
 
                                             return (
                                                 <Link href={`/blog/${rp.slug}`} className="group block rounded-2xl" key={rp.slug}>
                                                     <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] transition hover:border-purple-500/40">
                                                         <div className="relative aspect-[16/10] overflow-hidden">
-                                                            <Image src={img} alt={rp.mainImage?.alt || rp.title} fill className="object-cover" />
+                                                            <Image src={img} alt={rp.title} fill className="object-cover" />
                                                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                                                         </div>
 
@@ -384,13 +452,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                 </div>
                             )}
 
-                            {/* Newsletter */}
                             <div className="mt-20">
                                 <Newsletter />
                             </div>
                         </div>
 
-                        {/* RIGHT: Sticky TOC (desktop) */}
+                        {/* RIGHT */}
                         <Toc />
                     </div>
                 </div>
@@ -398,7 +465,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
             <Footer />
 
-            {/* JSON-LD */}
             <Script id="ld-article" type="application/ld+json" strategy="beforeInteractive">
                 {JSON.stringify(ldArticle)}
             </Script>
@@ -429,7 +495,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const publishedISO = isoOrUndefined(data.publishedAt);
     const modifiedISO = isoOrUndefined(data.updatedAt ?? data.publishedAt);
     const authors = data.authorName ? [data.authorName] : ["CalisHub"];
-
     const ogImages = mainImageForOg(data.mainImage as SanityImageType | undefined) ?? [];
     const shouldIndex = Boolean(data.publishedAt);
 
