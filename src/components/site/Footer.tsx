@@ -4,13 +4,12 @@ import { FaTiktok } from "react-icons/fa6";
 
 export default function Footer() {
     return (
-            <footer className=" border-t border-white/10 bg-black">
+        <footer className="relative overflow-hidden border-t border-white/10 bg-black">
             {/* subtle glow */}
             <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
                 <div className="absolute -inset-24 opacity-40 blur-3xl bg-[radial-gradient(circle_at_20%_0%,rgba(168,85,247,0.14),transparent_55%)]" />
                 <div className="absolute -inset-24 opacity-30 blur-3xl bg-[radial-gradient(circle_at_80%_80%,rgba(236,72,153,0.10),transparent_55%)]" />
             </div>
-
             <div className="container mx-auto px-4 py-12">
                 <div className="grid gap-10 md:grid-cols-4">
                     {/* Brand */}

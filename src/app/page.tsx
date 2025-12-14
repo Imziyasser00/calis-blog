@@ -21,7 +21,6 @@ export default async function Home() {
     return (
         <div className="min-h-screen bg-black text-white">
             <Header />
-
             <main className="container mx-auto px-4 py-12">
                 {/* Hero */}
                 <section className="mb-20">
