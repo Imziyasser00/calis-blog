@@ -5,7 +5,7 @@ const TOPICS = [
     {
         title: "Beginner’s Guide",
         desc: "Start with the basics: form, routine, and progress.",
-        href: "/topics/beginners-guide",
+        href: "/topics/beginner-s-guide",
         icon: Sparkles,
         glow: "from-purple-500/25 via-fuchsia-500/10 to-transparent",
         borderHover: "hover:border-purple-500/40",
@@ -13,7 +13,7 @@ const TOPICS = [
     {
         title: "Exercises & Progressions",
         desc: "Step-by-step progressions for core movements.",
-        href: "/topics/exercises-progressions",
+        href: "/topics/exercises-and-progressions",
         icon: Dumbbell,
         glow: "from-purple-500/20 via-indigo-500/10 to-transparent",
         borderHover: "hover:border-purple-500/30",
@@ -21,15 +21,15 @@ const TOPICS = [
     {
         title: "Skills & Moves",
         desc: "Handstand, muscle-up, L-sit, and more.",
-        href: "/topics/skills-moves",
+        href: "/topics/skills-and-moves",
         icon: Swords,
         glow: "from-fuchsia-500/20 via-purple-500/10 to-transparent",
         borderHover: "hover:border-fuchsia-500/35",
     },
     {
-        title: "Strength & Conditioning",
+        title: "Workouts & Routines",
         desc: "Build power, endurance, and athletic capacity.",
-        href: "/topics/strength-conditioning",
+        href: "/topics/workouts-and-routines",
         icon: Flame,
         glow: "from-orange-500/15 via-fuchsia-500/10 to-transparent",
         borderHover: "hover:border-white/20",
@@ -37,7 +37,7 @@ const TOPICS = [
     {
         title: "Nutrition & Recovery",
         desc: "Protein, sleep, and recovery habits that work.",
-        href: "/topics/nutrition-recovery",
+        href: "/topics/nutrition-and-recovery",
         icon: Apple,
         glow: "from-emerald-500/15 via-purple-500/10 to-transparent",
         borderHover: "hover:border-white/20",
@@ -45,7 +45,7 @@ const TOPICS = [
     {
         title: "Mindset & Motivation",
         desc: "Consistency, discipline, and training psychology.",
-        href: "/topics/mindset-motivation",
+        href: "/topics/mindset-and-motivation",
         icon: Brain,
         glow: "from-cyan-500/12 via-purple-500/10 to-transparent",
         borderHover: "hover:border-white/20",
