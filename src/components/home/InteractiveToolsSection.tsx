@@ -63,7 +63,7 @@ export function InteractiveToolsSection() {
 
                 {/* Workout Generator */}
                 <a
-                    href="#newsletter"
+                    href="/workout-generator"
                     className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-fuchsia-500/40"
                 >
                     {/* glow */}
@@ -75,9 +75,9 @@ export function InteractiveToolsSection() {
                     <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-fuchsia-500/0 via-fuchsia-500/60 to-fuchsia-500/0 opacity-0 group-hover:opacity-100 transition" />
 
                     <div className="relative flex items-start justify-between">
-                        <div className="inline-flex items-center gap-2 text-xs text-fuchsia-300">
-                            <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-500" />
-                            Coming soon • Join waitlist
+                        <div className="inline-flex items-center gap-2 text-xs text-purple-300">
+                            <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+                            Live • Takes 90s
                         </div>
 
                         <div className="rounded-xl bg-fuchsia-500/10 p-2 ring-1 ring-fuchsia-500/20">
@@ -93,9 +93,10 @@ export function InteractiveToolsSection() {
                         Auto-create workouts based on your goals, level, and available time.
                     </p>
 
-                    <span className="mt-4 inline-flex items-center rounded-lg border border-fuchsia-500/40 px-3 py-1.5 text-sm text-fuchsia-200 group-hover:border-fuchsia-500/70 transition">
-            Get notified at launch
-          </span>
+                    <div className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
+                        Try it now
+                        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                    </div>
                 </a>
             </div>
         </section>
