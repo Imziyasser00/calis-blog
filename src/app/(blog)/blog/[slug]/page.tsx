@@ -23,6 +23,7 @@ import Toc from "@calis/components/post/Toc";
 const SITE_URL = "https://www.calishub.com";
 
 /* ------------------------- Types ------------------------- */
+
 type LinkMark = TypedObject & {
     _type: "link";
     href?: string;
@@ -48,6 +49,12 @@ type SanityImage = {
 
 type SanityTag = { title: string };
 
+type FaqItem = {
+    question: string;
+    answer: string;
+};
+
+
 type Post = {
     title: string;
     currentSlug: string;
@@ -60,7 +67,9 @@ type Post = {
     readTime?: string;
     seoDescription?: string;
     tags?: string[];
+    faq?: FaqItem[];
 };
+
 
 type RelatedPost = {
     title: string;
@@ -176,6 +185,7 @@ async function getData(slug: string): Promise<Post | null> {
     _updatedAt,
     mainImage,
     body,
+    faq, // ✅ add this
     author->{ name },
     categories[]->{ _id, title, "slug": slug.current },
     seo{ description, image },
@@ -192,6 +202,7 @@ async function getData(slug: string): Promise<Post | null> {
         updatedAt: raw._updatedAt,
         mainImage: raw.seo?.image ?? raw.mainImage,
         body: raw.body ?? [],
+        faq: raw.faq ?? [], // ✅ add this
         authorName: raw?.author?.name,
         categories: raw?.categories ?? [],
         seoDescription: raw?.seo?.description,
@@ -199,6 +210,7 @@ async function getData(slug: string): Promise<Post | null> {
             .map((t: SanityTag | string) => (typeof t === "string" ? t : t?.title))
             .filter(Boolean),
     };
+
 }
 
 async function getRelatedPosts(slug: string, firstCategoryId?: string): Promise<RelatedPost[]> {
@@ -265,6 +277,39 @@ function isoOrUndefined(d?: string) {
     return isNaN(+x) ? undefined : x.toISOString();
 }
 
+function FaqSection({ items }: { items?: { question: string; answer: string }[] }) {
+    if (!items || items.length === 0) return null;
+
+    return (
+        <section className="mt-14 border-t border-white/10 pt-10">
+            <h3 className="text-xl font-bold mb-6">Frequently Asked Questions</h3>
+
+            <div className="space-y-3">
+                {items.map((item, i) => (
+                    <details
+                        key={i}
+                        className="group rounded-2xl border border-white/10 bg-white/[0.02] p-5 open:border-purple-500/40"
+                    >
+                        <summary className="cursor-pointer list-none select-none">
+                            <div className="flex items-start justify-between gap-4">
+                <span className="font-medium text-white/90 group-open:text-purple-200">
+                  {item.question}
+                </span>
+                                <span className="text-white/40 group-open:text-purple-300">+</span>
+                            </div>
+                        </summary>
+
+                        <div className="mt-3 text-white/70 leading-relaxed">
+                            {item.answer}
+                        </div>
+                    </details>
+                ))}
+            </div>
+        </section>
+    );
+}
+
+
 function mainImageForOg(img?: SanityImageType | undefined) {
     if (!img) return undefined;
     const url = urlFor(img).width(1200).height(630).fit("crop").auto("format").quality(80).url();
@@ -328,6 +373,26 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         articleSection: data.categories?.[0]?.title,
         publisher: { "@type": "Organization", name: "CalisHub", url: SITE_URL },
     };
+
+    const ldFaq =
+        data.faq && data.faq.length
+            ? {
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: data.faq
+                    .filter((x) => x?.question && x?.answer)
+                    .slice(0, 8)
+                    .map((x) => ({
+                        "@type": "Question",
+                        name: x.question,
+                        acceptedAnswer: {
+                            "@type": "Answer",
+                            text: x.answer,
+                        },
+                    })),
+            }
+            : null;
+
 
     return (
         <div className="min-h-screen bg-black text-white">
@@ -408,6 +473,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                                 <PortableText value={rest} components={portableComponents} />
                             </article>
 
+                            <FaqSection items={data.faq} />
+
                             {/* Related */}
                             {related.length > 0 && (
                                 <div className="border-t border-white/10 mt-14 pt-10">
@@ -468,6 +535,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <Script id="ld-article" type="application/ld+json" strategy="beforeInteractive">
                 {JSON.stringify(ldArticle)}
             </Script>
+
+            {ldFaq && (
+                <Script id="ld-faq" type="application/ld+json" strategy="beforeInteractive">
+                    {JSON.stringify(ldFaq)}
+                </Script>
+            )}
         </div>
     );
 }
@@ -535,3 +608,4 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         category: data.categories?.[0]?.title,
     };
 }
+
