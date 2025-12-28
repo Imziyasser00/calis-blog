@@ -17,39 +17,60 @@ export default function Hero() {
                 <div className="space-y-7">
                     <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70 backdrop-blur">
                         <span className="h-2 w-2 rounded-full bg-purple-500" />
-                        Tools + guides updated weekly
+                        Beginner-friendly tools & guides, updated weekly
                     </div>
 
                     <h1 className="text-4xl md:text-6xl font-bold leading-tight tracking-tight">
-            <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-purple-300 bg-clip-text text-transparent">
-              Calisthenics
-            </span>{" "}
-                        Workouts, Skill Progressions & Strength Tools
+                        <span className="bg-gradient-to-r from-purple-400 via-fuchsia-400 to-purple-300 bg-clip-text text-transparent">
+                            Start Calisthenics
+                        </span>{" "}
+                        Without Feeling Lost
                     </h1>
 
                     <p className="text-base md:text-lg text-white/70 max-w-xl">
-                        Build real strength with clear workouts, step-by-step progressions, and interactive tools that
-                        help you train smarter and track progress.
+                        Get your first real pull-up and a consistent routine with simple workouts, step-by-step
+                        progressions, and friendly tools that tell you exactly what to do next.
                     </p>
 
                     {/* Primary actions */}
                     <div className="flex flex-col sm:flex-row gap-3">
+                        {/* New first choice: I’m new */}
                         <Link
-                            href="/tools"
+                            href="/beginner-calisthenics"
                             className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-purple-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
                         >
-                            <BicepsFlexed className="h-4 w-4" />
-                            Explore Training Tools
+                            <Sparkles className="h-4 w-4" />
+                            I’m New – Start Here
                             <ArrowRight className="h-4 w-4" />
                         </Link>
 
+                        {/* Second: I already train / tools */}
                         <Link
-                            href="/beginner-calisthenics"
+                            href="/tools"
                             className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/90 backdrop-blur transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
                         >
-                            <Sparkles className="h-4 w-4" />
-                            Start Here (Beginner Guide)
+                            <BicepsFlexed className="h-4 w-4" />
+                            I Already Train – Use Tools
                         </Link>
+                    </div>
+
+                    {/* Lead magnet: Beginner Strength Passport */}
+                    <div className={"flex gap-2 items-center"}>
+
+                    🎁 <p className="text-s md:text-m text-white/60 max-w-md">
+                         Get the{" "}
+                        <span className="font-semibold text-white">
+                            Beginner Strength Passport
+                        </span>
+                        : 3-day starter plan, pull-up roadmap, and habit checklist.
+                        <Link
+                            href="#newsletter"
+                            className="ml-1 underline underline-offset-2 text-purple-400 font-bold decoration-purple-400 hover:text-white"
+                        >
+                            Send it to my email
+                        </Link>
+                        .
+                    </p>
                     </div>
 
                     {/* Quick links (reduces bounce) */}
@@ -67,30 +88,23 @@ export default function Hero() {
                         >
                             Workout Generator
                         </Link>
-                        <Link
-                            href="/exercises"
-                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10 transition"
-                        >
-                            Exercise Library
-                        </Link>
                     </div>
 
                     {/* Trust signals */}
                     <div className="flex flex-wrap gap-6 pt-2 text-sm">
                         <div className="flex items-center gap-2 text-white/70">
-                            <span className="font-semibold text-white">100+</span> tutorials
+                            <span className="font-semibold text-white">Beginner → Intermediate</span> paths you can follow
                         </div>
                         <div className="flex items-center gap-2 text-white/70">
-                            <span className="font-semibold text-white">Beginner → Advanced</span> progressions
+                            <span className="font-semibold text-white">Pull-up focused</span> progressions & drills
                         </div>
                         <div className="flex items-center gap-2 text-white/70">
-                            <span className="font-semibold text-white">No-equipment</span> options
+                            <span className="font-semibold text-white">No-equipment</span> options included
                         </div>
                     </div>
                 </div>
 
-                {/* Right: clean "Tool Preview" panel */}
-                {/* Right: colored "Tool Preview" panel */}
+                {/* Right: "Tool Preview" panel */}
                 <div className="relative">
                     <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 shadow-2xl backdrop-blur transition">
                         {/* panel glow */}
@@ -109,10 +123,11 @@ export default function Hero() {
                                         Start in 60 seconds
                                     </p>
                                     <h2 className="mt-2 text-xl md:text-2xl font-semibold">
-                                        Pick a tool and get a plan
+                                        Pick a tool and get your next step
                                     </h2>
                                     <p className="mt-2 text-sm text-white/70">
-                                        Use your current reps to estimate your level, then choose a progression path.
+                                        Use your current reps to get a realistic starting level, then choose the
+                                        progression path that fits your goal.
                                     </p>
                                 </div>
                             </div>
@@ -134,7 +149,7 @@ export default function Hero() {
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium">Max Rep Estimator</p>
-                                            <p className="text-xs text-white/60">Know your level instantly</p>
+                                            <p className="text-xs text-white/60">Know your current level in seconds</p>
                                         </div>
                                     </div>
 
@@ -157,7 +172,7 @@ export default function Hero() {
                                         </div>
                                         <div>
                                             <p className="text-sm font-medium">Workout Generator</p>
-                                            <p className="text-xs text-white/60">Strength, skills, fat loss</p>
+                                            <p className="text-xs text-white/60">Get a simple routine you can stick to</p>
                                         </div>
                                     </div>
 
@@ -166,10 +181,10 @@ export default function Hero() {
                             </div>
 
                             <div className="mt-5 flex items-center justify-between text-xs text-white/50">
-                                <span>No signup required</span>
+                                <span>No login needed to try the tools</span>
                                 <span className="rounded-full text-green-500 font-bold border border-white/10 bg-white/5 px-2 py-1">
-          Free
-        </span>
+                                    Free
+                                </span>
                             </div>
                         </div>
                     </div>
