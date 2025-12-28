@@ -1,0 +1,38 @@
+# ----------------------------
+# CalisHub Robots Rules
+# ----------------------------
+
+# Default: search engines may index public content
+User-agent: *
+Allow: /
+
+# Block private / non-public areas
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /api/private/
+
+# Sitemap for SEO discovery
+Sitemap: https://www.calishub.com/sitemap.xml
+
+# AI content usage preferences
+Content-Signal: search=yes, ai-input=no, ai-train=no
+
+# Known AI crawlers to block
+User-agent: GPTBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+# ----------------------------
+# End of file
+# ----------------------------
