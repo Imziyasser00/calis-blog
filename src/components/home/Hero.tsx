@@ -44,7 +44,7 @@ export default function Hero() {
                         </Link>
 
                         <Link
-                            href="http://localhost:3000/blog/how-to-build-a-beginner-friendly-calisthenics-routine-step-by-step-guide"
+                            href="/beginner-calisthenics"
                             className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/90 backdrop-blur transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
                         >
                             <Sparkles className="h-4 w-4" />
