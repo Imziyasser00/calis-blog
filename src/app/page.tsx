@@ -28,10 +28,11 @@ export default async function Home() {
                         <Hero />
                     </Suspense>
                 </section>
-                {/* Interactive Tools section (high on page) */}
-                <InteractiveToolsSection />
                 {/* Start Here Section */}
                 <StartHereSection />
+                {/* Interactive Tools section (high on page) */}
+                <InteractiveToolsSection />
+
                     {/* Topics */}
                 <TopicsTilesSection />
                 {/* Recent (next 6) */}
