@@ -10,7 +10,8 @@ export function InteractiveToolsSection() {
                         Interactive Tools
                     </h2>
                     <p className="mt-1 text-sm text-white/60 max-w-2xl">
-                        Modern calisthenics tools to assess your level, plan workouts, and progress intelligently.
+                        Simple tools that turn your current reps and goals into clear next steps.
+                        No login, no fluff — just numbers you can use.
                     </p>
                 </div>
 
@@ -39,7 +40,7 @@ export function InteractiveToolsSection() {
                     <div className="relative flex items-start justify-between">
                         <div className="inline-flex items-center gap-2 text-xs text-purple-300">
                             <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
-                            Live • Takes 60s
+                            Live • Takes ~60s
                         </div>
 
                         <div className="rounded-xl bg-purple-500/10 p-2 ring-1 ring-purple-500/20">
@@ -52,18 +53,19 @@ export function InteractiveToolsSection() {
                     </h3>
 
                     <p className="mt-2 text-sm text-white/65">
-                        Estimate your current strength level and get a clear progression direction.
+                        Plug in your best sets and get a realistic strength level plus a direction to progress
+                        without ego lifting.
                     </p>
 
                     <div className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
-                        Try it now
+                        Check my level
                         <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
                     </div>
                 </Link>
 
                 {/* Workout Generator */}
-                <a
-                    href="/workout-generator"
+                <Link
+                    href="/tools/workout-generator"
                     className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-fuchsia-500/40"
                 >
                     {/* glow */}
@@ -77,7 +79,7 @@ export function InteractiveToolsSection() {
                     <div className="relative flex items-start justify-between">
                         <div className="inline-flex items-center gap-2 text-xs text-purple-300">
                             <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
-                            Live • Takes 90s
+                            Live • Takes ~90s
                         </div>
 
                         <div className="rounded-xl bg-fuchsia-500/10 p-2 ring-1 ring-fuchsia-500/20">
@@ -90,14 +92,15 @@ export function InteractiveToolsSection() {
                     </h3>
 
                     <p className="mt-2 text-sm text-white/65">
-                        Auto-create workouts based on your goals, level, and available time.
+                        Choose your goal, days per week, and equipment, then get a simple routine you can actually
+                        stick to.
                     </p>
 
                     <div className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
-                        Try it now
+                        Generate my routine
                         <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
                     </div>
-                </a>
+                </Link>
             </div>
         </section>
     );
