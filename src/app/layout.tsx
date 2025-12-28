@@ -149,7 +149,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <>
                 <Script
                     async
-                    src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+                    src={`https://www.googletagmanager.com/gtag/js?id=G-F02CLSL67R`}
                     strategy="afterInteractive"
                 />
                 <Script id="ga4-init" strategy="afterInteractive">
