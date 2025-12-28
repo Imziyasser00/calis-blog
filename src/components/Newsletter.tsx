@@ -27,7 +27,10 @@ export default function Newsletter() {
             const res = await fetch("/api/subscribe", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({
+                    email,
+                    intent: "beginner-strength-passport", // optional: helps you tag this in backend
+                }),
             });
 
             const data = await res.json();
@@ -35,9 +38,6 @@ export default function Newsletter() {
 
             setIsSuccess(true);
             setEmail("");
-
-            // Optional: toast only on error; inline success is enough
-            // toast("Subscribed! 🎉", { description: "You’ll get our newest workouts & guides in your inbox." });
 
             setTimeout(() => setIsSuccess(false), 3500);
         } catch (err: any) {
@@ -61,7 +61,7 @@ export default function Newsletter() {
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="relative overflow-hidden rounded-2xl"
             >
-                {/* Softer gradient outline (less loud than conic) */}
+                {/* Gradient outline */}
                 <div className="absolute inset-0 rounded-2xl p-[1px] bg-gradient-to-r from-purple-500/50 via-fuchsia-500/30 to-purple-500/50 [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude] pointer-events-none" />
 
                 {/* Subtle animated shapes */}
@@ -87,21 +87,24 @@ export default function Newsletter() {
                         <div className="md:col-span-3 space-y-3">
                             <div className="inline-flex items-center gap-2 text-purple-300">
                                 <Sparkles className="h-4 w-4" />
-                                <span className="text-xs uppercase tracking-wider">Newsletter</span>
+                                <span className="text-xs uppercase tracking-wider">
+                                    Beginner Strength Passport
+                                </span>
                             </div>
 
                             <h2 className="text-2xl md:text-3xl font-bold">
-                                Get stronger with smart calisthenics tips.
+                                Get your 3-day starter plan & pull-up roadmap.
                             </h2>
 
                             <p className="text-white/65">
-                                Step-by-step progressions, technique cues, realistic programs, and gear guides.
-                                Clean, practical, and beginner-friendly.
+                                One simple PDF with a 3-day routine, a realistic roadmap to your first pull-up,
+                                and a habit checklist so you don&apos;t fall off after week one. You&apos;ll also
+                                get occasional beginner-friendly tips from CalisHub.
                             </p>
 
                             <div className="flex items-center gap-2 text-xs text-white/60">
                                 <ShieldCheck className="h-4 w-4" />
-                                <span>Privacy-friendly. One-click unsubscribe.</span>
+                                <span>Privacy-friendly. No spam. One-click unsubscribe.</span>
                             </div>
                         </div>
 
@@ -125,7 +128,6 @@ export default function Newsletter() {
                                         required
                                     />
 
-                                    {/* Focus shimmer (now works) */}
                                     <span className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-transparent transition group-focus-within:ring-purple-500/40" />
                                 </div>
 
@@ -139,12 +141,12 @@ export default function Newsletter() {
                                         disabled={isSubmitting}
                                         className="h-11 w-full cursor-pointer bg-purple-600 hover:bg-purple-700 disabled:opacity-80"
                                     >
-                                        {isSubmitting ? "Subscribing…" : "Subscribe"}
+                                        {isSubmitting ? "Sending…" : "Send my passport"}
                                     </Button>
                                 </motion.div>
 
                                 <p className="text-xs text-white/45">
-                                    Free. No spam. Unsubscribe anytime.
+                                    You&apos;ll receive the PDF by email and 1–2 helpful updates per month.
                                 </p>
 
                                 {/* Success inline message */}
@@ -159,7 +161,7 @@ export default function Newsletter() {
                                 >
                                     {isSuccess && (
                                         <div className="rounded-md border border-purple-500/30 bg-purple-500/10 px-3 py-2 text-purple-200">
-                                            🎉 You’re in! Check your inbox for a confirmation email.
+                                            🎉 Passport sent! Check your inbox (and spam folder) in the next minute.
                                         </div>
                                     )}
                                 </motion.div>
