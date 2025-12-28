@@ -32,12 +32,9 @@ export const metadata: Metadata = {
     description: DEFAULT_DESC,
     verification: {
         google: "AGMdB0VDBN5JY8pqAeLWaBU_sB4thxrCbC4I10s1W2M",
-        yandex: "XXXX",
-        other: { "msvalidate.01": ["BING_CODE"] },
     },
     alternates: {
         canonical: `${SITE_URL}/`,
-        types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
     },
     openGraph: {
         type: "website",
@@ -65,13 +62,6 @@ export const metadata: Metadata = {
     robots: {
         index: true,
         follow: true,
-        googleBot: {
-            index: true,
-            follow: true,
-            "max-video-preview": -1,
-            "max-image-preview": "large",
-            "max-snippet": -1,
-        },
     },
     manifest: "/site.webmanifest",
 };
@@ -79,73 +69,43 @@ export const metadata: Metadata = {
 export default function RootLayout({
                                        children,
                                    }: Readonly<{ children: React.ReactNode }>) {
-    // JSON-LD --------------------------------------------------------------------
-    const ldOrganization = {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        name: SITE_NAME,
-        url: SITE_URL,
-        logo: `${SITE_URL}/logo.png`,
-        sameAs: [],
-    };
-
-    const ldWebsite = {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        name: SITE_NAME,
-        url: SITE_URL,
-        potentialAction: {
-            "@type": "SearchAction",
-            target: `${SITE_URL}/search?q={search_term_string}`,
-            "query-input": "required name=search_term_string",
+    // JSON-LD Schema Markup
+    const jsonLdCombined = [
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: SITE_NAME,
+            url: SITE_URL,
+            logo: `${SITE_URL}/logo.png`,
         },
-    };
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: SITE_NAME,
+            url: SITE_URL,
+            potentialAction: {
+                "@type": "SearchAction",
+                target: `${SITE_URL}/search?q={search_term_string}`,
+                "query-input": "required name=search_term_string",
+            },
+        },
+    ];
 
-    const ldNav = {
-        "@context": "https://schema.org",
-        "@type": "SiteNavigationElement",
-        name: ["Beginner Guide", "Exercises", "Workouts", "Skills", "Blog"],
-        url: [
-            `${SITE_URL}/guides/beginner`,
-            `${SITE_URL}/exercises`,
-            `${SITE_URL}/workouts`,
-            `${SITE_URL}/skills`,
-            `${SITE_URL}/blog`,
-        ],
-    };
-
-    const jsonLdCombined = [ldOrganization, ldWebsite, ldNav];
-    const gaId = process.env.NEXT_PUBLIC_GA_ID;
+    const gaId = process.env.NEXT_PUBLIC_GA_ID; // <-- ADD THIS TO ENV
 
     return (
         <html lang="en">
         <head>
             <link rel="icon" href="/favicon.ico" sizes="any" />
             <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
-            <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png" />
-            <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png" />
-            <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png" />
-            <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png" />
-            <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png" />
-            <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png" />
-            <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png" />
-            <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png" />
-            <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png" />
-            <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png" />
-            <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-            <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
-            <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-            <link rel="manifest" href="/manifest.json" />
-            <meta name="msapplication-TileColor" content="#ffffff" />
-            <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
-            <meta name="theme-color" content="#ffffff" />
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
             <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
 
-            {/* GA4 – in head, but loaded after interactive */}
+            {/* ------------------ GOOGLE ANALYTICS ------------------ */}
             {gaId && (
                 <>
                     <Script
+                        async
                         src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
                         strategy="afterInteractive"
                     />
@@ -161,6 +121,8 @@ export default function RootLayout({
                     </Script>
                 </>
             )}
+            {/* -------------------------------------------------------- */}
+
         </head>
         <body
             className={`${geistSans.variable} ${geistMono.variable} bg-black overflow-x-hidden antialiased min-h-screen`}
@@ -171,6 +133,7 @@ export default function RootLayout({
         <Script id="ld-all" type="application/ld+json" strategy="afterInteractive">
             {JSON.stringify(jsonLdCombined)}
         </Script>
+
         <SpeedInsights />
         <Analytics />
         </body>
