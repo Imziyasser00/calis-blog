@@ -15,6 +15,7 @@ import {
     Wrench,
     Info,
 } from "lucide-react";
+import { FolderOpen } from "lucide-react";
 
 type NavItem = {
     href: string;
@@ -47,6 +48,7 @@ export default function Header() {
             { href: "/blog", label: "Blog", icon: BookOpen },
             { href: "/topics", label: "Topics", icon: Hash },
             { href: "/tools", label: "Tools", icon: Wrench },
+            { href: "/library", label: "Library", icon: FolderOpen },
             { href: "/about", label: "About", icon: Info },
             { href: "/contact", label: "Contact", icon: Mail, subtle: true },
         ],
