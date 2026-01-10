@@ -35,6 +35,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.9,
         },
         {
+            url: `${SITE_URL}/library`,
+            lastModified: new Date(),
+            changeFrequency: "weekly",
+            priority: 0.7,
+        },
+        {
+            url: `${SITE_URL}/library/pullup-passport`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.75,
+        },
+        {
             url: `${SITE_URL}/topics`,
             lastModified: new Date("2024-01-01"),
             changeFrequency: "weekly",
