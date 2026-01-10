@@ -5,6 +5,7 @@ import Script from "next/script";
 import Header from "@calis/components/site/Header";
 import Footer from "@calis/components/site/Footer";
 import Newsletter from "@calis/components/Newsletter";
+import DownloadGate from "@calis/components/library/DownloadGate";
 import {
     ArrowLeft,
     ArrowRight,
@@ -143,13 +144,11 @@ export default function PullupPassportPage() {
                             </p>
 
                             <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                                <Link
-                                    href={PDF_URL}
-                                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-purple-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
-                                >
-                                    <Download className="h-4 w-4" />
-                                    Download PDF
-                                </Link>
+                                <DownloadGate
+                                    pdfUrl={PDF_URL}
+                                    buttonClassName="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-purple-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
+                                />
+
 
                                 <a
                                     href="#inside"
@@ -322,13 +321,8 @@ export default function PullupPassportPage() {
                                     the newsletter to get new PDFs when they drop.
                                 </p>
                                 <div className="mt-4 flex flex-wrap gap-3">
-                                    <Link
-                                        href={PDF_URL}
-                                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-purple-700 transition"
-                                    >
-                                        <Download className="h-4 w-4" />
-                                        Download PDF
-                                    </Link>
+                                    <DownloadGate pdfUrl={PDF_URL} />
+
                                     <Link
                                         href="/library"
                                         className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white/85 hover:bg-white/10 transition"
