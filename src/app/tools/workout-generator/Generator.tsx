@@ -65,7 +65,8 @@ export default function Generator() {
                             logoPath: "/logo.png",
                             siteLine: "calishub.com — Train smart. Recover well. Stay consistent.",
                         })
-                    }                    onReset={() => {
+                    }
+                    onReset={() => {
                         setShowResult(false);
                         setStep(0);
                         setForm({ level: "", goal: "", days: 3, equipment: [] });

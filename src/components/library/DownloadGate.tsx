@@ -8,16 +8,30 @@ function isValidEmail(email: string) {
 }
 
 type Props = {
-    pdfUrl: string;
+    // Keep this for your Library page (static PDFs)
+    pdfUrl?: string;
+
+    // New: for generator dynamic PDF creation
+    onAfterUnlock?: () => Promise<void> | void;
+
     buttonClassName?: string;
     buttonLabel?: string;
+
+    // Optional copy tweak
+    title?: string;
+    subtitle?: string;
 };
+
 
 export default function DownloadGate({
                                          pdfUrl,
+                                         onAfterUnlock,
                                          buttonClassName,
                                          buttonLabel = "Download PDF",
+                                         title = "Download the PDF",
+                                         subtitle = "Enter your email to unlock your download.",
                                      }: Props) {
+
     const [open, setOpen] = useState(false);
     const [email, setEmail] = useState("");
     const [hp, setHp] = useState(""); // honeypot
@@ -64,12 +78,21 @@ export default function DownloadGate({
             }
 
             // download after successful save
-            const a = document.createElement("a");
-            a.href = pdfUrl;
-            a.download = "";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+            // download after successful save
+            // download after successful save
+            if (onAfterUnlock) {
+                await onAfterUnlock();
+            } else if (pdfUrl) {
+                const a = document.createElement("a");
+                a.href = pdfUrl;
+                a.download = "";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } else {
+                throw new Error("No download action provided.");
+            }
+
 
             setOpen(false);
             setEmail("");
@@ -108,10 +131,8 @@ export default function DownloadGate({
                     <div className="relative mx-auto mt-24 w-[92%] max-w-md rounded-2xl border border-white/10 bg-black/90 p-5 backdrop-blur">
                         <div className="flex items-start justify-between gap-3">
                             <div>
-                                <h3 className="text-lg font-semibold">Download the PDF</h3>
-                                <p className="mt-1 text-sm text-white/60">
-                                    Enter your email to get the Beginner Strength Passport.
-                                </p>
+                                <h3 className="text-lg font-semibold">{title}</h3>
+                                <p className="mt-1 text-sm text-white/60">{subtitle}</p>
                             </div>
 
                             <button
