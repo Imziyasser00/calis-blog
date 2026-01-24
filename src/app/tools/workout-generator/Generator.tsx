@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Stepper from "@calis/components/Stepper";
 import StepLevel from "@calis/components/steps/StepLevel";
@@ -11,8 +11,9 @@ import ResultHero from "@calis/components/ResultHero";
 import DayCard from "@calis/components/DayCard";
 import { createWorkoutPlan } from "@calis/lib/plan";
 import { downloadPlanPdf } from "@calis/lib/pdf";
-import type { FormData, Plan, Level, Goal } from "@calis/lib/types";
+import type { FormData, Plan } from "@calis/lib/types";
 import { Sparkles } from "lucide-react";
+import { trackEvent } from "@calis/lib/analytics/track";
 
 const steps = [
     { title: "Experience Level", description: "Select your current level" },
@@ -28,6 +29,38 @@ export default function Generator() {
     const [form, setForm] = useState<FormData>({ level: "", goal: "", days: 3, equipment: [] });
     const [plan, setPlan] = useState<Plan | null>(null);
 
+    // ---- analytics refs (to avoid spamming) ----
+    const viewedRef = useRef(false);
+    const lastStepRef = useRef<number>(-1);
+    const submittedRef = useRef(false);
+    const downloadedRef = useRef(false);
+
+    // ---- analytics: tool_view once per tab session ----
+    useEffect(() => {
+        if (viewedRef.current) return;
+        viewedRef.current = true;
+
+        const key = "ch_viewed_tool_workout_generator";
+        if (typeof window === "undefined") return;
+        if (sessionStorage.getItem(key)) return;
+        sessionStorage.setItem(key, "1");
+
+        trackEvent("tool_view", { tool: "workout_generator" });
+    }, []);
+
+    // ---- analytics: step navigation (optional but useful) ----
+    useEffect(() => {
+        if (lastStepRef.current === step) return;
+        lastStepRef.current = step;
+
+        trackEvent("tool_step_view", {
+            tool: "workout_generator",
+            step,
+            stepName: steps[step]?.title,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [step]);
+
     const canProceed = useMemo(() => {
         if (step === 0) return form.level !== "";
         if (step === 1) return form.goal !== "";
@@ -38,17 +71,49 @@ export default function Generator() {
 
     const next = () => (step < steps.length - 1 ? setStep((s) => s + 1) : generate());
     const back = () => step > 0 && setStep((s) => s - 1);
+
     const toggleEq = (id: string) =>
-        setForm((p) => ({ ...p, equipment: p.equipment.includes(id) ? p.equipment.filter((e) => e !== id) : [...p.equipment, id] }));
+        setForm((p) => ({
+            ...p,
+            equipment: p.equipment.includes(id) ? p.equipment.filter((e) => e !== id) : [...p.equipment, id],
+        }));
 
     function generate() {
+        // Prevent double submits if user clicks fast
+        if (isGenerating) return;
+
+        // ---- analytics: tool_submit (intent) ----
+        if (!submittedRef.current) {
+            submittedRef.current = true;
+            trackEvent("tool_submit", {
+                tool: "workout_generator",
+                level: form.level,
+                goal: form.goal,
+                days: form.days,
+                equipmentCount: form.equipment.length,
+                equipment: form.equipment, // keep if you want deep analytics
+            });
+        }
+
         setIsGenerating(true);
+
         setTimeout(() => {
             const p = createWorkoutPlan(form);
             setPlan(p);
             setShowResult(true);
             setIsGenerating(false);
             window.scrollTo({ top: 0, behavior: "smooth" });
+
+            // ---- analytics: tool_result ----
+            trackEvent("tool_result", {
+                tool: "workout_generator",
+                level: p.level,
+                goal: p.goal,
+                days: p.workouts.length,
+                title: p.title,
+                workoutTypes: Array.from(new Set(p.workouts.map((w) => w.type))),
+                totalExercises: p.workouts.reduce((acc, w) => acc + (w.exercises?.length ?? 0), 0),
+            });
         }, 900);
     }
 
@@ -60,16 +125,36 @@ export default function Generator() {
                     level={plan.level}
                     goal={plan.goal}
                     days={plan.workouts.length}
-                    onDownload={async () =>
-                        downloadPlanPdf(plan, {
+                    onDownload={async () => {
+                        // ---- analytics: pdf_download (conversion) ----
+                        if (!downloadedRef.current) {
+                            downloadedRef.current = true;
+                            trackEvent("pdf_download", {
+                                tool: "workout_generator",
+                                pdf: "workout_plan",
+                                level: plan.level,
+                                goal: plan.goal,
+                                days: plan.workouts.length,
+                            });
+                        }
+
+                        await downloadPlanPdf(plan, {
                             logoPath: "/logo.png",
                             siteLine: "calishub.com — Train smart. Recover well. Stay consistent.",
-                        })
-                    }
+                        });
+                    }}
                     onReset={() => {
+                        trackEvent("tool_reset", { tool: "workout_generator" });
+
                         setShowResult(false);
                         setStep(0);
                         setForm({ level: "", goal: "", days: 3, equipment: [] });
+                        setPlan(null);
+
+                        // allow new tracking for a new run
+                        submittedRef.current = false;
+                        downloadedRef.current = false;
+
                         window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
                 />

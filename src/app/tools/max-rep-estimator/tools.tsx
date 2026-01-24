@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@calis/components/ui/card"
 import { Input } from "@calis/components/ui/input"
@@ -12,6 +12,7 @@ import { toast } from "sonner"
 import * as RSlider from "@radix-ui/react-slider"
 import { motion } from "framer-motion"
 import Header from "@calis/components/site/Header"
+import { trackEvent } from "@calis/lib/analytics/track"
 
 // ---------- UI: Purple slider ----------
 function PurpleSlider({
@@ -256,6 +257,22 @@ function CalisthenicsStrengthTool() {
     const extraEmpty = extraWeightStr.trim() === ""
     const extraError = !extraEmpty && !isValidNonNegative(extraWeightStr)
 
+    // ---- analytics refs (typing protection) ----
+    const lastResultKeyRef = useRef<string>("")
+    const lastSentAtRef = useRef<number>(0)
+
+    // ---- analytics: tool_view (once per tab session) ----
+    useEffect(() => {
+        const key = "ch_viewed_tool_max_rep_estimator"
+        if (typeof window === "undefined") return
+        if (sessionStorage.getItem(key)) return
+        sessionStorage.setItem(key, "1")
+
+        trackEvent("tool_view", {
+            tool: "max_rep_estimator",
+        })
+    }, [])
+
     useEffect(() => {
         setReps((r) => Math.min(r, repMaxForExercise))
     }, [repMaxForExercise])
@@ -306,6 +323,27 @@ function CalisthenicsStrengthTool() {
             currentIndex: currentProgressionIndex,
             oneRMkg: oneRM,
         })
+
+        // ---- analytics: tool_result (throttled) ----
+        const now = Date.now()
+        const resultKey = `${selectedExercise}|${unit}|${bodyweightStr}|${extraWeightStr}|${reps}`
+
+        if (resultKey !== lastResultKeyRef.current && now - lastSentAtRef.current > 800) {
+            lastResultKeyRef.current = resultKey
+            lastSentAtRef.current = now
+
+            trackEvent("tool_result", {
+                tool: "max_rep_estimator",
+                exercise: selectedExercise,
+                unit,
+                reps,
+                bodyweight: bodyweightStr,
+                extraWeight: extraWeightStr,
+                strengthRatio: Number(strengthRatio.toFixed(2)),
+                level: level.name,
+                oneRMkg: Number(oneRM.toFixed(1)), // kg baseline
+            })
+        }
 
         if (level.name === "Elite" || level.name === "Legendary") {
             toast(`${level.badge} ${level.name} Calisthenics Athlete!`, {
@@ -375,9 +413,7 @@ function CalisthenicsStrengthTool() {
                                         aria-invalid={bwError}
                                         className={`bg-black ${bwError ? "border-red-500 focus-visible:ring-red-500" : "border-gray-700"}`}
                                     />
-                                    {bwError && (
-                                        <p className="text-xs text-red-400">Type a valid number please (must be &gt; 0).</p>
-                                    )}
+                                    {bwError && <p className="text-xs text-red-400">Type a valid number please (must be &gt; 0).</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Unit</Label>
@@ -398,7 +434,9 @@ function CalisthenicsStrengthTool() {
                                 <div className="flex items-center justify-between">
                                     <Label>Reps Performed</Label>
                                     <div className="flex items-center gap-2">
-                                        <Badge variant="outline" className="border-cyan-500 text-cyan-400">{reps}</Badge>
+                                        <Badge variant="outline" className="border-cyan-500 text-cyan-400">
+                                            {reps}
+                                        </Badge>
                                         <Input
                                             type="number"
                                             value={reps}
@@ -428,9 +466,7 @@ function CalisthenicsStrengthTool() {
                                     aria-invalid={extraError}
                                     className={`bg-black ${extraError ? "border-red-500 focus-visible:ring-red-500" : "border-gray-700"}`}
                                 />
-                                {extraError && (
-                                    <p className="text-xs text-red-400">Type a valid number please (must be ≥ 0).</p>
-                                )}
+                                {extraError && <p className="text-xs text-red-400">Type a valid number please (must be ≥ 0).</p>}
                                 {!extraError && <p className="text-xs text-gray-500">Leave empty for none.</p>}
                             </div>
                         </CardContent>
@@ -502,7 +538,8 @@ function CalisthenicsStrengthTool() {
                                 ) : (
                                     <div className="p-4 bg-purple-500/10 rounded-lg border border-purple-500/20">
                                         <p className="text-sm">
-                                            <strong>Final Progression Reached:</strong> You’re at the top of this path—time for harder variations or added weight.
+                                            <strong>Final Progression Reached:</strong> You’re at the top of this path—time for harder variations or added
+                                            weight.
                                         </p>
                                     </div>
                                 )}
