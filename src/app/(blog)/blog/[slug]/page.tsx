@@ -2,6 +2,9 @@ import "server-only";
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
+import TrackedLink from "@calis/components/analytics/TrackedLink";
+
+import BlogAnalytics from "@calis/components/analytics/BlogAnalytics";
 import { ArrowLeft, BrainCircuit, Clock } from "lucide-react";
 import {
     PortableText,
@@ -94,12 +97,15 @@ function StartHereCard({
         <div className="my-10 rounded-2xl border border-purple-500/30 bg-purple-500/5 p-6">
             <h3 className="text-lg font-semibold text-purple-300 mb-2">{title}</h3>
             <p className="text-white/70 mb-4">{description}</p>
-            <Link
+            <TrackedLink
                 href={href}
+                eventType="blog_cta_click"
+                metadata={{ cta: "start_here", href, title }}
                 className="inline-flex items-center gap-2 rounded-lg border border-purple-500 px-4 py-2 text-purple-300 hover:bg-purple-500/10"
             >
                 {cta} →
-            </Link>
+            </TrackedLink>
+
         </div>
     );
 }
@@ -397,7 +403,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     return (
         <div className="min-h-screen bg-black text-white">
             <Header />
-
+            <BlogAnalytics
+                slug={data.currentSlug}
+                title={data.title}
+                category={data.categories?.[0]?.title}
+                author={data.authorName}
+            />
             <main className="container mx-auto px-4 py-12">
                 <div className="mx-auto max-w-7xl">
                     <div className="grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-12">
