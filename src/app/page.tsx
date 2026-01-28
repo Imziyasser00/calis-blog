@@ -11,10 +11,38 @@ import Link from "next/link";
 import {InteractiveToolsSection} from "@calis/components/home/InteractiveToolsSection";
 import {StartHereSection} from "@calis/components/home/StartHereSection";
 import {TopicsTilesSection} from "@calis/components/home/TopicsSection";
+import type { Metadata } from "next";
 
 export const revalidate = 60; // ISR
 
-
+export const metadata: Metadata = {
+    title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
+    description:
+        "Learn calisthenics the smart way: step-by-step progressions, workouts, and realistic programs—from absolute beginner to advanced.",
+    alternates: { canonical: "https://www.calishub.com/" },
+    openGraph: {
+        type: "website",
+        url: "https://www.calishub.com/",
+        title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
+        description:
+            "Learn calisthenics the smart way: step-by-step progressions, workouts, and realistic programs—from absolute beginner to advanced.",
+        images: [
+            {
+                url: "https://www.calishub.com/og.jpg",
+                width: 1200,
+                height: 630,
+                alt: "Calisthenics Hub",
+            },
+        ],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
+        description:
+            "Learn calisthenics the smart way: step-by-step progressions, workouts, and realistic programs—from absolute beginner to advanced.",
+        images: ["https://www.calishub.com/og.jpg"],
+    },
+};
 export default async function Home() {
     const data = await getHomepageData(client);
 

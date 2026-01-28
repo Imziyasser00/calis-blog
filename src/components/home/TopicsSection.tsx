@@ -5,7 +5,8 @@ const TOPICS = [
     {
         title: "Beginner’s Guide",
         desc: "Start with the basics: form, routine, and progress.",
-        href: "/topics/beginner-s-guide",
+        // NOTE: Update this slug to your real route (avoid "beginner-s-guide")
+        href: "/topics/beginners-guide",
         icon: Sparkles,
         glow: "from-purple-500/25 via-fuchsia-500/10 to-transparent",
         borderHover: "hover:border-purple-500/40",
@@ -73,46 +74,44 @@ export function TopicsTilesSection() {
                 </Link>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" aria-label="Calisthenics topics">
                 {TOPICS.map((t) => {
                     const Icon = t.icon;
                     return (
-                        <Link
-                            key={t.title}
-                            href={t.href}
-                            className={[
-                                "group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-5 transition",
-                                t.borderHover,
-                            ].join(" ")}
-                        >
-                            {/* glow */}
-                            <div className="pointer-events-none absolute -inset-24 opacity-70">
-                                <div className={`absolute inset-0 bg-gradient-to-br ${t.glow}`} />
-                            </div>
-
-                            <div className="relative flex items-start justify-between gap-4">
-                                <div className="rounded-xl bg-white/5 p-2 ring-1 ring-white/10">
-                                    <Icon className="h-4 w-4 text-white/80 group-hover:text-white transition" />
+                        <li key={t.title}>
+                            <Link
+                                href={t.href}
+                                className={[
+                                    "group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-5 transition",
+                                    t.borderHover,
+                                ].join(" ")}
+                                aria-label={`Explore ${t.title} guides`}
+                            >
+                                {/* glow */}
+                                <div className="pointer-events-none absolute -inset-24 opacity-70">
+                                    <div className={`absolute inset-0 bg-gradient-to-br ${t.glow}`} />
                                 </div>
 
-                                <ArrowRight className="h-4 w-4 text-white/40 transition group-hover:text-white/80 group-hover:translate-x-0.5" />
-                            </div>
+                                <div className="relative flex items-start justify-between gap-4">
+                                    <div className="rounded-xl bg-white/5 p-2 ring-1 ring-white/10">
+                                        <Icon className="h-4 w-4 text-white/80 group-hover:text-white transition" />
+                                    </div>
 
-                            <h3 className="relative mt-4 text-lg font-semibold">
-                                {t.title}
-                            </h3>
+                                    <ArrowRight className="h-4 w-4 text-white/40 transition group-hover:text-white/80 group-hover:translate-x-0.5" />
+                                </div>
 
-                            <p className="relative mt-2 text-sm text-white/65">
-                                {t.desc}
-                            </p>
+                                <h3 className="relative mt-4 text-lg font-semibold">{t.title}</h3>
 
-                            <div className="relative mt-4 text-xs text-white/50">
-                                Explore guides →
-                            </div>
-                        </Link>
+                                <p className="relative mt-2 text-sm text-white/65">{t.desc}</p>
+
+                                <div className="relative mt-4 text-xs text-white/50">
+                                    Explore {t.title} guides →
+                                </div>
+                            </Link>
+                        </li>
                     );
                 })}
-            </div>
+            </ul>
         </section>
     );
 }

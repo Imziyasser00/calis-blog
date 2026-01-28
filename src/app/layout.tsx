@@ -4,8 +4,9 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@calis/components/ui/sonner";
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
@@ -22,23 +23,30 @@ export const viewport: Viewport = {
     viewportFit: "cover",
 };
 
+// -- SEO: Global metadata (baseline for all pages) ------------------------------
 export const metadata: Metadata = {
     metadataBase: new URL(SITE_URL),
     title: {
         default: "Calisthenics Hub — Tutorials, Progressions & Workouts",
         template: "%s — Calisthenics Hub",
     },
-
+    applicationName: SITE_NAME,
     description: DEFAULT_DESC,
+
+    // Optional but helpful for SERP snippets (harmless if you don't use it elsewhere)
+    category: "Fitness",
+
     verification: {
         google: "AGMdB0VDBN5JY8pqAeLWaBU_sB4thxrCbC4I10s1W2M",
         yandex: "XXXX",
-        other: { "msvalidate.01": ["BING_CODE"] }
+        other: { "msvalidate.01": ["BING_CODE"] },
     },
+
     alternates: {
         canonical: `${SITE_URL}/`,
         types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
     },
+
     openGraph: {
         type: "website",
         url: `${SITE_URL}/`,
@@ -56,12 +64,14 @@ export const metadata: Metadata = {
         ],
         locale: "en_US",
     },
+
     twitter: {
         card: "summary_large_image",
         title: "Calisthenics Hub — Tutorials, Progressions & Workouts",
         description: DEFAULT_DESC,
         images: [`${SITE_URL}/og.jpg`],
     },
+
     robots: {
         index: true,
         follow: true,
@@ -73,105 +83,90 @@ export const metadata: Metadata = {
             "max-snippet": -1,
         },
     },
-    manifest: "/site.webmanifest",
 
+    // If you have a real webmanifest, keep it. If not, remove to avoid 404.
+    manifest: "/site.webmanifest",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-    // ---- JSON-LD: Organization + WebSite (+ optional SiteNavigation) -----------
+export default function RootLayout({
+                                       children,
+                                   }: Readonly<{ children: React.ReactNode }>) {
+    // ---- JSON-LD: Organization + WebSite ---------------------------------------
     const ldOrganization = {
         "@context": "https://schema.org",
         "@type": "Organization",
         name: SITE_NAME,
         url: SITE_URL,
-        logo: `${SITE_URL}/logo.png`, // optional: add public/logo.png (512x512+)
+        logo: `${SITE_URL}/logo.png`, // ensure this exists in /public
         sameAs: [
-            // add your real profiles to boost E-E-A-T
+            // Add real links if you have them (leave empty if not)
+            // "https://www.tiktok.com/@yourhandle",
             // "https://www.instagram.com/yourhandle",
             // "https://www.youtube.com/@yourchannel",
-            // "https://twitter.com/yourhandle"
         ],
     };
 
+    // Only keep SearchAction if /search actually exists and returns indexable results
     const ldWebsite = {
         "@context": "https://schema.org",
         "@type": "WebSite",
         name: SITE_NAME,
         url: SITE_URL,
-        potentialAction: {
-            "@type": "SearchAction",
-            target: `${SITE_URL}/search?q={search_term_string}`,
-            "query-input": "required name=search_term_string",
-        },
+        // Uncomment ONLY if you have /search working
+        // potentialAction: {
+        //   "@type": "SearchAction",
+        //   target: `${SITE_URL}/search?q={search_term_string}`,
+        //   "query-input": "required name=search_term_string",
+        // },
     };
 
-    // (Optional) Site navigation markup – update the names/urls to your real top nav
-    const ldNav = {
-        "@context": "https://schema.org",
-        "@type": "SiteNavigationElement",
-        name: ["Beginner Guide", "Exercises", "Workouts", "Skills", "Blog"],
-        url: [
-            `${SITE_URL}/guides/beginner`,
-            `${SITE_URL}/exercises`,
-            `${SITE_URL}/workouts`,
-            `${SITE_URL}/skills`,
-            `${SITE_URL}/blog`,
-        ],
-    };
-
-    const jsonLdCombined = [ldOrganization, ldWebsite, ldNav];
+    const jsonLdCombined = [ldOrganization, ldWebsite];
 
     return (
         <html lang="en">
         <head>
-            <link rel="icon" href="/favicon.ico" sizes="any"/>
-            <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous"/>
-            <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png"/>
-            <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png"/>
-            <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png"/>
-            <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png"/>
-            <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png"/>
-            <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png"/>
-            <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png"/>
-            <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png"/>
-            <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png"/>
-            <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png"/>
-            <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
-            <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png"/>
-            <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
-            <link rel="manifest" href="/manifest.json"/>
-            <meta name="msapplication-TileColor" content="#ffffff"/>
-            <meta name="msapplication-TileImage" content="/ms-icon-144x144.png"/>
-            <meta name="theme-color" content="#ffffff"/>
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>
-            <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous"/>
+            {/* Icons (keep what exists, remove broken ones to avoid 404 noise) */}
+            <link rel="icon" href="/favicon.ico" sizes="any" />
+            <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png" />
+            <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+            <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+            <meta name="theme-color" content="#ffffff" />
 
-            <>
-                <Script
-                    async
-                    src={`https://www.googletagmanager.com/gtag/js?id=G-F02CLSL67R`}
-                    strategy="afterInteractive"
-                />
-                <Script id="ga4-init" strategy="afterInteractive">
-                    {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', 'G-F02CLSL67R', {
-                  page_path: window.location.pathname,
-                });
-              `}
-                </Script>
-            </>
+            {/* Performance: Sanity CDN preconnect is good */}
+            <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
+
+            {/* If you actually use /manifest.json keep it, otherwise delete */}
+            <link rel="manifest" href="/manifest.json" />
+
+            {/* GA4 */}
+            <Script
+                async
+                src="https://www.googletagmanager.com/gtag/js?id=G-F02CLSL67R"
+                strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+                {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-F02CLSL67R', {
+              page_path: window.location.pathname,
+            });
+          `}
+            </Script>
+
+            {/* Structured data: render early in HTML */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdCombined) }}
+            />
         </head>
-        <body className={`${geistSans.variable} ${geistMono.variable} bg-black overflow-x-hidden antialiased min-h-screen`}>
+
+        <body
+            className={`${geistSans.variable} ${geistMono.variable} bg-black overflow-x-hidden antialiased min-h-screen`}
+        >
         {children}
         <Toaster />
-
-
-        <Script id="ld-all" type="application/ld+json" strategy="afterInteractive">
-            {JSON.stringify(jsonLdCombined)}
-        </Script>
         <SpeedInsights />
         <Analytics />
         </body>
