@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Gauge, Wand2 } from "lucide-react";
+import { ArrowRight, Gauge, Wand2, Activity, Sparkles } from "lucide-react";
 
 export function InteractiveToolsSection() {
     return (
@@ -11,7 +11,7 @@ export function InteractiveToolsSection() {
                     </h2>
                     <p className="mt-1 text-sm text-white/60 max-w-2xl">
                         Simple tools that turn your current reps and goals into clear next steps.
-                        No login, no fluff — just numbers you can use.
+                        No login, no fluff , just numbers you can use.
                     </p>
                 </div>
 
@@ -23,18 +23,61 @@ export function InteractiveToolsSection() {
                 </Link>
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Pull-Up Diagnostic (NEW) */}
+                <Link
+                    href="/tools/pull-up-diagnostic"
+                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-cyan-500/40"
+                >
+                    {/* glow */}
+                    <div className="pointer-events-none absolute -inset-20 opacity-0 group-hover:opacity-100 transition duration-700">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(34,211,238,0.25),transparent_60%)]" />
+                    </div>
+
+                    {/* top gradient line */}
+                    <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-cyan-500/0 via-cyan-500/60 to-cyan-500/0 opacity-0 group-hover:opacity-100 transition" />
+
+                    <div className="relative flex items-start justify-between">
+                        <div className="flex items-center gap-2">
+                            <div className="inline-flex items-center gap-2 text-xs text-cyan-200">
+                                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
+                                Live • Takes ~45s
+                            </div>
+
+                            {/* NEW badge */}
+                            <span className="inline-flex items-center gap-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[11px] text-cyan-200">
+                <Sparkles className="h-3 w-3" />
+                New
+              </span>
+                        </div>
+
+                        <div className="rounded-xl bg-cyan-500/10 p-2 ring-1 ring-cyan-500/20">
+                            <Activity className="h-4 w-4 text-cyan-200" />
+                        </div>
+                    </div>
+
+                    <h3 className="mt-4 text-xl font-semibold group-hover:text-cyan-200 transition-colors">
+                        Pull-Up Diagnostic
+                    </h3>
+
+                    <p className="mt-2 text-sm text-white/65">
+                        Find your bottleneck (grip, lats, start, top range) and get the next best drill to fix it.
+                    </p>
+
+                    <div className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
+                        Diagnose my pull-up
+                        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                    </div>
+                </Link>
                 {/* Max Rep Estimator */}
                 <Link
                     href="/tools/max-rep-estimator"
                     className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-purple-500/40"
                 >
-                    {/* glow */}
                     <div className="pointer-events-none absolute -inset-20 opacity-0 group-hover:opacity-100 transition duration-700">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(168,85,247,0.25),transparent_60%)]" />
                     </div>
 
-                    {/* top gradient line */}
                     <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-purple-500/0 via-purple-500/60 to-purple-500/0 opacity-0 group-hover:opacity-100 transition" />
 
                     <div className="relative flex items-start justify-between">
@@ -68,12 +111,10 @@ export function InteractiveToolsSection() {
                     href="/tools/workout-generator"
                     className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-fuchsia-500/40"
                 >
-                    {/* glow */}
                     <div className="pointer-events-none absolute -inset-20 opacity-0 group-hover:opacity-100 transition duration-700">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(236,72,153,0.25),transparent_60%)]" />
                     </div>
 
-                    {/* top gradient line */}
                     <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-fuchsia-500/0 via-fuchsia-500/60 to-fuchsia-500/0 opacity-0 group-hover:opacity-100 transition" />
 
                     <div className="relative flex items-start justify-between">
@@ -101,6 +142,8 @@ export function InteractiveToolsSection() {
                         <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
                     </div>
                 </Link>
+
+
             </div>
         </section>
     );

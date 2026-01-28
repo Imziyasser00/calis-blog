@@ -60,7 +60,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     className="text-white/60 hover:text-white transition"
-                                    href="/blog/how-to-build-a-beginner-friendly-calisthenics-routine-step-by-step-guide"
+                                    href="/beginner-calisthenics"
                                 >
                                     Beginner Guide
                                 </Link>
@@ -75,11 +75,7 @@ export default function Footer() {
                                     Workout Generator
                                 </Link>
                             </li>
-                            <li>
-                                <Link className="text-white/60 hover:text-white transition" href="/topics/exercises-progressions">
-                                    Exercise Progressions
-                                </Link>
-                            </li>
+
                         </ul>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, BicepsFlexed, Sparkles, Gauge, ClipboardList } from "lucide-react";
+import { ArrowRight, BicepsFlexed, Sparkles, Gauge, ClipboardList, Activity } from "lucide-react";
 
 export default function Hero() {
     return (
@@ -133,6 +133,35 @@ export default function Hero() {
                             </div>
 
                             <div className="mt-6 grid gap-3">
+                                {/* Row 0 (NEW) */}
+                                <Link
+                                    href="/tools/pull-up-diagnostic"
+                                    className="group/item relative overflow-hidden flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3 transition hover:border-cyan-500/40 hover:bg-black/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+                                >
+                                    {/* row glow */}
+                                    <div className="pointer-events-none absolute -inset-16 opacity-0 group-hover/item:opacity-100 transition duration-700">
+                                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(34,211,238,0.20),transparent_60%)]" />
+                                    </div>
+
+                                    <div className="relative flex items-center gap-3">
+                                        <div className="rounded-xl bg-cyan-500/10 p-2 ring-1 ring-cyan-500/20">
+                                            <Activity className="h-4 w-4 text-cyan-200" />
+                                        </div>
+
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-sm font-medium">Pull-Up Diagnostic</p>
+                                                <span className="inline-flex items-center rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-semibold text-cyan-200">
+          NEW
+        </span>
+                                            </div>
+                                            <p className="text-xs text-white/60">Find your bottleneck and the best next drill</p>
+                                        </div>
+                                    </div>
+
+                                    <ArrowRight className="relative h-4 w-4 text-white/60 transition group-hover/item:translate-x-0.5 group-hover/item:text-white/80" />
+                                </Link>
+
                                 {/* Row 1 */}
                                 <Link
                                     href="/tools/max-rep-estimator"

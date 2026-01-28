@@ -13,6 +13,8 @@ import * as RSlider from "@radix-ui/react-slider"
 import { motion } from "framer-motion"
 import Header from "@calis/components/site/Header"
 import { trackEvent } from "@calis/lib/analytics/track"
+import Newsletter from "@calis/components/Newsletter";
+import Footer from "@calis/components/site/Footer"
 
 // ---------- UI: Purple slider ----------
 function PurpleSlider({
@@ -639,7 +641,14 @@ export default function ToolPage() {
                     </Link>
                 </div>
                 <CalisthenicsStrengthTool />
+                <div className="mt-12   ">
+
+                <Newsletter />
+                </div>
+
             </main>
+            <Footer />
+
         </div>
     )
 }
