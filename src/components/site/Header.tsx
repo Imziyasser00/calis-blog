@@ -4,17 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@calis/components/ui/button";
-import {
-    Menu,
-    X,
-    Sparkles,
-    Mail,
-    ArrowRight,
-    BookOpen,
-    Hash,
-    Wrench,
-    Info,
-} from "lucide-react";
+import { Menu, X, Sparkles, Mail, ArrowRight, BookOpen, Hash, Wrench, Info } from "lucide-react";
 import { FolderOpen } from "lucide-react";
 
 type NavItem = {
@@ -43,7 +33,8 @@ export default function Header() {
 
     const navItems: NavItem[] = useMemo(
         () => [
-            { href: "/", label: "Home" },
+            // Consider removing Home since logo already links to "/"
+            // { href: "/", label: "Home" },
             { href: "/beginner-calisthenics", label: "Start Here", icon: Sparkles },
             { href: "/blog", label: "Blog", icon: BookOpen },
             { href: "/topics", label: "Topics", icon: Hash },
@@ -55,8 +46,7 @@ export default function Header() {
         []
     );
 
-    const isActive = (href: string) =>
-        pathname === href || (href !== "/" && pathname.startsWith(href));
+    const isActive = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(href));
 
     return (
         <header className="sticky top-0 z-50 w-full p-2 border-b border-white/10 bg-black">
@@ -64,8 +54,9 @@ export default function Header() {
                 {/* Logo */}
                 <Link
                     href="/"
+                    title="Calisthenics Hub"
                     className="group inline-flex items-center rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-lg font-bold tracking-tight text-white/90 hover:bg-white/10 transition"
-                    aria-label="CalisHub home"
+                    aria-label="Go to Calisthenics Hub homepage"
                 >
                     <span className="text-white">Calis</span>
                     <span className="ml-1 bg-gradient-to-r from-purple-400 via-fuchsia-400 to-purple-300 bg-clip-text text-transparent">
@@ -74,7 +65,7 @@ export default function Header() {
                 </Link>
 
                 {/* Desktop nav */}
-                <nav className="hidden md:flex items-center gap-1 text-sm">
+                <nav aria-label="Primary navigation" className="hidden md:flex items-center gap-1 text-sm">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const active = isActive(item.href);
@@ -90,6 +81,7 @@ export default function Header() {
                                         ? "text-white border border-purple-500/30 bg-purple-500/10"
                                         : "border border-transparent hover:border-white/10 hover:bg-white/5",
                                 ].join(" ")}
+                                aria-current={active ? "page" : undefined}
                             >
                                 {Icon ? <Icon className="h-4 w-4 text-purple-300/90" /> : null}
                                 {item.label}
@@ -100,7 +92,7 @@ export default function Header() {
 
                 {/* Desktop CTA */}
                 <div className="hidden sm:flex items-center gap-2">
-                    <Link href="/#newsletter">
+                    <Link href="/#newsletter" prefetch={false}>
                         <Button
                             variant="outline"
                             className="h-9 px-3 border-purple-500/60 text-purple-300 bg-black hover:bg-purple-950/50 hover:text-white"
@@ -116,6 +108,7 @@ export default function Header() {
                     onClick={() => setOpen((v) => !v)}
                     aria-label="Toggle menu"
                     aria-expanded={open}
+                    aria-controls="mobile-menu"
                 >
                     {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                 </button>
@@ -123,7 +116,7 @@ export default function Header() {
 
             {/* Mobile FULLSCREEN menu */}
             {open && (
-                <div className="md:hidden fixed inset-0 z-[60] bg-black">
+                <div id="mobile-menu" className="md:hidden fixed inset-0 z-[60] bg-black" role="dialog" aria-modal="true">
                     {/* top bar */}
                     <div className="h-14 px-3 flex items-center justify-between border-b border-white/10">
                         <span className="text-sm text-white/70">Menu</span>
@@ -137,7 +130,7 @@ export default function Header() {
                     </div>
 
                     {/* content */}
-                    <div className="px-3 py-4 space-y-2">
+                    <nav aria-label="Mobile navigation" className="px-3 py-4 space-y-2">
                         {navItems.map((item) => {
                             const Icon = item.icon;
                             const active = isActive(item.href);
@@ -153,6 +146,7 @@ export default function Header() {
                                             : "border border-white/10 bg-white/5 text-white/85 hover:bg-white/10",
                                     ].join(" ")}
                                     onClick={() => setOpen(false)}
+                                    aria-current={active ? "page" : undefined}
                                 >
                                     <div className="flex items-center gap-3">
                                         {Icon ? (
@@ -171,16 +165,12 @@ export default function Header() {
                         })}
 
                         <div className="pt-3">
-                            <Link href="/#newsletter" onClick={() => setOpen(false)}>
-                                <Button className="w-full h-11 text-base bg-purple-600 hover:bg-purple-700">
-                                    Subscribe
-                                </Button>
+                            <Link href="/#newsletter" prefetch={false} onClick={() => setOpen(false)}>
+                                <Button className="w-full h-11 text-base bg-purple-600 hover:bg-purple-700">Subscribe</Button>
                             </Link>
-                            <p className="mt-2 text-xs text-white/50 px-1">
-                                No spam. One-click unsubscribe.
-                            </p>
+                            <p className="mt-2 text-xs text-white/50 px-1">No spam. One-click unsubscribe.</p>
                         </div>
-                    </div>
+                    </nav>
                 </div>
             )}
         </header>

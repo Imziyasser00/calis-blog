@@ -26,24 +26,24 @@ export function StartHereSection() {
                             </h2>
 
                             <p className="mt-2 text-white/60">
-                                Stop guessing. Use a beginner-friendly path that tells you what to train, how often,
-                                and how to progress toward your first clean pull-up without wrecking your joints.
+                                Stop guessing. Use a beginner-friendly path that tells you what to train, how often, and how to
+                                progress toward your first clean pull-up without wrecking your joints.
                             </p>
 
                             {/* mini trust points */}
                             <div className="mt-5 flex flex-wrap gap-3 text-sm text-white/60">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                  <ShieldCheck className="h-4 w-4 text-purple-300" />
+                  joint-friendly progressions
+                </span>
                                 <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                                    <ShieldCheck className="h-4 w-4 text-purple-300" />
-                                    joint-friendly progressions
-                                </span>
+                  <ClipboardCheck className="h-4 w-4 text-purple-300" />
+                  weekly plan included
+                </span>
                                 <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                                    <ClipboardCheck className="h-4 w-4 text-purple-300" />
-                                    weekly plan included
-                                </span>
-                                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                                    <Gauge className="h-4 w-4 text-purple-300" />
-                                    track your level
-                                </span>
+                  <Gauge className="h-4 w-4 text-purple-300" />
+                  track your level
+                </span>
                             </div>
 
                             <div className="mt-6 flex flex-col sm:flex-row gap-3">
@@ -67,10 +67,11 @@ export function StartHereSection() {
                             {/* Soft plug for the passport */}
                             <p className="mt-3 text-xs text-white/55">
                                 Prefer something you can save? Get the{" "}
-                                <span className="font-medium text-white">Beginner Strength Passport</span>{" "}
-                                (3-day starter plan + pull-up roadmap){" "}
+                                <span className="font-medium text-white">Beginner Strength Passport</span> (3-day starter plan + pull-up
+                                roadmap){" "}
                                 <Link
-                                    href="#newsletter"
+                                    href="/#newsletter"
+                                    prefetch={false}
                                     className="underline underline-offset-2 decoration-purple-400 hover:text-white"
                                 >
                                     sent to your email
