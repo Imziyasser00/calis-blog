@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server"
 import { serverClient } from "@calis/lib/sanity.server"
 import crypto from "crypto"
+import { sendWelcomeEmail } from "@calis/lib/mail"
 
-export const dynamic = "force-dynamic" // avoid any caching
+export const dynamic = "force-dynamic"
 
 type Body = { email?: string }
 
@@ -12,14 +13,12 @@ function isEmail(v: string) {
 
 function idForEmail(email: string) {
     const norm = email.trim().toLowerCase()
-    // deterministic id so we can upsert/patch cleanly
     const hash = crypto.createHash("sha256").update(norm).digest("hex").slice(0, 24)
     return `subscriber.${hash}`
 }
 
 function getClientIp(req: Request) {
     const xf = req.headers.get("x-forwarded-for") || ""
-    // x-forwarded-for can be "ip, ip, ip"
     const first = xf.split(",")[0]?.trim()
     const xri = req.headers.get("x-real-ip") || ""
     return first || xri || ""
@@ -27,56 +26,66 @@ function getClientIp(req: Request) {
 
 function maskIp(ip: string) {
     if (!ip) return ""
-    // IPv6?
     if (ip.includes(":")) {
-        // Keep first few hextets; mask the rest
         const parts = ip.split(":")
         const kept = parts.slice(0, 4).join(":")
         return `${kept}::/64`
     }
-    // IPv4
     return ip.replace(/\.\d+$/, ".***")
 }
 
 export async function POST(req: Request) {
     try {
         const { email }: Body = await req.json()
+
         if (!email || !isEmail(email)) {
             return NextResponse.json({ ok: false, error: "Invalid email" }, { status: 400 })
         }
 
+        const normalizedEmail = email.trim().toLowerCase()
         const now = new Date().toISOString()
-        const _id = idForEmail(email)
+        const _id = idForEmail(normalizedEmail)
+
         const ipRaw = getClientIp(req)
         const maskedIp = maskIp(ipRaw)
         const userAgent = (req.headers.get("user-agent") || "").slice(0, 500)
 
-        // Try to create the doc if it doesn't exist
         const baseDoc = {
             _id,
             _type: "subscriber",
-            email: email.trim().toLowerCase(),
+            email: normalizedEmail,
             createdAt: now,
             source: "newsletter",
             ip: maskedIp,
             userAgent,
+            welcomeSentAt: null,
         }
 
-        // First attempt: create if not exists (idempotent)
-        const created = await serverClient.createIfNotExists(baseDoc)
+        // Create if not exists (idempotent)
+        const existingOrCreated = await serverClient.createIfNotExists(baseDoc)
 
-        // If it already existed, created === existing doc.
-        // Ensure ip / userAgent are set (in case early versions didn’t include them)
+        // Patch missing telemetry if needed
         const needsPatch =
-            (!created.ip && maskedIp) || (!created.userAgent && userAgent)
+            (!existingOrCreated.ip && maskedIp) ||
+            (!existingOrCreated.userAgent && userAgent)
 
         if (needsPatch) {
             await serverClient
                 .patch(_id)
                 .set({
-                    ip: created.ip || maskedIp,
-                    userAgent: created.userAgent || userAgent,
+                    ip: existingOrCreated.ip || maskedIp,
+                    userAgent: existingOrCreated.userAgent || userAgent,
                 })
+                .commit()
+        }
+
+        // ✅ Send welcome email ONLY ONCE
+        if (!existingOrCreated.welcomeSentAt) {
+            await sendWelcomeEmail(normalizedEmail)
+
+            await serverClient
+                .patch(_id)
+                .set({ welcomeSentAt: now })
                 .commit()
         }
 
