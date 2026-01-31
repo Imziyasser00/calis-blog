@@ -3,13 +3,22 @@ import { client } from "@calis/lib/sanity.client";
 
 const SITE_URL = "https://www.calishub.com";
 
-const POSTS_GROQ = /* groq */ `
+const POSTS_GROQ =  `
 *[_type == "post" && defined(slug.current) && !(_id in path("drafts.**"))]{
   "slug": slug.current,
   publishedAt,
   _updatedAt
 }
 `;
+
+const ANSWERS_GROQ =  `
+*[_type == "answerPage" && defined(slug.current) && !(_id in path("drafts.**")) && !(seo.noindex == true)]{
+  "slug": slug.current,
+  publishedAt,
+  _updatedAt
+}
+`;
+
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // -----------------
@@ -34,6 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             changeFrequency: "daily",
             priority: 0.9,
         },
+
         {
             url: `${SITE_URL}/library`,
             lastModified: new Date(),
@@ -77,6 +87,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.6,
         },
         {
+            url: `${SITE_URL}/answers`,
+            lastModified: new Date(),
+            changeFrequency: "daily",
+            priority: 0.85,
+        },
+
+        {
             url: `${SITE_URL}/about`,
             lastModified: new Date(),
             changeFrequency: "yearly",
@@ -106,6 +123,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         _updatedAt?: string;
     }[] = await client.fetch(POSTS_GROQ);
 
+    const answers: {
+        slug: string;
+        publishedAt?: string;
+        _updatedAt?: string;
+    }[] = await client.fetch(ANSWERS_GROQ);
+
+
     const postRoutes: MetadataRoute.Sitemap = posts.map((p) => ({
         url: `${SITE_URL}/blog/${p.slug}`,
         lastModified: new Date(p._updatedAt ?? p.publishedAt ?? "2024-01-01"),
@@ -113,5 +137,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
     }));
 
-    return [...staticRoutes, ...postRoutes];
+    const answerRoutes: MetadataRoute.Sitemap = answers.map((a) => ({
+        url: `${SITE_URL}/answers/${a.slug}`,
+        lastModified: new Date(a._updatedAt ?? a.publishedAt ?? "2024-01-01"),
+        changeFrequency: "monthly",
+        priority: 0.75,
+    }));
+
+    return [...staticRoutes, ...postRoutes, ...answerRoutes];
 }
