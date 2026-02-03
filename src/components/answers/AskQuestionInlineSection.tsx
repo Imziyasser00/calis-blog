@@ -9,13 +9,17 @@ export default function AskQuestionInlineSection({
 }) {
     const [loading, setLoading] = useState(false);
     const [done, setDone] = useState<null | "ok" | "err">(null);
+    const [error, setError] = useState<string>("");
 
     async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setLoading(true);
         setDone(null);
+        setError("");
 
-        const fd = new FormData(e.currentTarget);
+        const form = e.currentTarget; // ✅ capture before await
+        const fd = new FormData(form);
+
         const question = String(fd.get("question") || "");
         const email = String(fd.get("email") || "");
         const topic = String(fd.get("topic") || defaultTopic || "");
@@ -32,11 +36,17 @@ export default function AskQuestionInlineSection({
                 }),
             });
 
-            if (!res.ok) throw new Error("bad");
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok || !data?.ok) {
+                throw new Error(data?.error || `Request failed (${res.status})`);
+            }
+
             setDone("ok");
-            e.currentTarget.reset();
-        } catch {
+            form.reset(); // ✅ safe
+        } catch (err: any) {
             setDone("err");
+            setError(err?.message || "Something went wrong. Try again.");
         } finally {
             setLoading(false);
         }
@@ -72,6 +82,7 @@ export default function AskQuestionInlineSection({
                         placeholder="Topic (optional)"
                         className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/85 placeholder:text-white/35 outline-none focus:ring-2 focus:ring-purple-500/60"
                     />
+
                     <input
                         type="email"
                         name="email"
@@ -89,10 +100,15 @@ export default function AskQuestionInlineSection({
                 </button>
 
                 {done === "ok" && (
-                    <p className="text-sm text-white/70">✅ Received. We’ll post an answer soon.</p>
+                    <p className="text-sm text-white/70">
+                        ✅ Received. We’ll post an answer soon.
+                    </p>
                 )}
+
                 {done === "err" && (
-                    <p className="text-sm text-white/60">❌ Something went wrong. Try again.</p>
+                    <p className="text-sm text-white/60">
+                        ❌ {error}
+                    </p>
                 )}
             </form>
         </section>

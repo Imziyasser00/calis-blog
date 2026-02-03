@@ -5,13 +5,17 @@ import { useState } from "react";
 export default function AskQuestionForm() {
     const [loading, setLoading] = useState(false);
     const [done, setDone] = useState<null | "ok" | "err">(null);
+    const [error, setError] = useState<string>("");
 
     async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setLoading(true);
         setDone(null);
+        setError("");
 
-        const fd = new FormData(e.currentTarget);
+        const form = e.currentTarget; // ✅ capture it BEFORE await
+        const fd = new FormData(form);
+
         const question = String(fd.get("question") || "");
         const email = String(fd.get("email") || "");
         const topic = String(fd.get("topic") || "");
@@ -23,11 +27,17 @@ export default function AskQuestionForm() {
                 body: JSON.stringify({ question, email, topic, source: "answers-form" }),
             });
 
-            if (!res.ok) throw new Error("bad");
+            const data = await res.json().catch(() => null);
+
+            if (!res.ok || !data?.ok) {
+                throw new Error(data?.error || `Request failed (${res.status})`);
+            }
+
             setDone("ok");
-            e.currentTarget.reset();
-        } catch {
+            form.reset(); // ✅ safe now
+        } catch (err: any) {
             setDone("err");
+            setError(err?.message || "Something went wrong.");
         } finally {
             setLoading(false);
         }
@@ -65,14 +75,11 @@ export default function AskQuestionForm() {
             </button>
 
             {done === "ok" && (
-                <p className="text-sm text-white/70">
-                    ✅ Got it. We’ll add an answer soon.
-                </p>
+                <p className="text-sm text-white/70">✅ Got it. We’ll add an answer soon.</p>
             )}
+
             {done === "err" && (
-                <p className="text-sm text-white/60">
-                    ❌ Something went wrong. Try again.
-                </p>
+                <p className="text-sm text-white/60">❌ {error || "Something went wrong. Try again."}</p>
             )}
 
             <p className="text-xs text-white/45">
