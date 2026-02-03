@@ -6,6 +6,7 @@ import Header from "@calis/components/site/Header";
 import Footer from "@calis/components/site/Footer";
 import { client } from "@calis/lib/sanity.client";
 import { ArrowRight, Sparkles, HelpCircle } from "lucide-react";
+import AskQuestionInlineSection from "@calis/components/answers/AskQuestionInlineSection";
 
 export const revalidate = 60;
 
@@ -334,6 +335,9 @@ export default async function AnswerPage({
                             Browse more answers <ArrowRight className="h-4 w-4" />
                         </Link>
                     </div>
+                    {/* Ask */}
+                    <AskQuestionInlineSection defaultTopic={doc.topic} />
+
                 </section>
             </main>
 
