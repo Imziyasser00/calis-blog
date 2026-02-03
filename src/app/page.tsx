@@ -12,6 +12,7 @@ import {InteractiveToolsSection} from "@calis/components/home/InteractiveToolsSe
 import {StartHereSection} from "@calis/components/home/StartHereSection";
 import {TopicsTilesSection} from "@calis/components/home/TopicsSection";
 import type { Metadata } from "next";
+import {AnswersCtaSection} from "../components/home/AnswersCtaSection";
 
 export const revalidate = 60; // ISR
 
@@ -82,6 +83,8 @@ export default async function Home() {
                             Browse all
                         </Link>
                     </div>
+                    <AnswersCtaSection />
+
 
                     <Suspense fallback={<PostsGridSkeleton count={6} />}>
                         <RecentGrid posts={data.recent} />

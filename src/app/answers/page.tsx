@@ -4,6 +4,7 @@ import Header from "@calis/components/site/Header";
 import Footer from "@calis/components/site/Footer";
 import { client } from "@calis/lib/sanity.client";
 import { Search, Sparkles } from "lucide-react";
+import AskQuestionForm from "../../components/AskQuestionForm";
 
 export const revalidate = 60;
 
@@ -167,6 +168,33 @@ export default async function AnswersIndexPage({
                 {totalPages > 1 && (
                     <Pagination currentPage={safePage} totalPages={totalPages} basePath="/answers" q={q} topic={topic} sort={sort} />
                 )}
+                <section id="ask" className="mt-16">
+                    <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0b0b10] p-6 sm:p-8">
+                        {/* glow */}
+                        <div aria-hidden className="pointer-events-none absolute -inset-24 opacity-70">
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(168,85,247,0.18),transparent_60%)]" />
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_30%,rgba(217,70,239,0.12),transparent_55%)]" />
+                        </div>
+
+                        <div className="relative">
+                            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70 backdrop-blur">
+                                <span className="h-2 w-2 rounded-full bg-purple-500" />
+                                Didn’t find your answer?
+                            </div>
+
+                            <h2 className="mt-4 text-2xl sm:text-3xl font-bold">
+                                Ask your question
+                            </h2>
+                            <p className="mt-2 max-w-2xl text-sm text-white/60">
+                                Submit it here. We’ll add it to the Answers library so other beginners can find it too.
+                            </p>
+
+                            {/* You can use a client component here (recommended) */}
+                            <AskQuestionForm />
+                        </div>
+                    </div>
+                </section>
+
             </main>
 
             <Footer />
@@ -233,6 +261,10 @@ function Pill({ href, label }: { href: string; label: string }) {
 function AnswerCard({ a }: { a: AnswerCardData }) {
     return (
         <article className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-5 transition hover:border-purple-500/35">
+            <Link
+                href={`/answers/${a.slug}`}
+                className="inline-flex items-center gap-2 text-sm font-medium text-purple-200 hover:text-purple-100"
+            >
             <div className="pointer-events-none absolute -inset-24 opacity-0 group-hover:opacity-100 transition duration-700">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(168,85,247,0.16),transparent_60%)]" />
             </div>
@@ -252,14 +284,12 @@ function AnswerCard({ a }: { a: AnswerCardData }) {
                 </p>
 
                 <div className="mt-5">
-                    <Link
-                        href={`/answers/${a.slug}`}
-                        className="inline-flex items-center gap-2 text-sm font-medium text-purple-200 hover:text-purple-100"
-                    >
+
                         Open answer <span aria-hidden>→</span>
-                    </Link>
                 </div>
             </div>
+            </Link>
+
         </article>
     );
 }
