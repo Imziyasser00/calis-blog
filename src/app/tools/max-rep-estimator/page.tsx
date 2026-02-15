@@ -1,69 +1,100 @@
-import "server-only"
-import type { Metadata } from "next"
-import ToolPage from "./tools"
+// app/tools/max-rep-estimator/page.tsx
+import type { Metadata } from "next";
+import ClientPage from "./ClientPage";
 
-const SITE_URL = "https://www.calishub.com"
+const SITE_URL = "https://www.calishub.com";
 
 export const metadata: Metadata = {
-    title: {
-        default: "Calisthenics Strength & Progression Calculator",
-        template: "%s · CalisHub",
-    },
+    title: "Max-Rep Estimator — Advanced Calisthenics Strength Calculator",
     description:
-        "Estimate your bodyweight strength (Epley 1RM), see your level, and follow a smart progression path across push, pull, rings, legs, and core.",
+        "Estimate your calisthenics 1RM-equivalent and rep maxes (3RM/5RM/8RM/10RM) using reps, bodyweight, added load, RIR, tempo, and rest quality. Get training targets instantly with CalisHub.",
+    keywords: [
+        "max rep estimator",
+        "calisthenics strength calculator",
+        "pull-up 1rm estimator",
+        "weighted pull-up calculator",
+        "dip 1rm estimator",
+        "rep max table",
+        "bodyweight strength ratio",
+        "RIR estimator",
+    ],
     alternates: {
         canonical: `${SITE_URL}/tools/max-rep-estimator`,
     },
     openGraph: {
         type: "website",
-        url: `${SITE_URL}/tools/max-rep-estimator`,
         siteName: "CalisHub",
-        title: "Calisthenics Strength & Progression · CalisHub",
+        title: "Max-Rep Estimator — Advanced Calisthenics Strength Calculator",
         description:
-            "Discover your bodyweight strength ratio, estimated 1RM, skill unlocks, and next progressions for calisthenics.",
+            "Estimate your 1RM-equivalent, rep max table, and training targets using RIR, tempo, and rest quality.",
+        url: `${SITE_URL}/tools/max-rep-estimator`,
         images: [
             {
-                url: `${SITE_URL}/og/tools-calisthenics-strength.png`,
-                width: 1200,
-                height: 630,
-                alt: "Calisthenics Strength & Progression Calculator",
+                url: "/og/max-rep-estimator.png",
+                width: 1024,
+                height: 1024,
+                alt: "CalisHub Max-Rep Estimator",
             },
         ],
+        locale: "en_US",
     },
     twitter: {
         card: "summary_large_image",
-        title: "Calisthenics Strength & Progression · CalisHub",
+        title: "Max-Rep Estimator — Advanced Calisthenics Strength Calculator",
         description:
-            "Estimate 1RM, visualize your level, and unlock the next steps in your calisthenics journey.",
-        images: [`${SITE_URL}/og/tools-calisthenics-strength.png`],
+            "Estimate 1RM-equivalent + rep maxes for pull-ups, dips, push-ups and more. Advanced inputs: RIR, tempo, rest quality.",
+        images: ["/og/max-rep-estimator.png"],
+        site: "@calishub",
         creator: "@calishub",
     },
-    robots: {
-        index: true,
-        follow: true,
-        googleBot: {
-            index: true,
-            follow: true,
-            "max-snippet": -1,
-            "max-image-preview": "large",
-            "max-video-preview": -1,
-        },
-    },
-    category: "Tools",
-    keywords: [
-        "calisthenics calculator",
-        "bodyweight strength",
-        "Epley 1RM",
-        "pull-ups strength",
-        "push-ups strength",
-        "dips",
-        "squats",
-        "progression path",
-        "skill unlocks",
-        "fitness tool",
-    ],
-}
+    category: "fitness",
+};
 
 export default function Page() {
-    return <ToolPage />
+    return (
+        <main className="min-h-[100svh] bg-black text-white">
+            {/* JSON-LD */}
+            <script
+                type="application/ld+json"
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebApplication",
+                        name: "CalisHub Max-Rep Estimator",
+                        applicationCategory: "HealthApplication",
+                        operatingSystem: "Web",
+                        url: `${SITE_URL}/tools/max-rep-estimator`,
+                        offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+                        publisher: { "@type": "Organization", name: "CalisHub" },
+                    }),
+                }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "BreadcrumbList",
+                        itemListElement: [
+                            {
+                                "@type": "ListItem",
+                                position: 1,
+                                name: "Tools",
+                                item: `${SITE_URL}/tools`,
+                            },
+                            {
+                                "@type": "ListItem",
+                                position: 2,
+                                name: "Max-Rep Estimator",
+                                item: `${SITE_URL}/tools/max-rep-estimator`,
+                            },
+                        ],
+                    }),
+                }}
+            />
+
+            <ClientPage />
+        </main>
+    );
 }
