@@ -10,17 +10,18 @@ import {
     ArrowLeft,
     ArrowRight,
     FileText,
-    Download,
     CheckCircle2,
     Gauge,
     Target,
     Clock,
     Sparkles,
 } from "lucide-react";
+import Image from "next/image";
 
 const SITE_URL = "https://www.calishub.com";
 const CANONICAL = `${SITE_URL}/library/pullup-passport`;
 const PDF_URL = "/pdfs/beginner-strength-passport.pdf"; // 👈 adjust if filename is different
+const COVER_URL = "/pdfs/covers/beginner-strength-passport.jpg";
 
 export const metadata: Metadata = {
     title: "Beginner Strength Passport: 3-Day Starter & Pull-Up Roadmap (PDF)",
@@ -180,6 +181,25 @@ export default function PullupPassportPage() {
                             <p className="text-xs uppercase tracking-wide text-white/40">
                                 Quick summary
                             </p>
+                            <div className="relative mt-3 overflow-hidden rounded-xl border border-white/10 bg-black/40">
+                                {/* ✅ Responsive aspect ratios: mobile = 3/4, tablet = 4/5, desktop = 16/10 */}
+                                <div className="relative w-full aspect-[3/4] sm:aspect-[4/5] lg:aspect-[16/10]">
+                                    <Image
+                                        src={COVER_URL}
+                                        alt="30-Day Pull-Up Challenge cover"
+                                        fill
+                                        className="object-cover object-top"
+                                        sizes="(max-width: 1024px) 100vw, 360px"
+                                        priority
+                                    />
+                                </div>
+
+                                {/* subtle readable overlay */}
+                                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                            </div>
+
+
+
 
                             <ul className="mt-3 space-y-3 text-sm text-white/70">
                                 <InfoRow label="Level" value="Complete beginner" />

@@ -9,12 +9,12 @@ import {
     FileText,
     BookOpen,
     Sparkles,
-    Download,
     Lock,
     Clock,
     Target,
 } from "lucide-react";
 import DownloadGate from "@calis/components/library/DownloadGate";
+import Image from "next/image";
 
 const SITE_URL = "https://www.calishub.com";
 const CANONICAL = `${SITE_URL}/library`;
@@ -70,9 +70,24 @@ type Guide = {
     status: GuideStatus;
     highlight?: string;
     pdfUrl?: string; // /pdfs/xxx.pdf once ready
+    coverImage?: string;
 };
 
 const guides: Guide[] = [
+    {
+        slug: "30-day-pull-up-challenge",
+        title: "30-Day Pull-Up Challenge",
+        subtitle: "Daily structure + smart progressions to level up your pull-ups.",
+        level: "Beginner–Intermediate",
+        focus: "Pull-ups, volume build-up, technique, consistency",
+        length: "39-page PDF",
+        status: "available",
+        highlight: "New",
+        pdfUrl: "/pdfs/30-day-pull-up-challenge.pdf",
+        coverImage: "/pdfs/covers/30-day-pull-up-challenge.jpg",
+
+    },
+
     {
         slug: "pullup-passport",
         title: "Beginner Strength Passport",
@@ -81,25 +96,17 @@ const guides: Guide[] = [
         focus: "Upper body, pull-up foundations, habit building",
         length: "8-page PDF",
         status: "available",
-        highlight: "New",
-        // set this when you place the file in /public/pdfs/
+        highlight: "Popular",
         pdfUrl: "/pdfs/beginner-strength-passport.pdf",
+        coverImage: "/pdfs/covers/beginner-strength-passport.jpg",
     },
+
     {
         slug: "core-checklist",
         title: "Core Control Checklist",
         subtitle: "Simple progressions to build a strong, quiet core.",
         level: "Beginner–Intermediate",
         focus: "Core tension, hollow body, anti-extension",
-        length: "Coming soon",
-        status: "coming-soon",
-    },
-    {
-        slug: "squat-knee-friendly",
-        title: "Knee-Friendly Squat Starter",
-        subtitle: "Basics to squat without pain + simple form cues.",
-        level: "Beginner",
-        focus: "Lower body, mobility, technique",
         length: "Coming soon",
         status: "coming-soon",
     },
@@ -286,20 +293,40 @@ function GuideCard({ guide }: { guide: Guide }) {
             </div>
 
             <div className="relative flex flex-col h-full">
+
+                {/* ✅ NEW: cover image */}
+                {guide.coverImage ? (
+                    <div className="relative mb-4 overflow-hidden rounded-xl border border-white/10 bg-black/40">
+                        <div className="relative aspect-[3/4] w-full">
+                            <Image
+                                src={guide.coverImage}
+                                alt={`${guide.title} cover`}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                            />
+                        </div>
+
+                        {/* optional overlay for nicer look */}
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                    </div>
+                ) : null}
+
                 <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2 text-xs text-white/55">
-            <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
-              <FileText className="h-3 w-3 text-purple-300" />
-              <span>PDF guide</span>
-            </span>
+        <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5">
+          <FileText className="h-3 w-3 text-purple-300" />
+          <span>PDF guide</span>
+        </span>
                         <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] uppercase tracking-wide">
-              {guide.level}
-            </span>
+          {guide.level}
+        </span>
                     </div>
+
                     {guide.highlight && (
                         <span className="rounded-full border border-purple-500/40 bg-purple-500/15 px-2 py-0.5 text-[10px] uppercase tracking-wide text-purple-200">
-              {guide.highlight}
-            </span>
+          {guide.highlight}
+        </span>
                     )}
                 </div>
 
@@ -322,7 +349,7 @@ function GuideCard({ guide }: { guide: Guide }) {
                         <>
                             <Link
                                 href={`/library/${guide.slug}`}
-                                className="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-3 py-2 text-sm font-medium text-white hover:bg-purple-700 transition"
+                                className="inline-flex items-center justify-center gap-2 rounded-lg border-purple-600 border-3 px-3 py-2 text-sm font-medium text-white hover:bg-purple-700 transition"
                             >
                                 View guide details <ArrowRight className="h-4 w-4" />
                             </Link>
