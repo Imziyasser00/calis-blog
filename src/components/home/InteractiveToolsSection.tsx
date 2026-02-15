@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Gauge, Wand2, Activity, Sparkles } from "lucide-react";
+import { ArrowRight, Gauge, Wand2, Activity, Sparkles, TrendingUp } from "lucide-react";
 
 export function InteractiveToolsSection() {
     return (
@@ -21,6 +21,45 @@ export function InteractiveToolsSection() {
             </div>
 
             <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <li>
+                    {/* Future Self Simulator (Push-Ups) */}
+                    <Link
+                        href="/tools/future-self"
+                        className="group block relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-emerald-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                        aria-label="Open Future Self Simulator tool"
+                    >
+                        <div className="pointer-events-none absolute -inset-20 opacity-0 group-hover:opacity-100 transition duration-700">
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(16,185,129,0.22),transparent_60%)]" />
+                        </div>
+
+                        <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-emerald-500/0 via-emerald-500/60 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition" />
+
+                        <div className="relative flex items-start justify-between">
+                            <div className="inline-flex items-center gap-2 text-xs text-emerald-200">
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                                Live • Takes ~30s
+                            </div>
+
+                            <div className="rounded-xl bg-emerald-500/10 p-2 ring-1 ring-emerald-500/20">
+                                <TrendingUp className="h-4 w-4 text-emerald-200" />
+                            </div>
+                        </div>
+
+                        <h3 className="mt-4 text-xl font-semibold group-hover:text-emerald-200 transition-colors">
+                            Future Self Simulator
+                        </h3>
+
+                        <p className="mt-2 text-sm text-white/65">
+                            Project your push-up max in 3, 6, or 12 months. Inspect the curve and download a clean chart.
+                        </p>
+
+                        <div className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
+                            Simulate my progress
+                            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                        </div>
+                    </Link>
+                </li>
+
                 <li>
                     {/* Pull-Up Diagnostic (NEW) */}
                     <Link

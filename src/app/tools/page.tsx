@@ -8,7 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@calis/components/ui/card";
-import { Dumbbell, Route, Activity } from "lucide-react";
+import {Dumbbell, Route, Activity, TrendingUp} from "lucide-react";
 import Header from "@calis/components/site/Header";
 import Footer from "@calis/components/site/Footer";
 import Newsletter from "@calis/components/Newsletter";
@@ -25,6 +25,15 @@ type Tool = {
 };
 
 const tools: Tool[] = [
+    {
+        title: "Future Self Simulator",
+        description:
+            "See your projected push-up max in 3, 6, or 12 months and download a clean progress chart.",
+        icon: <TrendingUp className="h-8 w-8" />,
+        slug: "future-self",
+        category: "Progress",
+        status: "live",
+    },
     {
         title: "Pull-Up Diagnostic",
         description:
@@ -52,6 +61,8 @@ const tools: Tool[] = [
         category: "Programming",
         status: "live",
     },
+
+
 ];
 
 function StatusPill({ status }: { status: ToolStatus }) {

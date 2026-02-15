@@ -473,29 +473,7 @@ export default async function BeginnerCalisthenicsHubPage() {
                         ))}
                     </div>
 
-                    <div className="mt-10 flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-white/90">Latest articles</h3>
-                        <Link href="/blog" className="text-sm text-white/60 hover:text-white">
-                            See more <ArrowRight className="h-4 w-4 inline" />
-                        </Link>
-                    </div>
 
-                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {latest.map((p: { _id: any; title: any; slug: any; excerpt: any; categoryTitles: any; publishedAt: any; mainImage: any; }) => (
-                            <ArticleCard
-                                key={`latest-${p._id}`}
-                                post={{
-                                    _id: p._id,
-                                    title: p.title,
-                                    slug: p.slug,
-                                    excerpt: p.excerpt,
-                                    categoryTitles: p.categoryTitles ?? [],
-                                    publishedAt: p.publishedAt,
-                                    mainImage: p.mainImage,
-                                }}
-                            />
-                        ))}
-                    </div>
                 </section>
 
                 {/* Mistakes */}

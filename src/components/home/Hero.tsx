@@ -1,5 +1,15 @@
+"use client";
+
 import Link from "next/link";
-import { ArrowRight, BicepsFlexed, Sparkles, Gauge, ClipboardList, Activity } from "lucide-react";
+import {
+    ArrowRight,
+    BicepsFlexed,
+    Sparkles,
+    Gauge,
+    ClipboardList,
+    Activity,
+    TrendingUp,
+} from "lucide-react";
 
 export default function Hero() {
     return (
@@ -85,6 +95,14 @@ export default function Hero() {
                             className="rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10 transition"
                         >
                             Workout Generator <span className="sr-only">(routine in minutes)</span>
+                        </Link>
+
+                        {/* ✅ NEW */}
+                        <Link
+                            href="/tools/future-self"
+                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 hover:bg-white/10 transition"
+                        >
+                            Future Self Simulator <span className="sr-only">(push-up projection)</span>
                         </Link>
                     </nav>
 
@@ -193,6 +211,34 @@ export default function Hero() {
 
                                     <ArrowRight className="relative h-4 w-4 text-white/60 transition group-hover/item:translate-x-0.5 group-hover/item:text-white/80" />
                                 </Link>
+
+                                {/* ✅ NEW: Future Self Simulator */}
+                                <Link
+                                    href="/tools/future-self"
+                                    className="group/item relative overflow-hidden flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3 transition hover:border-emerald-500/40 hover:bg-black/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                                >
+                                    <div className="pointer-events-none absolute -inset-16 opacity-0 group-hover/item:opacity-100 transition duration-700">
+                                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(16,185,129,0.18),transparent_60%)]" />
+                                    </div>
+
+                                    <div className="relative flex items-center gap-3">
+                                        <div className="rounded-xl bg-emerald-500/10 p-2 ring-1 ring-emerald-500/20">
+                                            <TrendingUp className="h-4 w-4 text-emerald-200" />
+                                        </div>
+
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-sm font-medium">Future Self Simulator</p>
+                                                <span className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-200">
+                          NEW
+                        </span>
+                                            </div>
+                                            <p className="text-xs text-white/60">Project your push-up max and download the chart</p>
+                                        </div>
+                                    </div>
+
+                                    <ArrowRight className="relative h-4 w-4 text-white/60 transition group-hover/item:translate-x-0.5 group-hover/item:text-white/80" />
+                                </Link>
                             </div>
 
                             <div className="mt-5 flex items-center justify-between text-xs text-white/50">
@@ -204,10 +250,7 @@ export default function Hero() {
                         </div>
                     </div>
 
-                    <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl bg-purple-600/10 blur-2xl"
-                    />
+                    <div aria-hidden="true" className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl bg-purple-600/10 blur-2xl" />
                 </div>
             </div>
         </section>
