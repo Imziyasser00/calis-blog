@@ -14,7 +14,13 @@ export default function ArticleCard({
     priority?: boolean;
 }) {
     const image = post.mainImage
-        ? urlFor(post.mainImage).width(900).height(560).fit("crop").quality(70).auto("format").url()
+        ? urlFor(post.mainImage)
+            .width(900)
+            .height(560)
+            .fit("crop")
+            .quality(70)
+            .auto("format")
+            .url()
         : "/placeholder.svg";
 
     const category = post.categoryTitles?.[0];
@@ -25,12 +31,14 @@ export default function ArticleCard({
 
     return (
         <article className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] transition hover:border-purple-500/35 focus-within:ring-2 focus-within:ring-purple-500/70">
-            {/* Hover glow */}
-            <div className="pointer-events-none absolute -inset-24 opacity-0 group-hover:opacity-100 transition duration-700">
+            {/* ✅ Hover glow only when hover exists (cheaper on mobile) */}
+            <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-24 opacity-0 transition duration-700 supports-[hover:hover]:group-hover:opacity-100"
+            >
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(168,85,247,0.18),transparent_60%)]" />
             </div>
 
-            {/* Image (clickable) */}
             <Link
                 href={`/blog/${post.slug}`}
                 aria-label={`Read article: ${post.title}`}
@@ -41,10 +49,13 @@ export default function ArticleCard({
                     alt={post.mainImage?.alt || post.title}
                     fill
                     priority={priority}
+                    // ✅ helps Chrome prioritize the LCP-ish image
+                    fetchPriority={priority ? "high" : "auto"}
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    className="object-cover transition-transform duration-500 supports-[hover:hover]:group-hover:scale-[1.03]"
                 />
 
+                {/* overlay is fine, cheap */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
                 {category && (
@@ -59,9 +70,8 @@ export default function ArticleCard({
                 </div>
             </Link>
 
-            {/* Content */}
             <div className="relative p-5">
-                <h3 className="text-base font-semibold leading-snug line-clamp-2 transition-colors group-hover:text-purple-200">
+                <h3 className="text-base font-semibold leading-snug line-clamp-2 transition-colors supports-[hover:hover]:group-hover:text-purple-200">
                     <Link href={`/blog/${post.slug}`} className="outline-none">
                         {post.title}
                     </Link>

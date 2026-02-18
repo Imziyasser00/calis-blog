@@ -1,19 +1,35 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
-import { FaTiktok } from "react-icons/fa6";
+
+function TikTokIcon(props: { className?: string }) {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            className={props.className}
+            fill="currentColor"
+        >
+            <path d="M21 7.1c-1.9-.1-3.5-.7-4.8-2-.9-.9-1.5-2-1.7-3.1h-3.2v13.1c0 1.4-1.1 2.6-2.6 2.6s-2.6-1.1-2.6-2.6 1.1-2.6 2.6-2.6c.3 0 .6 0 .9.1V9.3c-.3 0-.6-.1-.9-.1-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6V9.8c1.5 1 3.3 1.6 5.2 1.7V7.1z" />
+        </svg>
+    );
+}
 
 export default function Footer() {
+    const year = new Date().getFullYear();
+
     return (
         <footer className="relative overflow-hidden border-t border-white/10 bg-black">
-            {/* subtle glow */}
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+            {/* ✅ glow: off on mobile, on hover devices */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -z-10 opacity-0 supports-[hover:hover]:opacity-100"
+            >
                 <div className="absolute -inset-24 opacity-40 blur-3xl bg-[radial-gradient(circle_at_20%_0%,rgba(168,85,247,0.14),transparent_55%)]" />
                 <div className="absolute -inset-24 opacity-30 blur-3xl bg-[radial-gradient(circle_at_80%_80%,rgba(236,72,153,0.10),transparent_55%)]" />
             </div>
 
             <div className="container mx-auto px-4 py-12">
                 <div className="grid gap-10 md:grid-cols-4">
-                    {/* Brand */}
                     <div className="space-y-4 md:col-span-2">
                         <Link href="/" className="text-4xl font-bold tracking-tighter" aria-label="Calisthenics Hub home">
                             Calis<span className="text-purple-400">Hub</span>
@@ -31,12 +47,11 @@ export default function Footer() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <FaTiktok className="h-5 w-5" />
+                                <TikTokIcon className="h-5 w-5" />
                             </Link>
 
                             <Link
                                 href="/#newsletter"
-                                prefetch={false}
                                 className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/70 hover:bg-white/[0.06] transition"
                             >
                                 <Mail className="h-4 w-4" />
@@ -45,78 +60,36 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Footer nav (semantic) */}
                     <nav aria-label="Footer navigation" className="contents">
-                        {/* Navigation */}
                         <div className="space-y-3">
                             <p className="text-sm font-semibold text-white/80">Explore</p>
                             <ul className="space-y-2 text-sm">
-                                <li>
-                                    <Link className="text-white/60 hover:text-white transition" href="/tools">
-                                        Tools
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link className="text-white/60 hover:text-white transition" href="/topics">
-                                        Topics
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link className="text-white/60 hover:text-white transition" href="/exercises">
-                                        Exercises
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link className="text-white/60 hover:text-white transition" href="/blog">
-                                        Blog
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link className="text-white/60 hover:text-white transition" href="/answers">
-                                        Answers
-                                    </Link>
-                                </li>
+                                <li><Link className="text-white/60 hover:text-white transition" href="/tools">Tools</Link></li>
+                                <li><Link className="text-white/60 hover:text-white transition" href="/topics">Topics</Link></li>
+                                <li><Link className="text-white/60 hover:text-white transition" href="/exercises">Exercises</Link></li>
+                                <li><Link className="text-white/60 hover:text-white transition" href="/blog">Blog</Link></li>
+                                <li><Link className="text-white/60 hover:text-white transition" href="/answers">Answers</Link></li>
                             </ul>
                         </div>
 
-                        {/* Start here */}
                         <div className="space-y-3">
                             <p className="text-sm font-semibold text-white/80">Start here</p>
                             <ul className="space-y-2 text-sm">
-                                <li>
-                                    <Link className="text-white/60 hover:text-white transition" href="/beginner-calisthenics">
-                                        Beginner Guide
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link className="text-white/60 hover:text-white transition" href="/tools/max-rep-estimator">
-                                        Max Rep Estimator
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link className="text-white/60 hover:text-white transition" href="/tools/workout-generator">
-                                        Workout Generator
-                                    </Link>
-                                </li>
+                                <li><Link className="text-white/60 hover:text-white transition" href="/beginner-calisthenics">Beginner Guide</Link></li>
+                                <li><Link className="text-white/60 hover:text-white transition" href="/tools/max-rep-estimator">Max Rep Estimator</Link></li>
+                                <li><Link className="text-white/60 hover:text-white transition" href="/tools/workout-generator">Workout Generator</Link></li>
                             </ul>
                         </div>
                     </nav>
                 </div>
 
-                {/* Bottom bar */}
                 <div className="mt-10 border-t border-white/10 pt-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between text-sm text-white/50">
-                    <p>© {new Date().getFullYear()} CalisHub. All rights reserved.</p>
+                    <p>© {year} CalisHub. All rights reserved.</p>
 
                     <div className="flex items-center gap-4" aria-label="Legal links">
-                        <Link href="/about" className="hover:text-white transition">
-                            About
-                        </Link>
-                        <Link href="/privacy" className="hover:text-white transition">
-                            Privacy
-                        </Link>
-                        <Link href="/contact" className="hover:text-white transition">
-                            Contact
-                        </Link>
+                        <Link href="/about" className="hover:text-white transition">About</Link>
+                        <Link href="/privacy" className="hover:text-white transition">Privacy</Link>
+                        <Link href="/contact" className="hover:text-white transition">Contact</Link>
                     </div>
                 </div>
             </div>

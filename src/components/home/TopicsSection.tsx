@@ -1,7 +1,16 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles, Dumbbell, Flame, Apple, Brain, Swords } from "lucide-react";
 
-const TOPICS = [
+type Topic = {
+    title: string;
+    desc: string;
+    href: string;
+    icon: React.ComponentType<{ className?: string }>;
+    glow: string;
+    borderHover: string;
+};
+
+const TOPICS: Topic[] = [
     {
         title: "Beginner’s Guide",
         desc: "Start with the basics: form, routine, and progress.",
@@ -76,17 +85,24 @@ export function TopicsTilesSection() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {TOPICS.map((t) => {
                     const Icon = t.icon;
+
                     return (
                         <Link
-                            key={t.title}
+                            key={t.href}
                             href={t.href}
                             className={[
                                 "group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-5 transition",
                                 t.borderHover,
                             ].join(" ")}
                         >
-                            {/* glow */}
-                            <div className="pointer-events-none absolute -inset-24 opacity-70">
+                            {/* ✅ Glow: disabled on mobile by default, enabled on hover-capable devices */}
+                            <div
+                                aria-hidden
+                                className={[
+                                    "pointer-events-none absolute -inset-24 opacity-0 transition duration-700",
+                                    "supports-[hover:hover]:group-hover:opacity-70",
+                                ].join(" ")}
+                            >
                                 <div className={`absolute inset-0 bg-gradient-to-br ${t.glow}`} />
                             </div>
 
@@ -95,20 +111,14 @@ export function TopicsTilesSection() {
                                     <Icon className="h-4 w-4 text-white/80 group-hover:text-white transition" />
                                 </div>
 
-                                <ArrowRight className="h-4 w-4 text-white/40 transition group-hover:text-white/80 group-hover:translate-x-0.5" />
+                                <ArrowRight className="h-4 w-4 text-white/40 transition group-hover:text-white/80 supports-[hover:hover]:group-hover:translate-x-0.5" />
                             </div>
 
-                            <h3 className="relative mt-4 text-lg font-semibold">
-                                {t.title}
-                            </h3>
+                            <h3 className="relative mt-4 text-lg font-semibold">{t.title}</h3>
 
-                            <p className="relative mt-2 text-sm text-white/65">
-                                {t.desc}
-                            </p>
+                            <p className="relative mt-2 text-sm text-white/65">{t.desc}</p>
 
-                            <div className="relative mt-4 text-xs text-white/50">
-                                Explore guides →
-                            </div>
+                            <div className="relative mt-4 text-xs text-white/50">Explore guides →</div>
                         </Link>
                     );
                 })}

@@ -1,7 +1,19 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles, Gauge, ClipboardCheck, ShieldCheck } from "lucide-react";
 
+type StepProps = {
+    n: string;
+    title: string;
+    desc: string;
+};
+
 export function StartHereSection() {
+    const steps: StepProps[] = [
+        { n: "1", title: "Pick your level", desc: "Use regressions you can do cleanly." },
+        { n: "2", title: "Train 3x/week", desc: "Simple plan, repeat weekly, progress slowly." },
+        { n: "3", title: "Upgrade when ready", desc: "More reps → harder variation → skill work." },
+    ];
+
     return (
         <section className="mb-20" aria-labelledby="start-here">
             <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10]">
@@ -64,14 +76,12 @@ export function StartHereSection() {
                                 </Link>
                             </div>
 
-                            {/* Soft plug for the passport */}
                             <p className="mt-3 text-xs text-white/55">
                                 Prefer something you can save? Get the{" "}
                                 <span className="font-medium text-white">Beginner Strength Passport</span> (3-day starter plan + pull-up
                                 roadmap){" "}
                                 <Link
                                     href="/#newsletter"
-                                    prefetch={false}
                                     className="underline underline-offset-2 decoration-purple-400 hover:text-white"
                                 >
                                     sent to your email
@@ -80,15 +90,23 @@ export function StartHereSection() {
                             </p>
                         </div>
 
-                        {/* Right: “3 steps” card */}
+                        {/* Right */}
                         <div className="w-full lg:max-w-sm">
                             <div className="rounded-2xl border border-white/10 bg-black/40 p-5 backdrop-blur">
                                 <p className="text-xs uppercase tracking-wider text-white/50">How it works</p>
 
                                 <div className="mt-4 space-y-3 text-sm">
-                                    <Step n="1" title="Pick your level" desc="Use regressions you can do cleanly." />
-                                    <Step n="2" title="Train 3x/week" desc="Simple plan, repeat weekly, progress slowly." />
-                                    <Step n="3" title="Upgrade when ready" desc="More reps → harder variation → skill work." />
+                                    {steps.map((s) => (
+                                        <div key={s.n} className="flex gap-3">
+                                            <div className="h-6 w-6 shrink-0 rounded-full border border-purple-500/40 bg-purple-500/10 text-purple-200 flex items-center justify-center text-xs">
+                                                {s.n}
+                                            </div>
+                                            <div>
+                                                <div className="font-medium text-white/90">{s.title}</div>
+                                                <div className="text-white/60">{s.desc}</div>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
 
                                 <div className="mt-5 text-xs text-white/45">
@@ -100,19 +118,5 @@ export function StartHereSection() {
                 </div>
             </div>
         </section>
-    );
-}
-
-function Step({ n, title, desc }: { n: string; title: string; desc: string }) {
-    return (
-        <div className="flex gap-3">
-            <div className="h-6 w-6 shrink-0 rounded-full border border-purple-500/40 bg-purple-500/10 text-purple-200 flex items-center justify-center text-xs">
-                {n}
-            </div>
-            <div>
-                <div className="font-medium text-white/90">{title}</div>
-                <div className="text-white/60">{desc}</div>
-            </div>
-        </div>
     );
 }

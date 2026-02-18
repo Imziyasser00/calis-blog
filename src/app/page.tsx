@@ -83,12 +83,14 @@ export default async function Home() {
                             Browse all
                         </Link>
                     </div>
-                    <AnswersCtaSection />
 
+                    {/* ✅ Keep this section purely "latest guides" */}
+                    <RecentGrid posts={data.recent} />
 
-                    <Suspense fallback={<PostsGridSkeleton count={6} />}>
-                        <RecentGrid posts={data.recent} />
-                    </Suspense>
+                    {/* ✅ CTA after the grid (less blocking) */}
+                    <div className="mt-10">
+                        <AnswersCtaSection />
+                    </div>
                 </section>
 
 

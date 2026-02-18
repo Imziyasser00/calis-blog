@@ -1,6 +1,122 @@
 import Link from "next/link";
 import { ArrowRight, Gauge, Wand2, Activity, Sparkles, TrendingUp } from "lucide-react";
 
+type ToolCard = {
+    href: string;
+    aria: string;
+    eyebrow: string;
+    title: string;
+    desc: string;
+    cta: string;
+    Icon: React.ComponentType<{ className?: string }>;
+    theme: {
+        ring: string;
+        hoverBorder: string;
+        focusRing: string;
+        dot: string;
+        iconWrap: string;
+        icon: string;
+        hoverText: string;
+        topLine: string;
+        glow: string; // radial gradient
+        badge?: {
+            text: string;
+            border: string;
+            bg: string;
+            textColor: string;
+        };
+    };
+};
+
+const TOOLS: ToolCard[] = [
+    {
+        href: "/tools/future-self",
+        aria: "Open Future Self Simulator tool",
+        eyebrow: "Live • Takes ~30s",
+        title: "Future Self Simulator",
+        desc: "Project your push-up max in 3, 6, or 12 months. Inspect the curve and download a clean chart.",
+        cta: "Simulate my progress",
+        Icon: TrendingUp,
+        theme: {
+            ring: "ring-emerald-500/20",
+            hoverBorder: "hover:border-emerald-500/40",
+            focusRing: "focus-visible:ring-emerald-500",
+            dot: "bg-emerald-400",
+            iconWrap: "bg-emerald-500/10",
+            icon: "text-emerald-200",
+            hoverText: "group-hover:text-emerald-200",
+            topLine: "from-emerald-500/0 via-emerald-500/60 to-emerald-500/0",
+            glow: "bg-[radial-gradient(circle_at_30%_20%,rgba(16,185,129,0.22),transparent_60%)]",
+        },
+    },
+    {
+        href: "/tools/pull-up-diagnostic",
+        aria: "Open Pull-Up Diagnostic tool",
+        eyebrow: "Live • Takes ~45s",
+        title: "Pull-Up Diagnostic",
+        desc: "Find your bottleneck (grip, lats, start, top range) and get the next best drill to fix it.",
+        cta: "Diagnose my pull-up",
+        Icon: Activity,
+        theme: {
+            ring: "ring-cyan-500/20",
+            hoverBorder: "hover:border-cyan-500/40",
+            focusRing: "focus-visible:ring-cyan-500",
+            dot: "bg-cyan-400",
+            iconWrap: "bg-cyan-500/10",
+            icon: "text-cyan-200",
+            hoverText: "group-hover:text-cyan-200",
+            topLine: "from-cyan-500/0 via-cyan-500/60 to-cyan-500/0",
+            glow: "bg-[radial-gradient(circle_at_30%_20%,rgba(34,211,238,0.25),transparent_60%)]",
+            badge: {
+                text: "New",
+                border: "border-cyan-500/30",
+                bg: "bg-cyan-500/10",
+                textColor: "text-cyan-200",
+            },
+        },
+    },
+    {
+        href: "/tools/max-rep-estimator",
+        aria: "Open Max Rep Estimator tool",
+        eyebrow: "Live • Takes ~60s",
+        title: "Max Rep Estimator",
+        desc: "Plug in your best sets and get a realistic strength level plus a direction to progress without ego lifting.",
+        cta: "Check my level",
+        Icon: Gauge,
+        theme: {
+            ring: "ring-purple-500/20",
+            hoverBorder: "hover:border-purple-500/40",
+            focusRing: "focus-visible:ring-purple-500",
+            dot: "bg-purple-500",
+            iconWrap: "bg-purple-500/10",
+            icon: "text-purple-300",
+            hoverText: "group-hover:text-purple-300",
+            topLine: "from-purple-500/0 via-purple-500/60 to-purple-500/0",
+            glow: "bg-[radial-gradient(circle_at_30%_20%,rgba(168,85,247,0.25),transparent_60%)]",
+        },
+    },
+    {
+        href: "/tools/workout-generator",
+        aria: "Open Workout Generator tool",
+        eyebrow: "Live • Takes ~90s",
+        title: "Workout Generator",
+        desc: "Choose your goal, days per week, and equipment, then get a simple routine you can actually stick to.",
+        cta: "Generate my routine",
+        Icon: Wand2,
+        theme: {
+            ring: "ring-fuchsia-500/20",
+            hoverBorder: "hover:border-fuchsia-500/40",
+            focusRing: "focus-visible:ring-fuchsia-500",
+            dot: "bg-purple-500",
+            iconWrap: "bg-fuchsia-500/10",
+            icon: "text-fuchsia-300",
+            hoverText: "group-hover:text-fuchsia-300",
+            topLine: "from-fuchsia-500/0 via-fuchsia-500/60 to-fuchsia-500/0",
+            glow: "bg-[radial-gradient(circle_at_30%_20%,rgba(236,72,153,0.25),transparent_60%)]",
+        },
+    },
+];
+
 export function InteractiveToolsSection() {
     return (
         <section className="mb-20" aria-labelledby="interactive-tools">
@@ -10,8 +126,7 @@ export function InteractiveToolsSection() {
                         Interactive Tools
                     </h2>
                     <p className="mt-1 text-sm text-white/60 max-w-2xl">
-                        Simple tools that turn your current reps and goals into clear next steps. No login, no fluff, just numbers
-                        you can use.
+                        Simple tools that turn your current reps and goals into clear next steps. No login, no fluff, just numbers you can use.
                     </p>
                 </div>
 
@@ -21,169 +136,78 @@ export function InteractiveToolsSection() {
             </div>
 
             <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <li>
-                    {/* Future Self Simulator (Push-Ups) */}
-                    <Link
-                        href="/tools/future-self"
-                        className="group block relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-emerald-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-                        aria-label="Open Future Self Simulator tool"
-                    >
-                        <div className="pointer-events-none absolute -inset-20 opacity-0 group-hover:opacity-100 transition duration-700">
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(16,185,129,0.22),transparent_60%)]" />
-                        </div>
-
-                        <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-emerald-500/0 via-emerald-500/60 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition" />
-
-                        <div className="relative flex items-start justify-between">
-                            <div className="inline-flex items-center gap-2 text-xs text-emerald-200">
-                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                                Live • Takes ~30s
+                {TOOLS.map((t) => (
+                    <li key={t.href}>
+                        <Link
+                            href={t.href}
+                            aria-label={t.aria}
+                            className={[
+                                "group block relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition",
+                                t.theme.hoverBorder,
+                                "focus-visible:outline-none focus-visible:ring-2",
+                                t.theme.focusRing,
+                            ].join(" ")}
+                        >
+                            {/* ✅ Hover glow only where hover exists (reduces mobile paint work) */}
+                            <div
+                                className={[
+                                    "pointer-events-none absolute -inset-20 opacity-0 transition duration-700",
+                                    "supports-[hover:hover]:group-hover:opacity-100",
+                                ].join(" ")}
+                            >
+                                <div className={["absolute inset-0", t.theme.glow].join(" ")} />
                             </div>
 
-                            <div className="rounded-xl bg-emerald-500/10 p-2 ring-1 ring-emerald-500/20">
-                                <TrendingUp className="h-4 w-4 text-emerald-200" />
-                            </div>
-                        </div>
+                            {/* ✅ Top line only on hover-capable devices */}
+                            <div
+                                className={[
+                                    "absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r opacity-0 transition",
+                                    t.theme.topLine,
+                                    "supports-[hover:hover]:group-hover:opacity-100",
+                                ].join(" ")}
+                            />
 
-                        <h3 className="mt-4 text-xl font-semibold group-hover:text-emerald-200 transition-colors">
-                            Future Self Simulator
-                        </h3>
+                            <div className="relative flex items-start justify-between">
+                                <div className="flex items-center gap-2">
+                                    <div className={["inline-flex items-center gap-2 text-xs", t.theme.icon].join(" ")}>
+                                        <span className={["h-1.5 w-1.5 rounded-full", t.theme.dot].join(" ")} />
+                                        {t.eyebrow}
+                                    </div>
 
-                        <p className="mt-2 text-sm text-white/65">
-                            Project your push-up max in 3, 6, or 12 months. Inspect the curve and download a clean chart.
-                        </p>
-
-                        <div className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
-                            Simulate my progress
-                            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                        </div>
-                    </Link>
-                </li>
-
-                <li>
-                    {/* Pull-Up Diagnostic (NEW) */}
-                    <Link
-                        href="/tools/pull-up-diagnostic"
-                        className="group block relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-cyan-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
-                        aria-label="Open Pull-Up Diagnostic tool"
-                    >
-                        <div className="pointer-events-none absolute -inset-20 opacity-0 group-hover:opacity-100 transition duration-700">
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(34,211,238,0.25),transparent_60%)]" />
-                        </div>
-
-                        <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-cyan-500/0 via-cyan-500/60 to-cyan-500/0 opacity-0 group-hover:opacity-100 transition" />
-
-                        <div className="relative flex items-start justify-between">
-                            <div className="flex items-center gap-2">
-                                <div className="inline-flex items-center gap-2 text-xs text-cyan-200">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
-                                    Live • Takes ~45s
+                                    {t.theme.badge && (
+                                        <span
+                                            className={[
+                                                "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px]",
+                                                t.theme.badge.border,
+                                                t.theme.badge.bg,
+                                                t.theme.badge.textColor,
+                                            ].join(" ")}
+                                        >
+                      <Sparkles className="h-3 w-3" />
+                                            {t.theme.badge.text}
+                    </span>
+                                    )}
                                 </div>
 
-                                <span className="inline-flex items-center gap-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[11px] text-cyan-200">
-                  <Sparkles className="h-3 w-3" />
-                  New
-                </span>
+                                <div className={["rounded-xl p-2 ring-1", t.theme.iconWrap, t.theme.ring].join(" ")}>
+                                    <t.Icon className={["h-4 w-4", t.theme.icon].join(" ")} />
+                                </div>
                             </div>
 
-                            <div className="rounded-xl bg-cyan-500/10 p-2 ring-1 ring-cyan-500/20">
-                                <Activity className="h-4 w-4 text-cyan-200" />
+                            <h3 className={["mt-4 text-xl font-semibold transition-colors", t.theme.hoverText].join(" ")}>
+                                {t.title}
+                            </h3>
+
+                            <p className="mt-2 text-sm text-white/65">{t.desc}</p>
+
+                            <div className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
+                                {t.cta}
+                                <ArrowRight className="h-4 w-4 transition supports-[hover:hover]:group-hover:translate-x-0.5" />
                             </div>
-                        </div>
-
-                        <h3 className="mt-4 text-xl font-semibold group-hover:text-cyan-200 transition-colors">
-                            Pull-Up Diagnostic
-                        </h3>
-
-                        <p className="mt-2 text-sm text-white/65">
-                            Find your bottleneck (grip, lats, start, top range) and get the next best drill to fix it.
-                        </p>
-
-                        <div className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
-                            Diagnose my pull-up
-                            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                        </div>
-                    </Link>
-                </li>
-
-                <li>
-                    {/* Max Rep Estimator */}
-                    <Link
-                        href="/tools/max-rep-estimator"
-                        className="group block relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-purple-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
-                        aria-label="Open Max Rep Estimator tool"
-                    >
-                        <div className="pointer-events-none absolute -inset-20 opacity-0 group-hover:opacity-100 transition duration-700">
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(168,85,247,0.25),transparent_60%)]" />
-                        </div>
-
-                        <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-purple-500/0 via-purple-500/60 to-purple-500/0 opacity-0 group-hover:opacity-100 transition" />
-
-                        <div className="relative flex items-start justify-between">
-                            <div className="inline-flex items-center gap-2 text-xs text-purple-300">
-                                <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
-                                Live • Takes ~60s
-                            </div>
-
-                            <div className="rounded-xl bg-purple-500/10 p-2 ring-1 ring-purple-500/20">
-                                <Gauge className="h-4 w-4 text-purple-300" />
-                            </div>
-                        </div>
-
-                        <h3 className="mt-4 text-xl font-semibold group-hover:text-purple-300 transition-colors">Max Rep Estimator</h3>
-
-                        <p className="mt-2 text-sm text-white/65">
-                            Plug in your best sets and get a realistic strength level plus a direction to progress without ego
-                            lifting.
-                        </p>
-
-                        <div className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
-                            Check my level
-                            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                        </div>
-                    </Link>
-                </li>
-
-                <li>
-                    {/* Workout Generator */}
-                    <Link
-                        href="/tools/workout-generator"
-                        className="group block relative overflow-hidden rounded-2xl border border-white/10 bg-[#0b0b10] p-6 transition hover:border-fuchsia-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-500"
-                        aria-label="Open Workout Generator tool"
-                    >
-                        <div className="pointer-events-none absolute -inset-20 opacity-0 group-hover:opacity-100 transition duration-700">
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(236,72,153,0.25),transparent_60%)]" />
-                        </div>
-
-                        <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-fuchsia-500/0 via-fuchsia-500/60 to-fuchsia-500/0 opacity-0 group-hover:opacity-100 transition" />
-
-                        <div className="relative flex items-start justify-between">
-                            <div className="inline-flex items-center gap-2 text-xs text-purple-300">
-                                <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
-                                Live • Takes ~90s
-                            </div>
-
-                            <div className="rounded-xl bg-fuchsia-500/10 p-2 ring-1 ring-fuchsia-500/20">
-                                <Wand2 className="h-4 w-4 text-fuchsia-300" />
-                            </div>
-                        </div>
-
-                        <h3 className="mt-4 text-xl font-semibold group-hover:text-fuchsia-300 transition-colors">
-                            Workout Generator
-                        </h3>
-
-                        <p className="mt-2 text-sm text-white/65">
-                            Choose your goal, days per week, and equipment, then get a simple routine you can actually stick to.
-                        </p>
-
-                        <div className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 group-hover:text-white transition">
-                            Generate my routine
-                            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                        </div>
-                    </Link>
-                </li>
+                        </Link>
+                    </li>
+                ))}
             </ul>
         </section>
     );
 }
-
