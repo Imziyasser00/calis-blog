@@ -6,13 +6,14 @@ import Header from "@calis/components/site/Header";
 import Footer from "@calis/components/site/Footer";
 import Hero from "@calis/components/home/Hero";
 import RecentGrid from "@calis/components/home/RecentGrid";
-import { PostsGridSkeleton, HeroSkeleton } from "@calis/components/skeletons";
+import { HeroSkeleton } from "@calis/components/skeletons";
 import Link from "next/link";
 import {InteractiveToolsSection} from "@calis/components/home/InteractiveToolsSection";
 import {StartHereSection} from "@calis/components/home/StartHereSection";
 import {TopicsTilesSection} from "@calis/components/home/TopicsSection";
 import type { Metadata } from "next";
 import {AnswersCtaSection} from "../components/home/AnswersCtaSection";
+import ComingSoonWaitlistCard from "@calis/components/home/ComingSoonWaitlistCard"
 
 export const revalidate = 60; // ISR
 
@@ -59,6 +60,10 @@ export default async function Home() {
                 </section>
                 {/* Start Here Section */}
                 <StartHereSection />
+                {/* Coming soon: Pull-Up Tracker App */}
+                <section className="mb-20">
+                    <ComingSoonWaitlistCard apiPath="/api/app-waitlist" />
+                </section>
                 {/* Interactive Tools section (high on page) */}
                 <InteractiveToolsSection />
 
