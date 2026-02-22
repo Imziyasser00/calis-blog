@@ -1,4 +1,3 @@
-// app/tools/max-rep-estimator/page.tsx
 import type { Metadata } from "next";
 import ClientPage from "./ClientPage";
 

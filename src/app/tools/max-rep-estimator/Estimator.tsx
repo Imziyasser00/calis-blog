@@ -73,8 +73,15 @@ export default function Estimator() {
         return false;
     }, [step, form]);
 
-    const next = () => (step < steps.length - 1 ? setStep((s) => s + 1) : generate());
-    const back = () => step > 0 && setStep((s) => s - 1);
+    const next = () => {
+        (document.activeElement as HTMLElement | null)?.blur?.();
+        return step < steps.length - 1 ? setStep((s) => s + 1) : generate();
+    };
+
+    const back = () => {
+        (document.activeElement as HTMLElement | null)?.blur?.();
+        return step > 0 && setStep((s) => s - 1);
+    };
 
     function generate() {
         if (isGenerating) return;
@@ -158,8 +165,9 @@ export default function Estimator() {
             <Stepper step={step} labels={steps.map((s) => s.title)} />
 
             <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0f0f15]/90 to-[#12121a]/90 backdrop-blur-xl">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(138,92,246,0.12),rgba(255,255,255,0))]" />
-                <div className="relative p-5 sm:p-10 space-y-6 sm:space-y-8">
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(138,92,246,0.12),rgba(255,255,255,0))]" />
+
+                <div className="relative z-10 p-5 sm:p-10 space-y-6 sm:space-y-8">
                     <div className="text-center space-y-2">
                         <h2 className="text-2xl sm:text-3xl font-extrabold">{steps[step].title}</h2>
                         <p className="text-gray-400 text-sm sm:text-base">{steps[step].description}</p>
@@ -199,13 +207,20 @@ export default function Estimator() {
                         </div>
                     )}
 
+                    {/* Desktop buttons (sm and up) */}
                     <div className="hidden sm:flex gap-3">
                         {step > 0 && (
-                            <button onClick={back} className="h-12 px-5 rounded-xl border border-white/10 hover:bg-white/5 transition">
+                            <button
+                                type="button"
+                                onClick={back}
+                                className="h-12 px-5 rounded-xl border border-white/10 hover:bg-white/5 transition"
+                            >
                                 Back
                             </button>
                         )}
+
                         <button
+                            type="button"
                             onClick={next}
                             disabled={!canProceed}
                             className="h-12 flex-1 rounded-xl font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed bg-purple-500 hover:opacity-95 transition"
@@ -215,6 +230,37 @@ export default function Estimator() {
                     </div>
                 </div>
             </section>
+
+            {/* Mobile fixed buttons (<sm) */}
+            <div className="sm:hidden fixed inset-x-0 bottom-0 z-50">
+                <div className="border-t border-white/10 bg-black/70 backdrop-blur supports-[backdrop-filter]:bg-black/50">
+                    <div className="container mx-auto px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+                        <div className="flex gap-3">
+                            {step > 0 && (
+                                <button
+                                    type="button"
+                                    onClick={back}
+                                    className="h-12 px-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition"
+                                >
+                                    Back
+                                </button>
+                            )}
+
+                            <button
+                                type="button"
+                                onClick={next}
+                                disabled={!canProceed}
+                                className="h-12 flex-1 rounded-xl font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed bg-purple-500 hover:opacity-95 transition"
+                            >
+                                {step === steps.length - 1 ? "Estimate My Max" : "Continue"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Spacer so fields aren't hidden behind the mobile bar */}
+            <div className="sm:hidden h-24" aria-hidden="true" />
         </>
     );
 }
